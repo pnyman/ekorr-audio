@@ -1,0 +1,3 @@
+#+TITLE: Ekorr
+
+Program för att korrekturläsa/lyssna talböcker och skapa rapporter.
