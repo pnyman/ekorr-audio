@@ -8,14 +8,14 @@ public class NccItem {
       String css_class;
       String text;
       String smil;
-      String fragment;
+      String par_id;
 
-    public NccItem(String name, String css_class, String text, String smil, String fragment) {
+    public NccItem(String name, String css_class, String text, String smil, String par_id) {
         this.name = name;
         this.css_class = css_class;
         this.text = text;
         this.smil = smil;
-        this.fragment = fragment;
+        this.par_id = par_id;
     }
 
     @Override
@@ -25,7 +25,7 @@ public class NccItem {
             + "css_class=" + css_class + ", "
             + "text=" + text + ", "
             + "smil=" + smil + ", "
-            + "fragment=" + fragment
+            + "par_id=" + par_id
             + "]";
     }
 

@@ -25,9 +25,14 @@ public class NccTest
         String file = "c:/Users/qwfwq/filfixaren/workspace/vagen_till_c/V005414_fixgen/ncc.html";
         try {
             Ncc ncc = new Ncc(file);
-            for (NccItem item : ncc.nccItems) {
-                System.out.println(item);
-            }
+
+            System.out.println(ncc.title + " " + ncc.creators + " " + ncc.identifier);
+
+
+            // for (NccItem item : ncc.nccItems) {
+            //     System.out.println(item);
+            // }
+
         }
         catch (Exception e) {
             fail(e.getMessage());

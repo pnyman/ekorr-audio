@@ -14,14 +14,18 @@ import org.jsoup.select.Elements;
  */
 public class Ncc {
     private Document doc;
+    public File directory;
     public String title;
     public String identifier;
     public ArrayList<String> creators = new ArrayList<>();
     public ArrayList<NccItem> nccItems = new ArrayList<>();
+    public ArrayList<String> smilFiles = new ArrayList<>();
 
-    public Ncc(String ncc_file) {
+    public Ncc(String nccFileString) {
         try {
-            doc = Jsoup.parse(new File(ncc_file), "UTF-8");
+            File nccFile = new File(nccFileString);
+            directory = nccFile.getParentFile();
+            doc = Jsoup.parse(nccFile, "UTF-8");
             setMetadata();
             getNccItems();
         }
@@ -30,11 +34,6 @@ public class Ncc {
             e.printStackTrace();
         }
     }
-
-
-    // <meta content="ULF BILTING" name="dc:creator"/>
-    // <meta name="dc:title" content="Vägen till C"/>
-    // <meta name="dc:identifier" content="V005414"/>
 
     private void setMetadata() {
         for (Element elt : doc.getElementsByTag("meta")) {
@@ -54,12 +53,15 @@ public class Ncc {
             String css_class = item.className();
             String text = item.text();
             Elements link = item.getElementsByTag("a");
-            String href = link.attr("href");
-            String[] s = href.split("#");
-            String smil = s[0];
-            String fragment = s[1];
+            String[] href = link.attr("href").split("#");
+            String smil = href[0];
+            String parElementId = href[1];
 
-            nccItems.add(new NccItem(name, css_class, text, smil, fragment));
+            nccItems.add(new NccItem(name, css_class, text, smil, parElementId));
+
+            if (!smilFiles.contains(smil))
+                smilFiles.add(smil);
+
         }
     }
 
