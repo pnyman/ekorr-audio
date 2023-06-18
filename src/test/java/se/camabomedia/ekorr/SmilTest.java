@@ -3,6 +3,7 @@ package se.camabomedia.ekorr;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 import org.junit.Test;
@@ -20,7 +21,7 @@ public class SmilTest {
 
         try {
             Ncc ncc = new Ncc(file);
-            Smil smil = new Smil(ncc.directory, ncc.smilFiles);
+            Smil smil = new Smil(ncc);
 
             SmilPar par1 = smil.getParFromParID("par_fixgen_11");
             System.out.println(par1);
@@ -46,9 +47,9 @@ public class SmilTest {
 
         try {
             Ncc ncc = new Ncc(file);
-            Smil smil = new Smil(ncc.directory, ncc.smilFiles);
+            Smil smil = new Smil(ncc);
 
-            for (NccItem item : ncc.nccItems) {
+            for (NccItem item : ncc.getNccItems()) {
                 SmilPar par = smil.getParFromParID(item.parID);
                 String textID = par.getSourceFileTagID();
                 System.out.println(item.text + " " + textID);
@@ -58,7 +59,21 @@ public class SmilTest {
         catch (Exception e) {
             fail(e.getMessage());
         }
+    }
 
+    @Test
+    public void test_breadCrumbs() {
+        String file = "c:/Users/qwfwq/filfixaren/workspace/vagen_till_c/V005414_fixgen/ncc.html";
+        try {
+            Ncc ncc = new Ncc(file);
+            Smil smil = new Smil(ncc);
+            String id = "id_fixgen_5326";
+            ArrayList<String> breadCrumbs = smil.getBreadCrumbs("id_fixgen_5326");
+            System.out.println(breadCrumbs);
+        }
+        catch (Exception e) {
+            fail(e.getMessage());
+        }
     }
 
 }
