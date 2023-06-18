@@ -3,6 +3,8 @@ package se.camabomedia.ekorr;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -47,17 +49,39 @@ public class Ncc {
     }
 
     private void getNccItems() {
-        for (Element item : doc.body().children()) {
 
+        Pattern pattern = Pattern.compile("^h(\\d)");
+        ArrayList<String> breadCrumb = new ArrayList<>();
+        boolean heading;
+        int thisLevel = 1;
+        int previousLevel = 1;
+
+        for (Element item : doc.body().children()) {
             String name = item.tagName();
-            String css_class = item.className();
+            String cssClass = item.className();
             String text = item.text();
             Elements link = item.getElementsByTag("a");
             String[] href = link.attr("href").split("#");
             String smil = href[0];
-            String parElementId = href[1];
+            String parId = href[1];
 
-            nccItems.add(new NccItem(name, css_class, text, smil, parElementId));
+            Matcher m = pattern.matcher(name);
+            if (m.find()) {
+                thisLevel = Integer.parseInt(m.group(1));
+                if (thisLevel == 1) {
+                    breadCrumb = new ArrayList<>();
+                }
+                else {
+                    breadCrumb = new ArrayList<>(breadCrumb);
+                    for (int i = previousLevel; i >= thisLevel; i--)
+                        breadCrumb.remove(breadCrumb.size() - 1);
+                }
+                breadCrumb.add(parId);
+            }
+
+            NccItem nccItem = new NccItem(name, cssClass, text, smil, parId, breadCrumb, thisLevel);
+            nccItems.add(nccItem);
+            previousLevel = thisLevel;
 
             if (!smilFiles.contains(smil))
                 smilFiles.add(smil);
