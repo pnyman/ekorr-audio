@@ -5,27 +5,27 @@ package se.camabomedia.ekorr;
  */
 public class NccItem {
       String name;
-      String css_class;
+      String cssClass;
       String text;
       String smil;
-      String par_id;
+      String parId;
 
-    public NccItem(String name, String css_class, String text, String smil, String par_id) {
+    public NccItem(String name, String cssClass, String text, String smil, String parId) {
         this.name = name;
-        this.css_class = css_class;
+        this.cssClass = cssClass;
         this.text = text;
         this.smil = smil;
-        this.par_id = par_id;
+        this.parId = parId;
     }
 
     @Override
     public String toString() {
         return "NccItem ["
             + "name=" + name + ", "
-            + "css_class=" + css_class + ", "
+            + "cssClass=" + cssClass + ", "
             + "text=" + text + ", "
             + "smil=" + smil + ", "
-            + "par_id=" + par_id
+            + "parId=" + parId
             + "]";
     }
 
