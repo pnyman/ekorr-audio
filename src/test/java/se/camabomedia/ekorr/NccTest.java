@@ -8,17 +8,7 @@ import org.junit.Test;
 /**
  * Unit test for ParseNcc.
  */
-public class NccTest
-{
-    /**
-     * Rigorous Test :-)
-     */
-    @Test
-    public void shouldAnswerWithTrue()
-    {
-        assertTrue( true );
-    }
-
+public class NccTest {
 
     @Test
     public void test_Constructor() {
@@ -27,7 +17,6 @@ public class NccTest
             Ncc ncc = new Ncc(file);
 
             System.out.println(ncc.title + " " + ncc.creators + " " + ncc.identifier);
-
 
             // for (NccItem item : ncc.nccItems) {
             //     System.out.println(item);
