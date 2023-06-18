@@ -11,9 +11,9 @@ import org.jsoup.nodes.Element;
 
 public class Smil {
 
-    private Hashtable<String, SmilPar> parElementIdTable = new Hashtable<>();
-    private Hashtable<String, SmilPar> textElementIdTable = new Hashtable<>();
-    private Hashtable<String, SmilPar> sourceFileTagIdTable = new Hashtable<>();
+    private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
+    private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
+    private Hashtable<String, SmilPar> sourceFileTagIDTable = new Hashtable<>();
 
     public Smil(File directory, ArrayList<String> smilFiles) {
         for (String smilFile : smilFiles) {
@@ -35,22 +35,22 @@ public class Smil {
     }
 
     private void addSmilPar(Element parElement) {
-        String parElementId = parElement.attr("id");
+        String parElementID = parElement.attr("id");
         Element textElement = parElement.select("text").first();
-        String textElementId = textElement.attr("id");
+        String textElementID = textElement.attr("id");
         String[] src = textElement.attr("src").split("#");
         String sourceFile = src[0];
-        String sourceFileTagId = src[1];
+        String sourceFileTagID = src[1];
 
-        SmilPar smilPar = new SmilPar(parElementId,
-                                      textElementId,
+        SmilPar smilPar = new SmilPar(parElementID,
+                                      textElementID,
                                       sourceFile,
-                                      sourceFileTagId,
+                                      sourceFileTagID,
                                       getAudio(parElement));
 
-        parElementIdTable.put(parElementId, smilPar);
-        textElementIdTable.put(textElementId, smilPar);
-        sourceFileTagIdTable.put(sourceFileTagId, smilPar);
+        parElementIDTable.put(parElementID, smilPar);
+        textElementIDTable.put(textElementID, smilPar);
+        sourceFileTagIDTable.put(sourceFileTagID, smilPar);
     }
 
     private ArrayList<SmilAudio> getAudio(Element parElement) {
@@ -64,16 +64,16 @@ public class Smil {
         return smilAudio;
     }
 
-    public SmilPar getParFromParId(String parId) {
-        return parElementIdTable.get(parId);
+    public SmilPar getParFromParID(String parID) {
+        return parElementIDTable.get(parID);
     }
 
-    public SmilPar getParFromTextId(String textId) {
-        return textElementIdTable.get(textId);
+    public SmilPar getParFromTextID(String textID) {
+        return textElementIDTable.get(textID);
     }
 
-    public SmilPar getParFromSourceFileTagId(String srcId) {
-        return sourceFileTagIdTable.get(srcId);
+    public SmilPar getParFromSourceFileTagID(String srcID) {
+        return sourceFileTagIDTable.get(srcID);
     }
 
 }

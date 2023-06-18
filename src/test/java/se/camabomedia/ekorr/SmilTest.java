@@ -22,12 +22,12 @@ public class SmilTest {
             Ncc ncc = new Ncc(file);
             Smil smil = new Smil(ncc.directory, ncc.smilFiles);
 
-            SmilPar par1 = smil.getParFromParId("par_fixgen_11");
+            SmilPar par1 = smil.getParFromParID("par_fixgen_11");
             System.out.println(par1);
 
-            SmilPar par2 = smil.getParFromTextId("txt_fixgen_11");
-            SmilPar par3 = smil.getParFromTextId(par1.getTextElementId());
-            SmilPar par4 = smil.getParFromSourceFileTagId(par1.getSourceFileTagId());
+            SmilPar par2 = smil.getParFromTextID("txt_fixgen_11");
+            SmilPar par3 = smil.getParFromTextID(par1.getTextElementID());
+            SmilPar par4 = smil.getParFromSourceFileTagID(par1.getSourceFileTagID());
 
             assertTrue(Objects.equals(par1, par2));
             assertTrue(Objects.equals(par1, par3));
@@ -41,7 +41,7 @@ public class SmilTest {
 
 
     @Test
-    public void test_nccItemsTextfileIds() {
+    public void test_nccItemsTextfileIDs() {
         String file = "c:/Users/qwfwq/filfixaren/workspace/leverans/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
 
         try {
@@ -49,9 +49,9 @@ public class SmilTest {
             Smil smil = new Smil(ncc.directory, ncc.smilFiles);
 
             for (NccItem item : ncc.nccItems) {
-                SmilPar par = smil.getParFromParId(item.parId);
-                String textId = par.getSourceFileTagId();
-                System.out.println(item.text + " " + textId);
+                SmilPar par = smil.getParFromParID(item.parID);
+                String textID = par.getSourceFileTagID();
+                System.out.println(item.text + " " + textID);
             }
 
         }

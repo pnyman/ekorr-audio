@@ -7,38 +7,38 @@ import java.util.ArrayList;
  */
 public class SmilPar {
 
-    private String parElementId;
-    private String textElementId;
+    private String parElementID;
+    private String textElementID;
     private String sourceFile;
-    private String sourceFileTagId;
+    private String sourceFileTagID;
     private ArrayList<SmilAudio> smilAudio;
 
-    public SmilPar(String parElementId,
-                   String textElementId,
+    public SmilPar(String parElementID,
+                   String textElementID,
                    String sourceFile,
-                   String sourceFileTagId,
+                   String sourceFileTagID,
                    ArrayList<SmilAudio> smilAudio) {
-        this.parElementId = parElementId;
-        this.textElementId = textElementId;
+        this.parElementID = parElementID;
+        this.textElementID = textElementID;
         this.sourceFile = sourceFile;
-        this.sourceFileTagId = sourceFileTagId;
+        this.sourceFileTagID = sourceFileTagID;
         this.smilAudio = smilAudio;
     }
 
-    public String getParElementId() {
-        return parElementId;
+    public String getParElementID() {
+        return parElementID;
     }
 
-    public String getTextElementId() {
-        return textElementId;
+    public String getTextElementID() {
+        return textElementID;
     }
 
     public String getSourceFile() {
         return sourceFile;
     }
 
-    public String getSourceFileTagId() {
-        return sourceFileTagId;
+    public String getSourceFileTagID() {
+        return sourceFileTagID;
     }
 
     public ArrayList<SmilAudio> getSmilAudio() {
@@ -47,10 +47,10 @@ public class SmilPar {
 
     @Override
     public String toString() {
-        return "SmilPar [parElementId=" + parElementId
-            + ", textElementId=" + textElementId
+        return "SmilPar [parElementID=" + parElementID
+            + ", textElementID=" + textElementID
             + ", sourceFile=" + sourceFile
-            + ", sourceFileTagId=" + sourceFileTagId
+            + ", sourceFileTagID=" + sourceFileTagID
             + ", smilAudio=" + smilAudio
             + "]";
     }

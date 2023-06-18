@@ -63,7 +63,7 @@ public class Ncc {
             Elements link = item.getElementsByTag("a");
             String[] href = link.attr("href").split("#");
             String smil = href[0];
-            String parId = href[1];
+            String parID = href[1];
 
             Matcher m = pattern.matcher(name);
             if (m.find()) {
@@ -76,10 +76,10 @@ public class Ncc {
                     for (int i = previousLevel; i >= thisLevel; i--)
                         breadCrumb.remove(breadCrumb.size() - 1);
                 }
-                breadCrumb.add(parId);
+                breadCrumb.add(parID);
             }
 
-            NccItem nccItem = new NccItem(name, cssClass, text, smil, parId, breadCrumb, thisLevel);
+            NccItem nccItem = new NccItem(name, cssClass, text, smil, parID, breadCrumb, thisLevel);
             nccItems.add(nccItem);
             previousLevel = thisLevel;
 

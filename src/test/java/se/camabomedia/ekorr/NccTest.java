@@ -17,10 +17,12 @@ public class NccTest {
             Ncc ncc = new Ncc(file);
 
             System.out.println(ncc.title + " " + ncc.creators + " " + ncc.identifier);
+            System.out.println();
 
-            // for (NccItem item : ncc.nccItems) {
-            //     System.out.println(item);
-            // }
+            for (NccItem item : ncc.nccItems) {
+                System.out.println(item);
+                System.out.println();
+            }
 
         }
         catch (Exception e) {
