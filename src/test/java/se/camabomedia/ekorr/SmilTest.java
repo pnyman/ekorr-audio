@@ -3,6 +3,9 @@ package se.camabomedia.ekorr;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -15,11 +18,11 @@ public class SmilTest {
 
     @Test
     public void test_Constructor() {
-        // String file = "c:/Users/qwfwq/filfixaren/workspace/vagen_till_c/V005414_fixgen/ncc.html";
-
-        String file = "c:/Users/qwfwq/filfixaren/workspace/leverans/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
+        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
+        URL url = getClass().getClassLoader().getResource(f);
 
         try {
+            String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
             Smil smil = new Smil(ncc);
 
@@ -34,18 +37,21 @@ public class SmilTest {
             assertTrue(Objects.equals(par1, par3));
             assertTrue(Objects.equals(par1, par4));
         }
+        catch (URISyntaxException e1) {
+            e1.printStackTrace();
+        }
         catch (Exception e) {
             fail(e.getMessage());
         }
-
     }
-
 
     @Test
     public void test_nccItemsTextfileIDs() {
-        String file = "c:/Users/qwfwq/filfixaren/workspace/leverans/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
+        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
+        URL url = getClass().getClassLoader().getResource(f);
 
         try {
+            String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
             Smil smil = new Smil(ncc);
 
@@ -56,6 +62,9 @@ public class SmilTest {
             }
 
         }
+        catch (URISyntaxException e1) {
+            e1.printStackTrace();
+        }
         catch (Exception e) {
             fail(e.getMessage());
         }
@@ -63,12 +72,16 @@ public class SmilTest {
 
     @Test
     public void test_breadCrumbs() {
-        String file = "c:/Users/qwfwq/filfixaren/workspace/vagen_till_c/V005414_fixgen/ncc.html";
+        String f = "V005414_fixgen/ncc.html";
+        URL url = getClass().getClassLoader().getResource(f);
+
         try {
+            String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
             Smil smil = new Smil(ncc);
             String id = "id_fixgen_5326";
             ArrayList<String> breadCrumbs = smil.getBreadCrumbs("id_fixgen_5326");
+            System.out.println();
             System.out.println(breadCrumbs);
         }
         catch (Exception e) {
