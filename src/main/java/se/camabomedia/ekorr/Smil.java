@@ -11,21 +11,25 @@ import org.jsoup.nodes.Element;
 
 public class Smil {
 
+    private Ncc ncc;
     private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> sourceFileTagIDTable = new Hashtable<>();
 
-    public Smil(File directory, ArrayList<String> smilFiles) {
-        for (String smilFile : smilFiles) {
-            addSmil(new File(directory, smilFile));
+    public Smil(Ncc ncc) {
+        this.ncc = ncc;
+        File directory = ncc.getDirectory();
+        Hashtable<String, ArrayList<String>> breadCrumbsTable = ncc.getBreadCrumbsTable();
+        for (String smilFile : ncc.getSmilFiles()) {
+            addSmil(new File(directory, smilFile), breadCrumbsTable.get(smilFile));
         }
     }
 
-    private void addSmil(File smilFile) {
+    private void addSmil(File smilFile, ArrayList<String> breadCrumbs) {
         try {
             Document doc = Jsoup.parse(smilFile, "UTF-8");
             for (Element parElement : doc.getElementsByTag("par")) {
-                addSmilPar(parElement);
+                addSmilPar(parElement, breadCrumbs);
             }
         }
         catch (IOException e) {
@@ -34,7 +38,7 @@ public class Smil {
         }
     }
 
-    private void addSmilPar(Element parElement) {
+    private void addSmilPar(Element parElement, ArrayList<String> breadCrumbs) {
         String parElementID = parElement.attr("id");
         Element textElement = parElement.select("text").first();
         String textElementID = textElement.attr("id");
@@ -46,7 +50,8 @@ public class Smil {
                                       textElementID,
                                       sourceFile,
                                       sourceFileTagID,
-                                      getAudio(parElement));
+                                      getAudio(parElement),
+                                      breadCrumbs);
 
         parElementIDTable.put(parElementID, smilPar);
         textElementIDTable.put(textElementID, smilPar);
@@ -62,6 +67,16 @@ public class Smil {
             }
         }
         return smilAudio;
+    }
+
+    public ArrayList<String> getBreadCrumbs(String sourceFileTagID) {
+        ArrayList<String> breadCrumbs = new ArrayList<>();
+        SmilPar par = getParFromSourceFileTagID(sourceFileTagID);
+        for (String bc : par.getBreadCrumbs()) {
+            NccItem nccItem = ncc.getNccItem(bc);
+            breadCrumbs.add(nccItem.getText());
+        }
+        return breadCrumbs;
     }
 
     public SmilPar getParFromParID(String parID) {

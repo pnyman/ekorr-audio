@@ -12,17 +12,20 @@ public class SmilPar {
     private String sourceFile;
     private String sourceFileTagID;
     private ArrayList<SmilAudio> smilAudio;
+    private ArrayList<String> breadCrumbs;
 
     public SmilPar(String parElementID,
                    String textElementID,
                    String sourceFile,
                    String sourceFileTagID,
-                   ArrayList<SmilAudio> smilAudio) {
+                   ArrayList<SmilAudio> smilAudio,
+                   ArrayList<String> breadCrumbs) {
         this.parElementID = parElementID;
         this.textElementID = textElementID;
         this.sourceFile = sourceFile;
         this.sourceFileTagID = sourceFileTagID;
         this.smilAudio = smilAudio;
+        this.breadCrumbs = breadCrumbs;
     }
 
     public String getParElementID() {
@@ -43,6 +46,10 @@ public class SmilPar {
 
     public ArrayList<SmilAudio> getSmilAudio() {
         return smilAudio;
+    }
+
+    public ArrayList<String> getBreadCrumbs() {
+        return breadCrumbs;
     }
 
     @Override

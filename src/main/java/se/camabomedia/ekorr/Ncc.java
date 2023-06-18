@@ -3,6 +3,7 @@ package se.camabomedia.ekorr;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,12 +17,14 @@ import org.jsoup.select.Elements;
  */
 public class Ncc {
     private Document doc;
-    public File directory;
-    public String title;
-    public String identifier;
-    public ArrayList<String> creators = new ArrayList<>();
-    public ArrayList<NccItem> nccItems = new ArrayList<>();
-    public ArrayList<String> smilFiles = new ArrayList<>();
+    private File directory;
+    private String title;
+    private String identifier;
+    private ArrayList<String> creators = new ArrayList<>();
+    private ArrayList<NccItem> nccItems = new ArrayList<>();
+    private ArrayList<String> smilFiles = new ArrayList<>();
+    private Hashtable<String, NccItem> parIDTable = new Hashtable<>();
+    private Hashtable<String, ArrayList<String>> breadCrumbsTable = new Hashtable<>();
 
     public Ncc(String nccFileString) {
         try {
@@ -29,7 +32,7 @@ public class Ncc {
             directory = nccFile.getParentFile();
             doc = Jsoup.parse(nccFile, "UTF-8");
             setMetadata();
-            getNccItems();
+            populateNccItems();
         }
         catch (IOException e) {
             // TODO Auto-generated catch block
@@ -48,7 +51,7 @@ public class Ncc {
         }
     }
 
-    private void getNccItems() {
+    private void populateNccItems() {
 
         Pattern pattern = Pattern.compile("^h(\\d)");
         ArrayList<String> breadCrumb = new ArrayList<>();
@@ -81,12 +84,51 @@ public class Ncc {
 
             NccItem nccItem = new NccItem(name, cssClass, text, smil, parID, breadCrumb, thisLevel);
             nccItems.add(nccItem);
+
+            parIDTable.put(parID, nccItem);
+            breadCrumbsTable.put(smil, breadCrumb);
+
             previousLevel = thisLevel;
 
             if (!smilFiles.contains(smil))
                 smilFiles.add(smil);
-
         }
+    }
+
+    public NccItem getNccItem(String parID) {
+        return parIDTable.get(parID);
+    }
+
+    public ArrayList<NccItem> getNccItems() {
+        return nccItems;
+    }
+
+    public File getDirectory() {
+        return directory;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public ArrayList<String> getCreators() {
+        return creators;
+    }
+
+    public ArrayList<String> getSmilFiles() {
+        return smilFiles;
+    }
+
+    public Hashtable<String, NccItem> getParIDTable() {
+        return parIDTable;
+    }
+
+    public Hashtable<String, ArrayList<String>> getBreadCrumbsTable() {
+        return breadCrumbsTable;
     }
 
 }
