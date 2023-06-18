@@ -12,6 +12,7 @@ import org.jsoup.nodes.Element;
 public class Smil {
 
     private Ncc ncc;
+    String sourceFile;
     private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> sourceFileTagIDTable = new Hashtable<>();
@@ -43,7 +44,7 @@ public class Smil {
         Element textElement = parElement.select("text").first();
         String textElementID = textElement.attr("id");
         String[] src = textElement.attr("src").split("#");
-        String sourceFile = src[0];
+        sourceFile = src[0];
         String sourceFileTagID = src[1];
 
         SmilPar smilPar = new SmilPar(parElementID,
@@ -89,6 +90,10 @@ public class Smil {
 
     public SmilPar getParFromSourceFileTagID(String srcID) {
         return sourceFileTagIDTable.get(srcID);
+    }
+
+    public String getSourceFile() {
+        return sourceFile;
     }
 
 }
