@@ -11,9 +11,9 @@ import org.jsoup.nodes.Element;
 
 public class Smil {
 
-    Hashtable<String, SmilPar> parElementIdTable = new Hashtable<>();
-    Hashtable<String, SmilPar> textElementIdTable = new Hashtable<>();
-    Hashtable<String, SmilPar> sourceFileTagIdTable = new Hashtable<>();
+    private Hashtable<String, SmilPar> parElementIdTable = new Hashtable<>();
+    private Hashtable<String, SmilPar> textElementIdTable = new Hashtable<>();
+    private Hashtable<String, SmilPar> sourceFileTagIdTable = new Hashtable<>();
 
     public Smil(File directory, ArrayList<String> smilFiles) {
         for (String smilFile : smilFiles) {
@@ -62,6 +62,18 @@ public class Smil {
             }
         }
         return smilAudio;
+    }
+
+    public SmilPar getParFromParId(String parId) {
+        return parElementIdTable.get(parId);
+    }
+
+    public SmilPar getParFromTextId(String textId) {
+        return textElementIdTable.get(textId);
+    }
+
+    public SmilPar getParFromSourceFileTagId(String srcId) {
+        return sourceFileTagIdTable.get(srcId);
     }
 
 }
