@@ -15,6 +15,21 @@
     <maven.compiler.target>11</maven.compiler.target>
   </properties>
 
+  <repositories>
+
+    <repository>
+      <id>be.0110.repo-releases</id>
+      <name>0110.be repository</name>
+      <url>https://mvn.0110.be/releases</url>
+    </repository>
+
+    <repository>
+      <id>clojars</id>
+      <url>http://clojars.org/repo/</url>
+    </repository>
+
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -40,6 +55,117 @@
       <artifactId>javafx-fxml</artifactId>
       <version>15.0.1</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-media</artifactId>
+      <version>15.0.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.clojars.automata</groupId>
+      <artifactId>tritonus-share</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.clojars.automata</groupId>
+      <artifactId>tritonus-aos</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>net.beadsproject</groupId>
+      <artifactId>beads</artifactId>
+      <version>3.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.tianscar.soundtouch</groupId>
+      <artifactId>soundtouch-jni-core</artifactId>
+      <version>1.0.6</version>
+    </dependency>
+
+
+    <!-- https://mvnrepository.com/artifact/javazoom/jlayer -->
+    <!-- <dependency> -->
+    <!--   <groupId>javazoom</groupId> -->
+    <!--   <artifactId>jlayer</artifactId> -->
+    <!--   <version>1.0.1</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>net.vezzy.friendly</groupId> -->
+    <!--   <artifactId>rubberband-java</artifactId> -->
+    <!--   <version>1.3</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>com.googlecode.soundlibs</groupId> -->
+    <!--   <artifactId>mp3spi</artifactId> -->
+    <!--   <version>1.9.5-1</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>javazoom</groupId> -->
+    <!--   <artifactId>jlayer</artifactId> -->
+    <!--   <version>1.0.1</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>be.tarsos.dsp</groupId> -->
+    <!--   <artifactId>tarsos-dsp</artifactId> -->
+    <!--   <version>6.12.0</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>be.tarsos.dsp</groupId> -->
+    <!--   <artifactId>core</artifactId> -->
+    <!--   <version>2.5</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>be.tarsos.dsp</groupId> -->
+    <!--   <artifactId>jvm</artifactId> -->
+    <!--   <version>2.5</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>com.surina.soundtouch</groupId> -->
+    <!--   <artifactId>soundtouch-java</artifactId> -->
+    <!--   <version>2.2.0</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>org.happy-digital.music</groupId> -->
+    <!--   <artifactId>rubberband</artifactId> -->
+    <!--   <version>1.4.2</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>com.goxr3plus</groupId> -->
+    <!--   <artifactId>soundtouch-java</artifactId> -->
+    <!--   <version>1.1.1</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--     <groupId>uk.co.caprica</groupId> -->
+    <!--     <artifactId>vlcj</artifactId> -->
+    <!--     <version>4.8.0</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--     <groupId>uk.co.caprica</groupId> -->
+    <!--     <artifactId>vlcj-natives</artifactId> -->
+    <!--     <version>4.8.1</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--     <groupId>net.java.dev.jna</groupId> -->
+    <!--     <artifactId>jna</artifactId> -->
+    <!--     <version>5.9.0</version> -->
+    <!-- </dependency> -->
+
   </dependencies>
 
   <build>
@@ -94,25 +220,25 @@
           </configuration>
         </plugin>
 
-        <plugin>
-          <groupId>com.igormaznitsa</groupId>
-          <artifactId>mvn-jlink-wrapper</artifactId>
-          <version>1.2.1</version>
-          <executions>
-            <execution>
-              <id>call-jdeps</id>
-              <goals>
-                <goal>jdeps</goal>
-              </goals>
-              <configuration>
-                <output>${project.build.directory}${file.separator}jdeps.out</output>
-                <options>
-                  <option>${project.build.directory}${file.separator}${project.build.finalName}.jar</option>
-                </options>
-              </configuration>
-            </execution>
-          </executions>
-        </plugin>
+        <!-- <plugin> -->
+        <!--   <groupId>com.igormaznitsa</groupId> -->
+        <!--   <artifactId>mvn-jlink-wrapper</artifactId> -->
+        <!--   <version>1.2.1</version> -->
+        <!--   <executions> -->
+        <!--     <execution> -->
+        <!--       <id>call-jdeps</id> -->
+        <!--       <goals> -->
+        <!--         <goal>jdeps</goal> -->
+        <!--       </goals> -->
+        <!--       <configuration> -->
+        <!--         <output>${project.build.directory}${file.separator}jdeps.out</output> -->
+        <!--         <options> -->
+        <!--           <option>${project.build.directory}${file.separator}${project.build.finalName}.jar</option> -->
+        <!--         </options> -->
+        <!--       </configuration> -->
+        <!--     </execution> -->
+        <!--   </executions> -->
+        <!-- </plugin> -->
 
         <plugin>
           <groupId>com.igormaznitsa</groupId>
