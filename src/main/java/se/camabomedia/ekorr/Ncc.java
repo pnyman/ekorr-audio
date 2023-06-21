@@ -2,6 +2,10 @@ package se.camabomedia.ekorr;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
@@ -20,6 +24,7 @@ public class Ncc {
     private File directory;
     private String title;
     private String identifier;
+    private String contentFile = null;
     private ArrayList<String> creators = new ArrayList<>();
     private ArrayList<NccItem> nccItems = new ArrayList<>();
     private ArrayList<String> smilFiles = new ArrayList<>();
@@ -32,11 +37,38 @@ public class Ncc {
             directory = nccFile.getParentFile();
             doc = Jsoup.parse(nccFile, "UTF-8");
             setMetadata();
+            findContentFile();
             populateNccItems();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+        }
+    }
+
+    private void findContentFile() {
+        Path path = Paths.get(directory.toString());
+
+        try (DirectoryStream<Path> ds = Files.newDirectoryStream(path, "*.smil")) {
+            for (Path smilFile : ds) {
+                if (contentFile != null) {
+                    break;
+                }
+                Document doc = Jsoup.parse(smilFile.toFile(), "UTF-8");
+                for (Element par : doc.getElementsByTag("par")) {
+                    try {
+                        String src = par.select("text").first().attr("src");
+                        if (!src.contains("ncc.html"))
+                            contentFile = src.split("#")[0];
+                    }
+                    catch (Exception ignore) {}
+                    if (contentFile != null) {
+                        break;
+                    }
+                }
+            }
+        }
+        catch (IOException e) {
+            System.err.println(e);
         }
     }
 
@@ -119,6 +151,10 @@ public class Ncc {
         return creators;
     }
 
+    public String getContentFile() {
+        return contentFile;
+    }
+
     public ArrayList<String> getSmilFiles() {
         return smilFiles;
     }
@@ -127,8 +163,8 @@ public class Ncc {
         return parIDTable;
     }
 
-    public Hashtable<String, ArrayList<String>> getBreadCrumbsTable() {
-        return breadCrumbsTable;
+    public ArrayList<String> getBreadCrumbs(String smilFile) {
+        return breadCrumbsTable.get(smilFile);
     }
 
 }
