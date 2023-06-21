@@ -12,10 +12,12 @@ import org.jsoup.nodes.Element;
 public class Smil {
 
     private Ncc ncc;
-    String sourceFile;
+    private String sourceFile;
     private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> sourceFileTagIDTable = new Hashtable<>();
+
+    SmilPar previousSmilPar = null;
 
     public Smil(Ncc ncc) {
         this.ncc = ncc;
@@ -29,8 +31,18 @@ public class Smil {
     private void addSmil(File smilFile, ArrayList<String> breadCrumbs) {
         try {
             Document doc = Jsoup.parse(smilFile, "UTF-8");
+
+            SmilPar thisSmilPar;
+
             for (Element parElement : doc.getElementsByTag("par")) {
-                addSmilPar(parElement, breadCrumbs);
+                thisSmilPar = addSmilPar(parElement, breadCrumbs);
+
+                if (previousSmilPar != null) {
+                    thisSmilPar.setPreviousSmilPar(previousSmilPar);
+                    previousSmilPar.setNextSmilPar(thisSmilPar);
+                }
+
+                previousSmilPar = thisSmilPar;
             }
         }
         catch (IOException e) {
@@ -39,7 +51,7 @@ public class Smil {
         }
     }
 
-    private void addSmilPar(Element parElement, ArrayList<String> breadCrumbs) {
+    private SmilPar addSmilPar(Element parElement, ArrayList<String> breadCrumbs) {
         String parElementID = parElement.attr("id");
         Element textElement = parElement.select("text").first();
         String textElementID = textElement.attr("id");
@@ -57,6 +69,8 @@ public class Smil {
         parElementIDTable.put(parElementID, smilPar);
         textElementIDTable.put(textElementID, smilPar);
         sourceFileTagIDTable.put(sourceFileTagID, smilPar);
+
+        return smilPar;
     }
 
     private ArrayList<SmilAudio> getAudio(Element parElement) {
