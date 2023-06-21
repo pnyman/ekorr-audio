@@ -22,16 +22,17 @@ public class NccTest {
         try {
             String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
+            String content = ncc.getContentFile();
 
-            System.out.println(ncc.getTitle()
-                               + " " + ncc.getCreators()
-                               + " " + ncc.getIdentifier());
-            System.out.println();
+            // System.out.println(ncc.getTitle()
+            //                    + " " + ncc.getCreators()
+            //                    + " " + ncc.getIdentifier());
+            // System.out.println();
 
-            for (NccItem item : ncc.getNccItems()) {
-                System.out.println(item);
-                System.out.println();
-            }
+            // for (NccItem item : ncc.getNccItems()) {
+            //     System.out.println(item);
+            //     System.out.println();
+            // }
         }
         catch (URISyntaxException e1) {
             e1.printStackTrace();

@@ -29,7 +29,7 @@ public class MP3PlayerTest {
             System.out.println(file);
 
             MP3Player p = new MP3Player();
-            p.play(file, 155 , 1, 1);
+            p.play(file, 155, 1, 1);
 
             // Wait for some time to allow playback
             try {

@@ -25,7 +25,7 @@ public class FullTextTest {
             Smil smil = new Smil(ncc);
             FullText fullText = new FullText(ncc.getDirectory(), smil.getSourceFile());
             String tagID = "id_fixgen_5326";
-            System.out.println(fullText.getTagText(tagID));
+            // System.out.println(fullText.getTagText(tagID));
         }
         catch (URISyntaxException e1) {
             e1.printStackTrace();
