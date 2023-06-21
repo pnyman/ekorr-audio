@@ -17,6 +17,7 @@ public class SmilPar {
     private ArrayList<String> breadCrumbs;
     private SmilPar previousSmilPar;
     private SmilPar nextSmilPar;
+    private String page;
 
     /**
      * Class constructor.
@@ -32,13 +33,15 @@ public class SmilPar {
                    String sourceFile,
                    String sourceFileTagID,
                    ArrayList<SmilAudio> smilAudio,
-                   ArrayList<String> breadCrumbs) {
+                   ArrayList<String> breadCrumbs,
+                   String page) {
         this.parElementID = parElementID;
         this.textElementID = textElementID;
         this.sourceFile = sourceFile;
         this.sourceFileTagID = sourceFileTagID;
         this.smilAudio = smilAudio;
         this.breadCrumbs = breadCrumbs;
+        this.page = page;
     }
 
     public String getParElementID() {
@@ -65,6 +68,10 @@ public class SmilPar {
         return breadCrumbs;
     }
 
+    public String getPage() {
+        return page;
+    }
+
     public SmilPar getPreviousSmilPar() {
         return previousSmilPar;
     }
@@ -88,6 +95,7 @@ public class SmilPar {
             + ", sourceFile=" + sourceFile
             + ", sourceFileTagID=" + sourceFileTagID
             + ", smilAudio=" + smilAudio
+            + ", page=" + page
             + "]";
     }
 

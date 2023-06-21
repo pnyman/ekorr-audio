@@ -13,25 +13,28 @@ public class Smil {
 
     private Ncc ncc;
     private String sourceFile;
+    private FullText fullText;
     private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> sourceFileTagIDTable = new Hashtable<>();
 
     SmilPar previousSmilPar = null;
+    String thisPage = null;
 
-    public Smil(Ncc ncc) {
+    public Smil(Ncc ncc, FullText fullText) {
         this.ncc = ncc;
+        this.fullText = fullText;
         File directory = ncc.getDirectory();
-        Hashtable<String, ArrayList<String>> breadCrumbsTable = ncc.getBreadCrumbsTable();
+
         for (String smilFile : ncc.getSmilFiles()) {
-            addSmil(new File(directory, smilFile), breadCrumbsTable.get(smilFile));
+            addSmil(new File(directory, smilFile), ncc.getBreadCrumbs(smilFile));
         }
+
     }
 
     private void addSmil(File smilFile, ArrayList<String> breadCrumbs) {
         try {
             Document doc = Jsoup.parse(smilFile, "UTF-8");
-
             SmilPar thisSmilPar;
 
             for (Element parElement : doc.getElementsByTag("par")) {
@@ -53,18 +56,24 @@ public class Smil {
 
     private SmilPar addSmilPar(Element parElement, ArrayList<String> breadCrumbs) {
         String parElementID = parElement.attr("id");
+        String systemRequired = parElement.attr("system-required");
         Element textElement = parElement.select("text").first();
         String textElementID = textElement.attr("id");
         String[] src = textElement.attr("src").split("#");
         sourceFile = src[0];
         String sourceFileTagID = src[1];
 
+        if (systemRequired.contains("pagenumber")) {
+            thisPage = fullText.getTagText(sourceFileTagID);
+        }
+
         SmilPar smilPar = new SmilPar(parElementID,
                                       textElementID,
                                       sourceFile,
                                       sourceFileTagID,
                                       getAudio(parElement),
-                                      breadCrumbs);
+                                      breadCrumbs,
+                                      thisPage);
 
         parElementIDTable.put(parElementID, smilPar);
         textElementIDTable.put(textElementID, smilPar);
