@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.script.SimpleScriptContext;
@@ -26,7 +28,8 @@ public class SmilTest {
         try {
             String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
-            Smil smil = new Smil(ncc);
+            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            Smil smil = new Smil(ncc, content);
 
             SmilPar par1 = smil.getParFromParID("par_fixgen_11");
             // System.out.println(par1);
@@ -55,7 +58,8 @@ public class SmilTest {
         try {
             String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
-            Smil smil = new Smil(ncc);
+            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            Smil smil = new Smil(ncc, content);
 
             for (NccItem item : ncc.getNccItems()) {
                 SmilPar par = smil.getParFromParID(item.parID);
@@ -79,7 +83,8 @@ public class SmilTest {
         try {
             String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
-            Smil smil = new Smil(ncc);
+            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            Smil smil = new Smil(ncc, content);
             String id = "id_fixgen_5326";
             ArrayList<String> breadCrumbs = smil.getBreadCrumbs("id_fixgen_5326");
             // System.out.println();
@@ -97,6 +102,7 @@ public class SmilTest {
         String file;
         Ncc ncc;
         Smil smil;
+        Content content;
         SmilPar thisPar;
         SmilPar previousPar;
         SmilPar nextPar;
@@ -104,7 +110,8 @@ public class SmilTest {
         try {
             file = Paths.get(url.toURI()).toString();
             ncc = new Ncc(file);
-            smil = new Smil(ncc);
+            content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            smil = new Smil(ncc, content);
 
             // First par in the talking book
             thisPar = smil.getParFromParID("par_fixgen_2");
@@ -159,7 +166,6 @@ public class SmilTest {
             thisPar = smil.getParFromParID("par_fixgen_2");
             assertTrue(thisPar.getPage() == null);
 
-
             thisPar = smil.getParFromParID("par_fixgen_255");
             System.out.println(thisPar);
 
@@ -189,4 +195,32 @@ public class SmilTest {
         }
     }
 
+    @Test
+    public void test_Timestamps() {
+        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
+        URL url = getClass().getClassLoader().getResource(f);
+
+        try {
+            String file = Paths.get(url.toURI()).toString();
+            Ncc ncc = new Ncc(file);
+            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            Smil smil = new Smil(ncc, content);
+
+            // gram0015.smil
+            // <audio src="15_JUNI.mp3" clip-begin="npt=239.616s" clip-end="npt=243.875s" id="audio_0080"/>
+            String contentId = "dol_1_15_id_fixgen_9843";
+            String mp3 = "15_JUNI.mp3";
+            int time = 241616;
+
+            assertTrue(smil.contentIdFromTime(mp3, time).equals("dol_1_15_id_fixgen_9843"));
+            assertTrue(smil.startTimeFromContentId(contentId) == 239616);
+            assertTrue(smil.startTimeFromContentId(smil.contentIdFromTime(mp3, time)) == 239616);
+        }
+        catch (URISyntaxException e1) {
+            e1.printStackTrace();
+        }
+        catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
 }
