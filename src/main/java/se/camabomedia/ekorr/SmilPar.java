@@ -52,11 +52,11 @@ public class SmilPar {
         return textElementID;
     }
 
-    public String getSourceFile() {
+    public String getContentFile() {
         return contentFile;
     }
 
-    public String getSourceFileTagID() {
+    public String getContentTagID() {
         return contentFileTagID;
     }
 
