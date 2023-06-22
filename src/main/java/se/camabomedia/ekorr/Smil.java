@@ -3,6 +3,7 @@ package se.camabomedia.ekorr;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 
 import org.jsoup.Jsoup;
@@ -12,11 +13,14 @@ import org.jsoup.nodes.Element;
 public class Smil {
 
     private Ncc ncc;
+    // TODO denna variabel onödig
     private String contentFile;
     private Content content;
+    File directory;
     private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> contentTagIDTable = new Hashtable<>();
+    private Hashtable<String, ArrayList<Integer>> mp3StartTimesTable = new Hashtable<>();
 
     SmilPar previousSmilPar = null;
     String thisPage = null;
@@ -24,17 +28,17 @@ public class Smil {
     public Smil(Ncc ncc, Content content) {
         this.ncc = ncc;
         this.content = content;
-        File directory = ncc.getDirectory();
+        directory = ncc.getDirectory();
 
         for (String smilFile : ncc.getSmilFiles()) {
-            addSmil(new File(directory, smilFile), ncc.getBreadCrumbs(smilFile));
+            addSmil(smilFile, ncc.getBreadCrumbs(smilFile));
         }
 
     }
 
-    private void addSmil(File smilFile, ArrayList<String> breadCrumbs) {
+    private void addSmil(String smilFile, ArrayList<String> breadCrumbs) {
         try {
-            Document doc = Jsoup.parse(smilFile, "UTF-8");
+            Document doc = Jsoup.parse(new File(directory, smilFile), "UTF-8");
             SmilPar thisSmilPar;
 
             for (Element parElement : doc.getElementsByTag("par")) {
@@ -45,6 +49,7 @@ public class Smil {
                     previousSmilPar.setNextSmilPar(thisSmilPar);
                 }
 
+                populateMp3StartTimesTable(thisSmilPar);
                 previousSmilPar = thisSmilPar;
             }
         }
@@ -52,6 +57,14 @@ public class Smil {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+
+    private void populateMp3StartTimesTable(SmilPar smilPar) {
+        String mp3File = smilPar.getSmilAudio().get(0).getSrc();
+        if (!mp3StartTimesTable.contains(mp3File)) {
+            mp3StartTimesTable.put(mp3File, new ArrayList<Integer>());
+        }
+        mp3StartTimesTable.get(mp3File).add(smilPar.getSmilAudio().get(0).getClipBegin());
     }
 
     private SmilPar addSmilPar(Element parElement, ArrayList<String> breadCrumbs) {
@@ -93,6 +106,15 @@ public class Smil {
         return smilAudio;
     }
 
+    public int findStartTime(String mp3File, int needle) {
+        ArrayList<Integer> startTimes = mp3StartTimesTable.get(mp3File);
+        int index = Collections.binarySearch(startTimes, needle);
+        if (index >= 0) {
+            return startTimes.get(index);
+        }
+        return (-index - 1) - 1;
+    }
+
     public ArrayList<String> getBreadCrumbs(String contentTagID) {
         ArrayList<String> breadCrumbs = new ArrayList<>();
         SmilPar par = getParFromContentTagID(contentTagID);
@@ -101,6 +123,14 @@ public class Smil {
             breadCrumbs.add(nccItem.getText());
         }
         return breadCrumbs;
+    }
+
+    public Hashtable<String, SmilPar> getContentTagIDTable() {
+        return contentTagIDTable;
+    }
+
+    public Hashtable<String, ArrayList<Integer>> getSmilStartTimesTable() {
+        return mp3StartTimesTable;
     }
 
     public SmilPar getParFromParID(String parID) {
