@@ -33,7 +33,7 @@ public class SmilTest {
 
             SmilPar par2 = smil.getParFromTextID("txt_fixgen_11");
             SmilPar par3 = smil.getParFromTextID(par1.getTextElementID());
-            SmilPar par4 = smil.getParFromSourceFileTagID(par1.getSourceFileTagID());
+            SmilPar par4 = smil.getParFromContentTagID(par1.getSourceFileTagID());
 
             assertTrue(Objects.equals(par1, par2));
             assertTrue(Objects.equals(par1, par3));

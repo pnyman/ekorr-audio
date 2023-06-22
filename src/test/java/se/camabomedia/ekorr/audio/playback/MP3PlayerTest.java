@@ -99,7 +99,7 @@ public class MP3PlayerTest {
             MP3Player p = new MP3Player();
 
             for (String syncpoint : syncpoints) {
-                SmilPar par = smil.getParFromSourceFileTagID(syncpoint);
+                SmilPar par = smil.getParFromContentTagID(syncpoint);
                 for (SmilAudio smilAudio : par.getSmilAudio()) {
                     String src = smilAudio.getSrc();
                     float begin = smilAudio.getClipBegin();

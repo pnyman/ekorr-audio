@@ -16,7 +16,7 @@ public class Smil {
     private Content content;
     private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
-    private Hashtable<String, SmilPar> sourceFileTagIDTable = new Hashtable<>();
+    private Hashtable<String, SmilPar> contentTagIDTable = new Hashtable<>();
 
     SmilPar previousSmilPar = null;
     String thisPage = null;
@@ -61,23 +61,23 @@ public class Smil {
         String textElementID = textElement.attr("id");
         String[] src = textElement.attr("src").split("#");
         contentFile = src[0];
-        String sourceFileTagID = src[1];
+        String contentTagID = src[1];
 
         if (systemRequired.contains("pagenumber")) {
-            thisPage = content.getTagText(sourceFileTagID);
+            thisPage = content.getTagText(contentTagID);
         }
 
         SmilPar smilPar = new SmilPar(parElementID,
                                       textElementID,
                                       contentFile,
-                                      sourceFileTagID,
+                                      contentTagID,
                                       getAudio(parElement),
                                       breadCrumbs,
                                       thisPage);
 
         parElementIDTable.put(parElementID, smilPar);
         textElementIDTable.put(textElementID, smilPar);
-        sourceFileTagIDTable.put(sourceFileTagID, smilPar);
+        contentTagIDTable.put(contentTagID, smilPar);
 
         return smilPar;
     }
@@ -93,9 +93,9 @@ public class Smil {
         return smilAudio;
     }
 
-    public ArrayList<String> getBreadCrumbs(String sourceFileTagID) {
+    public ArrayList<String> getBreadCrumbs(String contentTagID) {
         ArrayList<String> breadCrumbs = new ArrayList<>();
-        SmilPar par = getParFromSourceFileTagID(sourceFileTagID);
+        SmilPar par = getParFromContentTagID(contentTagID);
         for (String bc : par.getBreadCrumbs()) {
             NccItem nccItem = ncc.getNccItem(bc);
             breadCrumbs.add(nccItem.getText());
@@ -111,11 +111,11 @@ public class Smil {
         return textElementIDTable.get(textID);
     }
 
-    public SmilPar getParFromSourceFileTagID(String srcID) {
-        return sourceFileTagIDTable.get(srcID);
+    public SmilPar getParFromContentTagID(String srcID) {
+        return contentTagIDTable.get(srcID);
     }
 
-    public String getSourceFile() {
+    public String getContentFile() {
         return contentFile;
     }
 
