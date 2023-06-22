@@ -17,12 +17,12 @@ public class SmilAudio {
     /**
      * Beginning of the clip, in milliseconds.
      */
-    float clipBegin;
+    int clipBegin;
 
     /**
      * End of the clip, in milliseconds.
      */
-    float clipEnd;
+    int clipEnd;
 
     /**
      * Class constructor.
@@ -30,12 +30,12 @@ public class SmilAudio {
      */
     public SmilAudio(Element audio) {
         src = audio.attr("src");
-        clipBegin = timestampToFloat(audio.attr("clip-begin"));
-        clipEnd = timestampToFloat(audio.attr("clip-end"));
+        clipBegin = timestampToInt(audio.attr("clip-begin"));
+        clipEnd = timestampToInt(audio.attr("clip-end"));
     }
 
-    private float timestampToFloat(String timestamp) {
-        return Float.parseFloat(timestamp.replace("npt=", "").replace("s", "")) * 1000;
+    private int timestampToInt(String t) {
+        return (int) (Float.parseFloat(t.replace("npt=", "").replace("s", "")) * 1000);
     }
 
     @Override
@@ -50,11 +50,11 @@ public class SmilAudio {
         return src;
     }
 
-    public float getClipBegin() {
+    public int getClipBegin() {
         return clipBegin;
     }
 
-    public float getClipEnd() {
+    public int getClipEnd() {
         return clipEnd;
     }
 
