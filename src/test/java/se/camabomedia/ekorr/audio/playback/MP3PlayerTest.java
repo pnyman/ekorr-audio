@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 import org.junit.Test;
 
 import javafx.util.Duration;
-import se.camabomedia.ekorr.FullText;
+import se.camabomedia.ekorr.Content;
 import se.camabomedia.ekorr.Ncc;
 import se.camabomedia.ekorr.Smil;
 import se.camabomedia.ekorr.SmilPar;
@@ -70,8 +70,8 @@ public class MP3PlayerTest {
         try {
             String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
-            FullText fullText = new FullText(ncc.getDirectory(), ncc.getContentFile());
-            Smil smil = new Smil(ncc, fullText);
+            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            Smil smil = new Smil(ncc, content);
 
             // String tag1 = "dol_1_15_id_fixgen_9842";
             // String tag2 = "dol_1_15_id_fixgen_9843";

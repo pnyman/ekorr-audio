@@ -9,14 +9,14 @@ import org.jsoup.nodes.Document;
 /**
  * FullText
  */
-public class FullText {
+public class Content {
 
     private Document doc;
 
-    public FullText(File directory, String fileName) {
-        File fullTextFile = new File(directory, fileName);
+    public Content(File directory, String fileName) {
+        File contentFile = new File(directory, fileName);
         try {
-            doc = Jsoup.parse(fullTextFile, "UTF-8");
+            doc = Jsoup.parse(contentFile, "UTF-8");
         }
         catch (IOException e) {
             // TODO Auto-generated catch block

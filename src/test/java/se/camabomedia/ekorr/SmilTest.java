@@ -147,13 +147,13 @@ public class SmilTest {
         Ncc ncc;
         Smil smil;
         SmilPar thisPar;
-        FullText fullText;
+        Content content;
 
         try {
             file = Paths.get(url.toURI()).toString();
             ncc = new Ncc(file);
-            fullText = new FullText(ncc.getDirectory(), ncc.getContentFile());
-            smil = new Smil(ncc, fullText);
+            content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            smil = new Smil(ncc, content);
 
             // First par in the talking book
             thisPar = smil.getParFromParID("par_fixgen_2");

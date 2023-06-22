@@ -11,8 +11,8 @@ public class SmilPar {
 
     private String parElementID;
     private String textElementID;
-    private String sourceFile;
-    private String sourceFileTagID;
+    private String contentFile;
+    private String contentFileTagID;
     private ArrayList<SmilAudio> smilAudio;
     private ArrayList<String> breadCrumbs;
     private SmilPar previousSmilPar;
@@ -22,23 +22,23 @@ public class SmilPar {
     /**
      * Class constructor.
      *
-     * @param parElementID     the @id of the par-element
-     * @param textElementID    the @id of the text-element
-     * @param sourceFileTagID  the @id of the syncpoint in the fulltext file
-     * @param smilAudio        list of the audio events in the par
-     * @param breadCrumbs      the hierarcy of document headings this per belongs to
+     * @param parElementID      the @id of the par-element
+     * @param textElementID     the @id of the text-element
+     * @param contentFileTagID  the @id of the syncpoint in the content file
+     * @param smilAudio         list of the audio events in the par
+     * @param breadCrumbs       the hierarcy of document headings this per belongs to
      */
     public SmilPar(String parElementID,
                    String textElementID,
-                   String sourceFile,
-                   String sourceFileTagID,
+                   String contentFile,
+                   String contentFileTagID,
                    ArrayList<SmilAudio> smilAudio,
                    ArrayList<String> breadCrumbs,
                    String page) {
         this.parElementID = parElementID;
         this.textElementID = textElementID;
-        this.sourceFile = sourceFile;
-        this.sourceFileTagID = sourceFileTagID;
+        this.contentFile = contentFile;
+        this.contentFileTagID = contentFileTagID;
         this.smilAudio = smilAudio;
         this.breadCrumbs = breadCrumbs;
         this.page = page;
@@ -53,11 +53,11 @@ public class SmilPar {
     }
 
     public String getSourceFile() {
-        return sourceFile;
+        return contentFile;
     }
 
     public String getSourceFileTagID() {
-        return sourceFileTagID;
+        return contentFileTagID;
     }
 
     public ArrayList<SmilAudio> getSmilAudio() {
@@ -88,12 +88,13 @@ public class SmilPar {
         this.nextSmilPar = nextSmilPar;
     }
 
+
     @Override
     public String toString() {
         return "SmilPar [parElementID=" + parElementID
             + ", textElementID=" + textElementID
-            + ", sourceFile=" + sourceFile
-            + ", sourceFileTagID=" + sourceFileTagID
+            + ", contentFile=" + contentFile
+            + ", contentFileTagID=" + contentFileTagID
             + ", smilAudio=" + smilAudio
             + ", page=" + page
             + "]";

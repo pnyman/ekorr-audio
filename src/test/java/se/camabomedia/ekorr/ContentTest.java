@@ -10,9 +10,9 @@ import org.junit.Test;
 
 
 /**
- * FullTextTest
+ * ContentTest
  */
-public class FullTextTest {
+public class ContentTest {
 
     @Test
     public void test_Constructor() {
@@ -22,10 +22,10 @@ public class FullTextTest {
         try {
             String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
-            Smil smil = new Smil(ncc);
-            FullText fullText = new FullText(ncc.getDirectory(), smil.getSourceFile());
+            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            Smil smil = new Smil(ncc, content);
             String tagID = "id_fixgen_5326";
-            // System.out.println(fullText.getTagText(tagID));
+            // System.out.println(content.getTagText(tagID));
         }
         catch (URISyntaxException e1) {
             e1.printStackTrace();

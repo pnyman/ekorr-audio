@@ -12,8 +12,8 @@ import org.jsoup.nodes.Element;
 public class Smil {
 
     private Ncc ncc;
-    private String sourceFile;
-    private FullText fullText;
+    private String contentFile;
+    private Content content;
     private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> sourceFileTagIDTable = new Hashtable<>();
@@ -21,9 +21,9 @@ public class Smil {
     SmilPar previousSmilPar = null;
     String thisPage = null;
 
-    public Smil(Ncc ncc, FullText fullText) {
+    public Smil(Ncc ncc, Content content) {
         this.ncc = ncc;
-        this.fullText = fullText;
+        this.content = content;
         File directory = ncc.getDirectory();
 
         for (String smilFile : ncc.getSmilFiles()) {
@@ -60,16 +60,16 @@ public class Smil {
         Element textElement = parElement.select("text").first();
         String textElementID = textElement.attr("id");
         String[] src = textElement.attr("src").split("#");
-        sourceFile = src[0];
+        contentFile = src[0];
         String sourceFileTagID = src[1];
 
         if (systemRequired.contains("pagenumber")) {
-            thisPage = fullText.getTagText(sourceFileTagID);
+            thisPage = content.getTagText(sourceFileTagID);
         }
 
         SmilPar smilPar = new SmilPar(parElementID,
                                       textElementID,
-                                      sourceFile,
+                                      contentFile,
                                       sourceFileTagID,
                                       getAudio(parElement),
                                       breadCrumbs,
@@ -116,7 +116,7 @@ public class Smil {
     }
 
     public String getSourceFile() {
-        return sourceFile;
+        return contentFile;
     }
 
 }
