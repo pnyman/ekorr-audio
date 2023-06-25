@@ -15,24 +15,21 @@ import org.junit.Test;
 public class NccTest {
 
     @Test
-    public void test_Constructor() {
-        String f = "V005414_fixgen/ncc.html";
+    public void test_nccItemContentID() {
+        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
         URL url = getClass().getClassLoader().getResource(f);
+        String expected = "Kvibille 1982";
+        String parID = "par_fixgen_1901";
 
         try {
             String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
-            String content = ncc.getContentFile();
+            // Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            // Smil smil = new Smil(ncc, content);
 
-            // System.out.println(ncc.getTitle()
-            //                    + " " + ncc.getCreators()
-            //                    + " " + ncc.getIdentifier());
-            // System.out.println();
+            NccItem item = ncc.getNccItem(parID);
+            assertTrue(item.getText().equals(expected));
 
-            // for (NccItem item : ncc.getNccItems()) {
-            //     System.out.println(item);
-            //     System.out.println();
-            // }
         }
         catch (URISyntaxException e1) {
             e1.printStackTrace();
@@ -41,4 +38,5 @@ public class NccTest {
             fail(e.getMessage());
         }
     }
+
 }

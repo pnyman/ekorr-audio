@@ -7,11 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.Map;
 import java.util.Objects;
-
-import javax.script.SimpleScriptContext;
 
 import org.junit.Test;
 
@@ -36,7 +32,7 @@ public class SmilTest {
 
             SmilPar par2 = smil.getParFromTextID("txt_fixgen_11");
             SmilPar par3 = smil.getParFromTextID(par1.getTextElementID());
-            SmilPar par4 = smil.getParFromContentTagID(par1.getSourceFileTagID());
+            SmilPar par4 = smil.getParFromContentID(par1.getContentID());
 
             assertTrue(Objects.equals(par1, par2));
             assertTrue(Objects.equals(par1, par3));
@@ -51,24 +47,21 @@ public class SmilTest {
     }
 
     @Test
-    public void test_nccItemsTextfileIDs() {
+    public void test_breadCrumbs() {
         String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
         URL url = getClass().getClassLoader().getResource(f);
+        String id = "dol_1_7_id_fixgen_1901";
+        ArrayList<String> expected = new ArrayList<String>();
+        expected.add("MARS");
+        expected.add("Kvibille 1982");
 
         try {
             String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
             Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
             Smil smil = new Smil(ncc, content);
-
-            for (NccItem item : ncc.getNccItems()) {
-                SmilPar par = smil.getParFromParID(item.parID);
-                String textID = par.getSourceFileTagID();
-                // System.out.println(item.text + " " + textID);
-            }
-        }
-        catch (URISyntaxException e1) {
-            e1.printStackTrace();
+            ArrayList<String> breadCrumbs = smil.makeBreadCrumbs(id);
+            assertTrue(breadCrumbs.equals(expected));
         }
         catch (Exception e) {
             fail(e.getMessage());
@@ -76,84 +69,15 @@ public class SmilTest {
     }
 
     @Test
-    public void test_breadCrumbs() {
-        String f = "V005414_fixgen/ncc.html";
-        URL url = getClass().getClassLoader().getResource(f);
-
-        try {
-            String file = Paths.get(url.toURI()).toString();
-            Ncc ncc = new Ncc(file);
-            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
-            Smil smil = new Smil(ncc, content);
-            String id = "id_fixgen_5326";
-            ArrayList<String> breadCrumbs = smil.getBreadCrumbs("id_fixgen_5326");
-            // System.out.println();
-            // System.out.println(breadCrumbs);
-        }
-        catch (Exception e) {
-            fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void test_PreviousAndNext() {
-        String f = "V005414_fixgen/ncc.html";
+    public void test_PreviousAndNextPar() {
+        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
         URL url = getClass().getClassLoader().getResource(f);
         String file;
         Ncc ncc;
         Smil smil;
-        Content content;
         SmilPar thisPar;
-        SmilPar previousPar;
         SmilPar nextPar;
-
-        try {
-            file = Paths.get(url.toURI()).toString();
-            ncc = new Ncc(file);
-            content = new Content(ncc.getDirectory(), ncc.getContentFile());
-            smil = new Smil(ncc, content);
-
-            // First par in the talking book
-            thisPar = smil.getParFromParID("par_fixgen_2");
-            previousPar = thisPar.getPreviousSmilPar();
-            nextPar = thisPar.getNextSmilPar();
-            assertTrue(previousPar == null);
-            assertTrue(nextPar.getParElementID().equals("par_fixgen_3"));
-
-            // Last par in the talking book
-            thisPar = smil.getParFromParID("par_fixgen_9677");
-            previousPar = thisPar.getPreviousSmilPar();
-            nextPar = thisPar.getNextSmilPar();
-            assertTrue(previousPar.getParElementID().equals("par_fixgen_9676"));
-            assertTrue(nextPar == null);
-
-            // First par in a smil file
-            thisPar = smil.getParFromParID("par_fixgen_255");
-            previousPar = thisPar.getPreviousSmilPar();
-            nextPar = thisPar.getNextSmilPar();
-            assertTrue(previousPar.getParElementID().equals("par_fixgen_254"));
-            assertTrue(nextPar.getParElementID().equals("par_fixgen_256"));
-
-            // Last par in a smil file
-            thisPar = smil.getParFromParID("par_fixgen_274");
-            previousPar = thisPar.getPreviousSmilPar();
-            nextPar = thisPar.getNextSmilPar();
-            assertTrue(previousPar.getParElementID().equals("par_fixgen_273"));
-            assertTrue(nextPar.getParElementID().equals("par_fixgen_275"));
-        }
-        catch (Exception e) {
-            fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void test_PageNumber() {
-        String f = "V005414_fixgen/ncc.html";
-        URL url = getClass().getClassLoader().getResource(f);
-        String file;
-        Ncc ncc;
-        Smil smil;
-        SmilPar thisPar;
+        SmilPar previousPar;
         Content content;
 
         try {
@@ -166,29 +90,26 @@ public class SmilTest {
             thisPar = smil.getParFromParID("par_fixgen_2");
             assertTrue(thisPar.getPage() == null);
 
-            thisPar = smil.getParFromParID("par_fixgen_255");
-            System.out.println(thisPar);
+            // Last par in the talking book
+            thisPar = smil.getParFromParID("par_fixgen_19000");
+            previousPar = thisPar.getPreviousSmilPar();
+            nextPar = thisPar.getNextSmilPar();
+            assertTrue(previousPar.getParElementID().equals("par_fixgen_18999"));
+            assertTrue(nextPar == null);
 
-            // // Last par in the talking book
-            // thisPar = smil.getParFromParID("par_fixgen_9677");
-            // previousPar = thisPar.getPreviousSmilPar();
-            // nextPar = thisPar.getNextSmilPar();
-            // assertTrue(previousPar.getParElementID().equals("par_fixgen_9676"));
-            // assertTrue(nextPar == null);
+            // First par in a smil file
+            thisPar = smil.getParFromParID("par_fixgen_18924");
+            previousPar = thisPar.getPreviousSmilPar();
+            nextPar = thisPar.getNextSmilPar();
+            assertTrue(previousPar.getParElementID().equals("par_fixgen_18921"));
+            assertTrue(nextPar.getParElementID().equals("par_fixgen_18925"));
 
-            // // First par in a smil file
-            // thisPar = smil.getParFromParID("par_fixgen_255");
-            // previousPar = thisPar.getPreviousSmilPar();
-            // nextPar = thisPar.getNextSmilPar();
-            // assertTrue(previousPar.getParElementID().equals("par_fixgen_254"));
-            // assertTrue(nextPar.getParElementID().equals("par_fixgen_256"));
-
-            // // Last par in a smil file
-            // thisPar = smil.getParFromParID("par_fixgen_274");
-            // previousPar = thisPar.getPreviousSmilPar();
-            // nextPar = thisPar.getNextSmilPar();
-            // assertTrue(previousPar.getParElementID().equals("par_fixgen_273"));
-            // assertTrue(nextPar.getParElementID().equals("par_fixgen_275"));
+            // Last par in a smil file
+            thisPar = smil.getParFromParID("par_fixgen_18921");
+            previousPar = thisPar.getPreviousSmilPar();
+            nextPar = thisPar.getNextSmilPar();
+            assertTrue(previousPar.getParElementID().equals("par_fixgen_18920"));
+            assertTrue(nextPar.getParElementID().equals("par_fixgen_18924"));
         }
         catch (Exception e) {
             fail(e.getMessage());
@@ -223,4 +144,39 @@ public class SmilTest {
             fail(e.getMessage());
         }
     }
+
+    @Test
+    public void test_getContentIdFromTime() {
+        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
+        URL url = getClass().getClassLoader().getResource(f);
+        // starting point
+        String startId = "dol_1_15_id_fixgen_9770";
+
+        try {
+            String file = Paths.get(url.toURI()).toString();
+            Ncc ncc = new Ncc(file);
+            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            Smil smil = new Smil(ncc, content);
+
+            // get mp3file absolute path and start time
+            String mp3File = smil.mp3FileFromContentId(startId);
+            System.out.println(mp3File);
+            int startTime = smil.startTimeFromContentId(startId);
+            System.out.println(startTime);
+
+            // mp3File is the absolute path, we need to get the file name only
+            String mp3FileName = Paths.get(mp3File).getFileName().toString();
+
+            // 9057
+            System.out.println(smil.contentIdFromTime(mp3FileName, 9057));
+        }
+        catch (URISyntaxException e1) {
+            e1.printStackTrace();
+        }
+        catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+
 }

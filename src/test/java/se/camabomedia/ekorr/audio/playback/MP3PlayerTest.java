@@ -2,32 +2,17 @@ package se.camabomedia.ekorr.audio.playback;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.Hashtable;
-import java.util.concurrent.CountDownLatch;
-
 
 import org.junit.Test;
 
-import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.media.MediaPlayer.Status;
-import javafx.util.Duration;
 import se.camabomedia.ekorr.Content;
 import se.camabomedia.ekorr.Ncc;
 import se.camabomedia.ekorr.Smil;
-import se.camabomedia.ekorr.SmilPar;
-import se.camabomedia.ekorr.SmilAudio;
 
 
 /**
