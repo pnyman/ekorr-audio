@@ -5,22 +5,42 @@ import java.util.concurrent.CountDownLatch;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Popup;
 import javafx.util.Duration;
 
 public class MP3Player {
-    private MediaPlayer mediaPlayer;
+    public MediaPlayer mediaPlayer;
     private Media media;
     private CountDownLatch latch;
     private Timeline positionUpdater;
+    public Duration currentPosition;
+    private IntegerProperty currentTime;
 
     public MP3Player() {
         // latch = new CountDownLatch(1);
+        this.currentTime = new SimpleIntegerProperty(this, "currentTime");
         // Initialize JavaFX platform
         if (!Platform.isFxApplicationThread()) {
             Platform.startup(() -> {});
         }
+    }
+
+    public Integer getCurrentTime() {
+        return currentTime.get();
+    }
+
+    public void setCurrentTime(Integer s) {
+        currentTime.set(s);
+    }
+
+    public IntegerProperty currentTimeProperty() {
+        return this.currentTime;
     }
 
     public void play(String mediaFile, double startTime, double endTime, double speed, double volume) {
@@ -39,8 +59,19 @@ public class MP3Player {
                 mediaPlayer.setRate(speed);
                 mediaPlayer.setVolume(volume);
                 mediaPlayer.play();
-                startPositionUpdater();
+                // startPositionUpdater();
             });
+
+        mediaPlayer.setOnPlaying(() -> {
+                Timeline positionUpdater
+                    = new Timeline(new KeyFrame(Duration.millis(100), event -> {
+                                currentPosition = mediaPlayer.getCurrentTime();
+                                // System.out.println("Current Position: " + currentPosition);
+                                setCurrentTime((int)currentPosition.toMillis());
+                    }));
+                positionUpdater.setCycleCount(Timeline.INDEFINITE);
+                positionUpdater.play();
+        });
 
         mediaPlayer.setOnEndOfMedia(() -> {
                 // mediaPlayer.seek(Duration.millis(endTime));
