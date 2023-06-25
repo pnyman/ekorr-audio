@@ -97,6 +97,7 @@ public class SmilPar {
             + ", contentFileTagID=" + contentFileTagID
             + ", smilAudio=" + smilAudio
             + ", page=" + page
+            + ", breadcrumbs=" + breadCrumbs
             + "]";
     }
 
