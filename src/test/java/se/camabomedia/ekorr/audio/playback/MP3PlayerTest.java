@@ -55,6 +55,7 @@ public class MP3PlayerTest {
             // get mp3file and start time
             String mp3File = smil.mp3FileFromContentId(startId);
             System.out.println(mp3File);
+            String mp3FileName = Paths.get(mp3File).getFileName().toString();
 
             int startTime = smil.startTimeFromContentId(startId);
             System.out.println(startTime);
@@ -67,7 +68,8 @@ public class MP3PlayerTest {
                     public void changed(ObservableValue<? extends Number> observable,
                                         Number oldValue,
                                         Number newValue) {
-                        System.out.println("oldValue: "+ oldValue + ", newValue: " + newValue);
+                        // System.out.println("oldValue: "+ oldValue + ", newValue: " + newValue);
+                        System.out.println(smil.contentIdFromTime(mp3FileName, (int)newValue));
                     }
                 };
 
