@@ -19,7 +19,12 @@ public class Smil {
     File directory;
     private Hashtable<String, SmilPar> parElementIDTable = new Hashtable<>();
     private Hashtable<String, SmilPar> textElementIDTable = new Hashtable<>();
-    private Hashtable<String, SmilPar> contentTagIDTable = new Hashtable<>();
+
+    /**
+     * Key:   id of syncpoint in content file
+     * Value: corresponding SmilPar
+     */
+    private Hashtable<String, SmilPar> contentIDTable = new Hashtable<>();
 
     /**
      * Key: mp3file
@@ -98,23 +103,24 @@ public class Smil {
         String textElementID = textElement.attr("id");
         String[] src = textElement.attr("src").split("#");
         contentFile = src[0];
-        String contentTagID = src[1];
+        String contentID = src[1];
 
         if (systemRequired.contains("pagenumber")) {
-            thisPage = content.getTagText(contentTagID);
+            thisPage = content.getTagText(contentID);
         }
 
         SmilPar smilPar = new SmilPar(parElementID,
                                       textElementID,
                                       contentFile,
-                                      contentTagID,
+                                      contentID,
                                       getAudio(parElement),
                                       breadCrumbs,
                                       thisPage);
 
+
         parElementIDTable.put(parElementID, smilPar);
         textElementIDTable.put(textElementID, smilPar);
-        contentTagIDTable.put(contentTagID, smilPar);
+        contentIDTable.put(contentID, smilPar);
 
         return smilPar;
     }
@@ -144,7 +150,24 @@ public class Smil {
      * @return the time when that clip begins in the corresponding mp3file
      */
     public int startTimeFromContentId(String contentId) {
-        return contentTagIDTable.get(contentId).getSmilAudio().get(0).getClipBegin();
+        return contentIDTable.get(contentId).getSmilAudio().get(0).getClipBegin();
+    }
+
+    /**
+     * @param  contentId id of a syncpoint in the content file
+     * @return the time when that clip ends in the corresponding mp3file
+     */
+    public int endTimeFromContentId(String contentId) {
+        return contentIDTable.get(contentId).getSmilAudio().get(0).getClipEnd();
+    }
+
+    /**
+     * @param  contentId id of a syncpoint in the content file
+     * @return absoulute path of the corresponding mp3file
+     */
+    public String mp3FileFromContentId(String contentId) {
+        String mp3File = contentIDTable.get(contentId).getSmilAudio().get(0).getSrc();
+        return new File(ncc.getDirectory(), mp3File).toString();
     }
 
     private int findStartTime(String mp3File, int needle) {
@@ -156,9 +179,13 @@ public class Smil {
         return startTimes.get(-index - 2);
     }
 
-    public ArrayList<String> getBreadCrumbs(String contentTagID) {
+    /**
+     * @param  contentID the ID of a syncpoint in the content document
+     * @return an ArrayList of headings
+     */
+    public ArrayList<String> makeBreadCrumbs(String contentID) {
         ArrayList<String> breadCrumbs = new ArrayList<>();
-        SmilPar par = getParFromContentTagID(contentTagID);
+        SmilPar par = getParFromContentTagID(contentID);
         for (String bc : par.getBreadCrumbs()) {
             NccItem nccItem = ncc.getNccItem(bc);
             breadCrumbs.add(nccItem.getText());
@@ -167,7 +194,7 @@ public class Smil {
     }
 
     public Hashtable<String, SmilPar> getContentTagIDTable() {
-        return contentTagIDTable;
+        return contentIDTable;
     }
 
     public Hashtable<String, ArrayList<Integer>> getSmilStartTimesTable() {
@@ -183,11 +210,28 @@ public class Smil {
     }
 
     public SmilPar getParFromContentTagID(String srcID) {
-        return contentTagIDTable.get(srcID);
+        return contentIDTable.get(srcID);
     }
 
     public String getContentFile() {
         return contentFile;
     }
+
+    public Hashtable<String, SmilPar> getParElementIDTable() {
+        return parElementIDTable;
+    }
+
+    public Hashtable<String, SmilPar> getTextElementIDTable() {
+        return textElementIDTable;
+    }
+
+    public Hashtable<String, ArrayList<Integer>> getMp3StartTimesTable() {
+        return mp3StartTimesTable;
+    }
+
+    public Hashtable<String, Hashtable<Integer, String>> getMp3ContentIdTable() {
+        return mp3ContentIdTable;
+    }
+
 
 }
