@@ -92,7 +92,7 @@ public class Smil {
             mp3ContentIdTable.put(mp3File, new Hashtable<Integer, String>());
         }
         int startTime = smilPar.getSmilAudio().get(0).getClipBegin();
-        String contentId = smilPar.getContentTagID();
+        String contentId = smilPar.getContentID();
         mp3ContentIdTable.get(mp3File).put(startTime, contentId);
     }
 
@@ -185,7 +185,7 @@ public class Smil {
      */
     public ArrayList<String> makeBreadCrumbs(String contentID) {
         ArrayList<String> breadCrumbs = new ArrayList<>();
-        SmilPar par = getParFromContentTagID(contentID);
+        SmilPar par = getParFromContentID(contentID);
         for (String bc : par.getBreadCrumbs()) {
             NccItem nccItem = ncc.getNccItem(bc);
             breadCrumbs.add(nccItem.getText());
@@ -193,7 +193,7 @@ public class Smil {
         return breadCrumbs;
     }
 
-    public Hashtable<String, SmilPar> getContentTagIDTable() {
+    public Hashtable<String, SmilPar> getContentIDTable() {
         return contentIDTable;
     }
 
@@ -209,7 +209,7 @@ public class Smil {
         return textElementIDTable.get(textID);
     }
 
-    public SmilPar getParFromContentTagID(String srcID) {
+    public SmilPar getParFromContentID(String srcID) {
         return contentIDTable.get(srcID);
     }
 
