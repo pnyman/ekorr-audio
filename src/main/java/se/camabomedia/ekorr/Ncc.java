@@ -168,6 +168,11 @@ public class Ncc {
         return contentFile;
     }
 
+    public File getContentFilePath() {
+        return new File(directory, contentFile);
+    }
+
+
     public ArrayList<String> getSmilFiles() {
         return smilFiles;
     }
