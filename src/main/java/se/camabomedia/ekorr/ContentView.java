@@ -53,8 +53,7 @@ public class ContentView {
 
                 isEventListenerAdded = true;
 
-                webEngine.executeScript("document.getElementById('" + "id_fixgen_665" + "').scrollIntoView({ behavior: 'smooth', block: 'center' })");
-
+                // webEngine.executeScript("document.getElementById('" + "id_fixgen_665" + "').scrollIntoView({ behavior: 'smooth', block: 'center' })");
 
             }
         });
@@ -69,16 +68,21 @@ public class ContentView {
                 // webEngine.executeScript(scrollScript);
 
         // Load a webpage
-        String foo = "C:/Users/qwfwq/filfixaren/workspace/generering/V001396_fixgen/V001396.html";
-        File file = new File(foo);
-        webEngine.load(file.toURI().toString());
+        // String foo = "C:/Users/qwfwq/filfixaren/workspace/generering/V001396_fixgen/V001396.html";
+        // File file = new File(foo);
+        // webEngine.load(file.toURI().toString());
 
         // Scene scene = new Scene(webView, 800, 600);
         // primaryStage.setScene(scene);
         // primaryStage.show();
     }
 
-    static void scrollWebViewToElement(WebEngine webEngine, String elementId) {
+    public void openContent(File contentFile) {
+        // File file = new File(nccFile);
+        webEngine.load(contentFile.toURI().toString());
+    }
+
+    static void scrollWebViewToElement(String elementId) {
 
         // String scrollScript = "var element = document.getElementById('" + elementId + "');" +
         //         "var viewportHeight = window.innerHeight || document.documentElement.clientHeight;" +
