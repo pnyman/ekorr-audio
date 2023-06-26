@@ -27,6 +27,12 @@ public class MainViewController implements Initializable {
     @FXML // fx:id="contentPane"
     private AnchorPane contentPane;
 
+    @FXML // fx:id="nccPane"
+    private AnchorPane nccPane;
+
+    @FXML // fx:d="btnOpen"
+    private Button btnOpen; // Value injected by FXMLLoader
+
     @FXML // fx:d="btnBack"
     private Button btnBack; // Value injected by FXMLLoader
 
@@ -54,11 +60,14 @@ public class MainViewController implements Initializable {
     @FXML // fx:id="x4"
     private Color x4; // Value injected by FXMLLoader
 
-    private ContentView contentView;
+    public ContentView contentView;
+    public NccView nccView;
 
     private double defaultDividerPosition;
     private double defaultContentPaneWidth;
     private double defaultContentPaneHeight;
+
+    private Ncc ncc;
 
     /**
      * Initializes the controller class.
@@ -97,6 +106,11 @@ public class MainViewController implements Initializable {
         contentView.webView.prefWidthProperty().bind(contentPane.widthProperty());
         contentView.webView.prefHeightProperty().bind(contentPane.heightProperty());
         contentPane.getChildren().add(contentView.getContentView());
+
+        nccView = new NccView();
+        nccView.webView.prefWidthProperty().bind(nccPane.widthProperty());
+        nccView.webView.prefHeightProperty().bind(nccPane.heightProperty());
+        nccPane.getChildren().add(nccView.getNccView());
 
         // Listen for changes in fullscreen mode
         // contentView.webView.sceneProperty().addListener((observable, oldScene, newScene) -> {
