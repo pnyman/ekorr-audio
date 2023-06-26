@@ -1,5 +1,6 @@
 package se.camabomedia.ekorr;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -14,7 +15,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
 
 public class MainViewController implements Initializable {
 
@@ -129,6 +132,27 @@ public class MainViewController implements Initializable {
         // });
     }
 
+    private void openProject() {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Open Resource File");
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Ncc file", "ncc.html"));
+        File selectedFile = fileChooser.showOpenDialog(stage);
+
+        ncc = new Ncc(selectedFile);
+        nccView.openNcc(selectedFile);
+
+        File contentFile = ncc.getContentFilePath();
+        contentView.openContent(contentFile);
+
+    }
+
+    @FXML
+    void handleBtnOpen(ActionEvent event) {
+        openProject();
+    }
+
+
     @FXML
     void handleBtnBack(ActionEvent event) {
 
@@ -151,7 +175,6 @@ public class MainViewController implements Initializable {
 
     @FXML
     void handleMenuItemOpen(ActionEvent event) {
-
+        openProject();
     }
-
 }
