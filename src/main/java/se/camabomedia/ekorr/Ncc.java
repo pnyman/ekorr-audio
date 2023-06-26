@@ -45,6 +45,19 @@ public class Ncc {
         }
     }
 
+    public Ncc(File nccFile) {
+        try {
+            directory = nccFile.getParentFile();
+            doc = Jsoup.parse(nccFile, "UTF-8");
+            setMetadata();
+            findContentFile();
+            populateNccItems();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     private void findContentFile() {
         Path path = Paths.get(directory.toString());
 
