@@ -22,9 +22,9 @@ public class App extends Application {
         stage.setTitle("Ekorr");
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("MainView.fxml"));
         scene = new Scene(fxmlLoader.load());
-
-        stage.setScene(scene);
         MainViewController ctrl = fxmlLoader.getController();
+        stage.setScene(scene);
+        stage.setMaximized(true);
         ctrl.initData(stage);
 
         stage.show();
