@@ -49,14 +49,14 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorr.MainViewController">
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
             <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
+            <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Open…" />
             <Menu mnemonicParsing="false" text="Open Recent" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Close" />
@@ -85,23 +85,41 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            <MenuItem mnemonicParsing="false" text="About Ekorr" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
-      <ButtonBar prefHeight="40.0" prefWidth="200.0">
-        <buttons>
-          <Button mnemonicParsing="false" text="Button" />
-        </buttons>
-      </ButtonBar>
+      <HBox prefHeight="40.0" prefWidth="900.0">
+         <children>
+            <ButtonBar buttonOrder="U+L_HE+FBIX_NCYOA_R" prefHeight="40.0" prefWidth="189.0" HBox.hgrow="ALWAYS">
+              <buttons>
+                <Button mnemonicParsing="false" text="Open" />
+              </buttons>
+            </ButtonBar>
+            <ButtonBar buttonOrder="U+L_HE+FBIX_NCYOA_R" prefHeight="40.0" prefWidth="538.0" HBox.hgrow="ALWAYS">
+              <buttons>
+                  <Button fx:id="btnBack" mnemonicParsing="false" onAction="#handleBtnBack" text="&lt;&lt;" />
+                <Button fx:id="btnPlay" mnemonicParsing="false" onAction="#handleBtnPlay" text="&gt;" />
+                  <Button fx:id="btnPause" mnemonicParsing="false" onAction="#handleBtnPause" text="||" />
+                  <Button fx:id="btnForward" mnemonicParsing="false" onAction="#handleButtonForward" text="&gt;&gt;" />
+              </buttons>
+            </ButtonBar>
+            <ButtonBar buttonOrder="U+L_HE+FBIX_NCYOA_R" prefHeight="40.0" prefWidth="186.0" HBox.hgrow="ALWAYS">
+              <buttons>
+                <Button mnemonicParsing="false" text="Prev" />
+                  <Button mnemonicParsing="false" text="Next" />
+              </buttons>
+            </ButtonBar>
+         </children>
+      </HBox>
     <SplitPane dividerPositions="0.2, 0.8" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
             <WebView minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" />
             <WebView minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" />
         <AnchorPane>
           <children>
-            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="Details" textAlignment="CENTER" wrapText="false">
+            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="Comments" textAlignment="CENTER" wrapText="false">
                      <font>
                 <Font size="18.0" fx:id="x1" />
                      </font>
