@@ -11,6 +11,7 @@ public class SmilPar {
 
     private String parElementID;
     private String textElementID;
+    private String smilFile;
     private String contentFile;
     private String contentID;
     private ArrayList<SmilAudio> smilAudio;
@@ -30,6 +31,7 @@ public class SmilPar {
      */
     public SmilPar(String parElementID,
                    String textElementID,
+                   String smilFile,
                    String contentFile,
                    String contentID,
                    ArrayList<SmilAudio> smilAudio,
@@ -37,6 +39,7 @@ public class SmilPar {
                    String page) {
         this.parElementID = parElementID;
         this.textElementID = textElementID;
+        this.smilFile = smilFile;
         this.contentFile = contentFile;
         this.contentID = contentID;
         this.smilAudio = smilAudio;
@@ -93,11 +96,14 @@ public class SmilPar {
     public String toString() {
         return "SmilPar [parElementID=" + parElementID
             + ", textElementID=" + textElementID
+            + ", smilFile=" + smilFile
             + ", contentFile=" + contentFile
             + ", contentID=" + contentID
             + ", smilAudio=" + smilAudio
             + ", page=" + page
             + ", breadcrumbs=" + breadCrumbs
+            // + ", previousSmilPar=" + previousSmilPar
+            // + ", nextSmilPar=" + nextSmilPar
             + "]";
     }
 

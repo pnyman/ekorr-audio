@@ -61,7 +61,7 @@ public class Smil {
             SmilPar thisSmilPar;
 
             for (Element parElement : doc.getElementsByTag("par")) {
-                thisSmilPar = addSmilPar(parElement, breadCrumbs);
+                thisSmilPar = addSmilPar(parElement, smilFile, breadCrumbs);
 
                 if (firstSmilPar == null) {
                     firstSmilPar = thisSmilPar;
@@ -119,6 +119,7 @@ public class Smil {
 
         SmilPar smilPar = new SmilPar(parElementID,
                                       textElementID,
+                                      smilFile,
                                       contentFile,
                                       contentID,
                                       getAudio(parElement),
