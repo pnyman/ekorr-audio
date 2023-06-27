@@ -6,12 +6,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
+import javafx.animation.PauseTransition;
 import javafx.application.Application;
 import javafx.concurrent.Worker;
 import javafx.scene.Scene;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import netscape.javascript.JSObject;
 
 public class ContentView {
@@ -20,6 +22,12 @@ public class ContentView {
     static WebEngine webEngine;
     private boolean isEventListenerAdded = false;
 
+    JavaBridge javaBridge;
+
+    private JSObject currentElement = null;
+    private String currentElementID = null;
+
+    private String firstElementID;
 
     // body {font-family: arial, helvetica, verdana, sans-serif; margin-left: 10%; margin-right: 10%;}
 
@@ -37,7 +45,7 @@ public class ContentView {
         webEngine.setJavaScriptEnabled(true);
 
         // Create an instance of the JavaBridge
-        JavaBridge javaBridge = new JavaBridge(webEngine);
+        javaBridge = new JavaBridge(webEngine);
 
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED && !isEventListenerAdded) {
@@ -65,28 +73,9 @@ public class ContentView {
 
                 isEventListenerAdded = true;
 
-                // webEngine.executeScript("document.getElementById('" + "id_fixgen_665" + "').scrollIntoView({ behavior: 'smooth', block: 'center' })");
-
             }
         });
 
-
-                // String elementId = "id_fixgen_665" ;
-                // String scrollScript = "var element = document.getElementById('" + elementId + "');" +
-                //         "var viewportHeight = window.innerHeight || document.documentElement.clientHeight;" +
-                //         "var topOffset = (viewportHeight * 0.25) - (element.offsetHeight / 2);" +
-                //         "element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });" +
-                //         "window.scrollBy(0, topOffset);";
-                // webEngine.executeScript(scrollScript);
-
-        // Load a webpage
-        // String foo = "C:/Users/qwfwq/filfixaren/workspace/generering/V001396_fixgen/V001396.html";
-        // File file = new File(foo);
-        // webEngine.load(file.toURI().toString());
-
-        // Scene scene = new Scene(webView, 800, 600);
-        // primaryStage.setScene(scene);
-        // primaryStage.show();
     }
 
     public void openContent(File contentFile) {
@@ -102,18 +91,56 @@ public class ContentView {
         doc.getDocumentElement().getElementsByTagName("head").item(0).appendChild(styleNode);
     }
 
-    static void scrollWebViewToElement(String elementId) {
+    public void scrollToElement(String elementID) {
+        // Check if the page is already loaded
+        if (webEngine.getLoadWorker().getState() == Worker.State.SUCCEEDED) {
+            // Page already loaded, directly scroll to the element
+            scroll(elementID);
+        } else {
+            // Wait for the page to finish loading
+            webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue == Worker.State.SUCCEEDED) {
+                    // Page loaded, scroll to the element
+                    scroll(elementID);
+                }
+            });
+        }
+    }
 
-        // String scrollScript = "var element = document.getElementById('" + elementId + "');" +
-        //         "var viewportHeight = window.innerHeight || document.documentElement.clientHeight;" +
-        //         "var topOffset = (viewportHeight * 0.25) - (element.offsetHeight / 2);" +
-        //         "element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });" +
-        //         "window.scrollBy(0, topOffset);";
-        // webEngine.executeScript(scrollScript);
+    private void scroll(String elementID) {
+        // Get the document object of the loaded page
+        JSObject document = (JSObject) webEngine.executeScript("window.document");
 
-        System.out.println("HEJ HEJ HEJ");
-        webEngine.executeScript("document.getElementById('" + elementId + "').scrollIntoView({ behavior: 'smooth', block: 'center' })");
+        // Get the element by its ID
+        JSObject element = (JSObject) document.call("getElementById", elementID);
 
+        // Scroll to the element
+        if (element != null) {
+            // Object result = element.call("getBoundingClientRect");
+            // JSObject rect = (JSObject) result;
+
+            // double elementTop = Double.parseDouble(rect.getMember("top").toString());
+            // double elementHeight = Double.parseDouble(rect.getMember("height").toString());
+            // double windowHeight = Double.parseDouble(webEngine.executeScript("window.innerHeight").toString());
+
+            // double scrollY = elementTop + elementHeight / 2 - windowHeight / 2;
+            // webEngine.executeScript("window.scrollTo(0, " + scrollY + ")");
+
+            webEngine.executeScript("document.getElementById('" + elementID + "').scrollIntoView({ behavior: 'smooth', block: 'center' })");
+            setCurrentElement(element, elementID);
+
+        }
+    }
+
+    private void setCurrentElement(JSObject element, String elementID) {
+        if (currentElement != null) {
+            currentElement.setMember("style", "background-color: " + "white");
+        }
+
+        element.setMember("style", "background-color: " + "yellow");
+
+        currentElement = element;
+        currentElementID = elementID;
     }
 
     // JavaScript bridge class to communicate with Java
@@ -124,26 +151,40 @@ public class ContentView {
             this.webEngine = webEngine;
         }
 
-        public void handleClick(String elementId) {
-            System.out.println("Clicked element ID: " + elementId);
+        public void handleClick(String elementID) {
+            System.out.println("Clicked element ID: " + elementID);
 
             Document doc = webEngine.getDocument();
-            Element element = doc.getElementById(elementId);
+            Element element = doc.getElementById(elementID);
             String value = element.getTextContent();
 
             System.out.println(value);
         }
 
-        public void scrollToId(String elementId) {
+        public void scrollToId(String elementID) {
+            System.out.println(elementID);
             // Retrieve the JavaScript window object
             JSObject window = (JSObject) webEngine.executeScript("window");
-            window.call("scrollToElementById", elementId);
+            window.call("scrollToElementById", elementID);
         }
     }
 
     public WebView getContentView() {
         return webView;
     }
+
+    public String getCurrentElementID() {
+        return currentElementID;
+    }
+
+    public String getFirstElementID() {
+        return firstElementID;
+    }
+
+    public void setFirstElementID(String firstElementID) {
+        this.firstElementID = firstElementID;
+    }
+
 
     // public static void main(String[] args) {
     //     launch(args);

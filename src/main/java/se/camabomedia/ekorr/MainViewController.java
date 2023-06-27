@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -66,11 +67,9 @@ public class MainViewController implements Initializable {
     public ContentView contentView;
     public NccView nccView;
 
-    private double defaultDividerPosition;
-    private double defaultContentPaneWidth;
-    private double defaultContentPaneHeight;
-
     private Ncc ncc;
+    private Content content;
+    private Smil smil;
 
     /**
      * Initializes the controller class.
@@ -80,27 +79,27 @@ public class MainViewController implements Initializable {
 
     }
 
-    private void adjustLayoutForFullscreen(AnchorPane contentPane) {
-        System.out.println("ENTERING FULLSCREEN");
-        splitPane.setDividerPositions(0.1, 0.8);
+    // private void adjustLayoutForFullscreen(AnchorPane contentPane) {
+    //     System.out.println("ENTERING FULLSCREEN");
+    //     splitPane.setDividerPositions(0.1, 0.8);
 
-        defaultContentPaneWidth = contentView.webView.getWidth();
-        defaultContentPaneHeight = contentView.webView.getHeight();
+    //     defaultContentPaneWidth = contentView.webView.getWidth();
+    //     defaultContentPaneHeight = contentView.webView.getHeight();
 
-        // contentPane.setPrefSize(contentPane.getWidth(), contentPane.getHeight());
-        contentView.webView.setPrefSize(contentPane.getWidth(), contentPane.getHeight());
-        splitPane.requestLayout();
-    }
+    //     // contentPane.setPrefSize(contentPane.getWidth(), contentPane.getHeight());
+    //     contentView.webView.setPrefSize(contentPane.getWidth(), contentPane.getHeight());
+    //     splitPane.requestLayout();
+    // }
 
-    private void adjustLayoutForExitFullscreen(AnchorPane contentPane) {
-        System.out.println("EXITING FULLSCREEN");
-        splitPane.setDividerPositions(0.15, 0.85);
+    // private void adjustLayoutForExitFullscreen(AnchorPane contentPane) {
+    //     System.out.println("EXITING FULLSCREEN");
+    //     splitPane.setDividerPositions(0.15, 0.85);
 
-        // contentPane.setPrefSize(defaultContentPaneWidth, defaultContentPaneHeight);
-        // contentPane.setPrefSize(contentPane.getWidth(), contentPane.getHeight());
-        contentView.webView.setPrefSize(defaultContentPaneWidth, defaultContentPaneHeight);
-        splitPane.requestLayout();
-    }
+    //     // contentPane.setPrefSize(defaultContentPaneWidth, defaultContentPaneHeight);
+    //     // contentPane.setPrefSize(contentPane.getWidth(), contentPane.getHeight());
+    //     contentView.webView.setPrefSize(defaultContentPaneWidth, defaultContentPaneHeight);
+    //     splitPane.requestLayout();
+    // }
 
     void initData(Stage stage) {
         this.stage = stage;
@@ -141,31 +140,80 @@ public class MainViewController implements Initializable {
         // });
     }
 
-    private void openProject() {
-
+    private void selectProject() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Ncc file", "ncc.html"));
         File selectedFile = fileChooser.showOpenDialog(stage);
+        openProject(selectedFile);
+    }
 
+    public void openProject(File selectedFile) {
         ncc = new Ncc(selectedFile);
+        content = new Content(ncc.getDirectory(), ncc.getContentFile());
+        smil = new Smil(ncc, content);
+        contentView.openContent(ncc.getContentFilePath());
         nccView.openNcc(selectedFile);
+        setFirstElement();
+    }
 
-        File contentFile = ncc.getContentFilePath();
-        contentView.openContent(contentFile);
+    private void setFirstElement() {
+        String firstElementID = smil.getFirstSmilPar().getContentID();
+        contentView.setFirstElementID(firstElementID);
+        contentView.scrollToElement(firstElementID);
+    }
 
+    // TODO gör private sen
+    public void setFirstElementxxx() {
+        Thread taskThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("GOT CALLED");
+                System.out.println(ncc);
+                content = new Content(ncc.getDirectory(), ncc.getContentFile());
+                smil = new Smil(ncc, content);
+                SmilPar firstSmilPar = smil.getFirstSmilPar();
+                System.out.println(firstSmilPar);
+                String contentID = firstSmilPar.getContentID();
+
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        contentView.scrollToElement(contentID);
+                    }
+                });
+            }
+        });
+        taskThread.start();
     }
 
     @FXML
     void handleBtnOpen(ActionEvent event) {
-        openProject();
+        selectProject();
     }
-
 
     @FXML
     void handleBtnBack(ActionEvent event) {
-
+        String currentElementID = contentView.getCurrentElementID();
+        if (currentElementID != contentView.getFirstElementID()) {
+            SmilPar smilPar = smil.getParFromContentID(currentElementID);
+            SmilPar nextPar = smilPar.getPreviousSmilPar();
+            String previousElementID = nextPar.getContentID();
+            contentView.scrollToElement(previousElementID);
+        }
     }
+
+    @FXML
+    void handleButtonForward(ActionEvent event) {
+        String currentElementID = contentView.getCurrentElementID();
+        SmilPar smilPar = smil.getParFromContentID(currentElementID);
+        SmilPar nextPar = smilPar.getNextSmilPar();
+        String nextElementID = nextPar.getContentID();
+        if (nextElementID != null) {
+            contentView.scrollToElement(nextElementID);
+        }
+    }
+
 
     @FXML
     void handleBtnPause(ActionEvent event) {
@@ -178,12 +226,7 @@ public class MainViewController implements Initializable {
     }
 
     @FXML
-    void handleButtonForward(ActionEvent event) {
-
-    }
-
-    @FXML
     void handleMenuItemOpen(ActionEvent event) {
-        openProject();
+        selectProject();
     }
 }

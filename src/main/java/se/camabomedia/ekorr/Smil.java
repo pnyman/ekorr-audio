@@ -40,8 +40,10 @@ public class Smil {
      *        Value: id of the corresponding element in content file
      */
     private Hashtable<String, Hashtable<Integer, String>> mp3ContentIdTable = new Hashtable<>();
-    SmilPar previousSmilPar = null;
+
     String thisPage = null;
+    private SmilPar previousSmilPar = null;
+    private SmilPar firstSmilPar = null;
 
     public Smil(Ncc ncc, Content content) {
         this.ncc = ncc;
@@ -51,7 +53,6 @@ public class Smil {
         for (String smilFile : ncc.getSmilFiles()) {
             addSmil(smilFile, ncc.getBreadCrumbs(smilFile));
         }
-
     }
 
     private void addSmil(String smilFile, ArrayList<String> breadCrumbs) {
@@ -62,10 +63,17 @@ public class Smil {
             for (Element parElement : doc.getElementsByTag("par")) {
                 thisSmilPar = addSmilPar(parElement, breadCrumbs);
 
+                if (firstSmilPar == null) {
+                    firstSmilPar = thisSmilPar;
+                }
+
                 if (previousSmilPar != null) {
                     thisSmilPar.setPreviousSmilPar(previousSmilPar);
                     previousSmilPar.setNextSmilPar(thisSmilPar);
                 }
+                // else {
+                //     thisSmilPar.setPreviousSmilPar(null);
+                // }
 
                 populateMp3StartTimesTable(thisSmilPar);
                 populateMp3ContentIdTable(thisSmilPar);
@@ -233,5 +241,8 @@ public class Smil {
         return mp3ContentIdTable;
     }
 
+    public SmilPar getFirstSmilPar() {
+        return firstSmilPar;
+    }
 
 }
