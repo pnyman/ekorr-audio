@@ -47,6 +47,24 @@ public class SmilTest {
     }
 
     @Test
+    public void test_Case() {
+        String f = "C:/Users/qwfwq/filfixaren/workspace/leverans/CA54896_Industrial_PUBLISHER_fixgen/CA_Daisy_202_audioFullText/ncc.html";
+
+        try {
+            Ncc ncc = new Ncc(f);
+            Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
+            System.out.println(">>>>>>>>>>>>>>>>");
+            System.out.println(content.contentFile);
+            Smil smil = new Smil(ncc, content);
+
+        }
+        catch (Exception e) {
+            fail(e.getMessage());
+        }
+    }
+
+
+    @Test
     public void test_breadCrumbs() {
         String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
         URL url = getClass().getClassLoader().getResource(f);
