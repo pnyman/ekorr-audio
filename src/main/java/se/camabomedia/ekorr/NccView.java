@@ -20,24 +20,6 @@ public class NccView {
     static WebEngine webEngine;
     private boolean isEventListenerAdded = false;
 
-    private static final String CSS = "a:link {"
-            + "    color: black; "
-            + "    text-decoration: none;"
-            + "}"
-            + "a:visited {"
-            + "    color: black; "
-            + "    text-decoration: none;"
-            + "}"
-            + "a:hover {"
-            + "    color: black; "
-            + "    background-color: lightgreen; "
-            + "    text-decoration: underline; "
-            + "}"
-            + "a:active {"
-            + "    color: black; "
-            + "    text-decoration: none;"
-            + "}";
-
     public NccView() {
         webView = new WebView();
         webEngine = webView.getEngine();
@@ -86,11 +68,7 @@ public class NccView {
     }
 
     private void applyCSS() {
-        Document doc = webEngine.getDocument() ;
-        Element styleNode = doc.createElement("style");
-        Text styleContent = doc.createTextNode(CSS);
-        styleNode.appendChild(styleContent);
-        doc.getDocumentElement().getElementsByTagName("head").item(0).appendChild(styleNode);
+        webEngine.setUserStyleSheetLocation(getClass().getResource("ncc.css").toString());
     }
 
     static void scrollWebViewToElement(String elementId) {

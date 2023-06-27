@@ -4,6 +4,7 @@ import java.io.File;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 import javafx.application.Application;
 import javafx.concurrent.Worker;
@@ -19,6 +20,15 @@ public class ContentView {
     static WebEngine webEngine;
     private boolean isEventListenerAdded = false;
 
+
+    // body {font-family: arial, helvetica, verdana, sans-serif; margin-left: 10%; margin-right: 10%;}
+
+    private static final String CSS =
+        "body {"
+        + "    margin-left: 3%; "
+        + "    margin-right: 3%; "
+        + "}" ;
+
     public ContentView() {
         webView = new WebView();
         webEngine = webView.getEngine();
@@ -31,6 +41,8 @@ public class ContentView {
 
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED && !isEventListenerAdded) {
+
+                applyCSS();
 
                 JSObject jsobj = (JSObject) webEngine.executeScript("window");
                 jsobj.setMember("java", javaBridge);
@@ -80,6 +92,14 @@ public class ContentView {
     public void openContent(File contentFile) {
         // File file = new File(nccFile);
         webEngine.load(contentFile.toURI().toString());
+    }
+
+    private void applyCSS() {
+        Document doc = webEngine.getDocument() ;
+        Element styleNode = doc.createElement("style");
+        Text styleContent = doc.createTextNode(CSS);
+        styleNode.appendChild(styleContent);
+        doc.getDocumentElement().getElementsByTagName("head").item(0).appendChild(styleNode);
     }
 
     static void scrollWebViewToElement(String elementId) {
