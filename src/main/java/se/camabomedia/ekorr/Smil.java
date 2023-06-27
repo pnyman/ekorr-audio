@@ -87,24 +87,32 @@ public class Smil {
     }
 
     private void populateMp3StartTimesTable(SmilPar smilPar) {
-        String mp3File = smilPar.getSmilAudio().get(0).getSrc();
-        if (!mp3StartTimesTable.containsKey(mp3File)) {
-            mp3StartTimesTable.put(mp3File, new ArrayList<Integer>());
+        // There may not be recorded sound in the whole book
+        // TODO Deal with this in the rest of the code
+        if (smilPar.getSmilAudio().size() > 0) {
+            String mp3File = smilPar.getSmilAudio().get(0).getSrc();
+            if (!mp3StartTimesTable.containsKey(mp3File)) {
+                mp3StartTimesTable.put(mp3File, new ArrayList<Integer>());
+            }
+            mp3StartTimesTable.get(mp3File).add(smilPar.getSmilAudio().get(0).getClipBegin());
         }
-        mp3StartTimesTable.get(mp3File).add(smilPar.getSmilAudio().get(0).getClipBegin());
     }
 
     private void populateMp3ContentIdTable(SmilPar smilPar) {
-        String mp3File = smilPar.getSmilAudio().get(0).getSrc();
-        if (!mp3ContentIdTable.containsKey(mp3File)) {
-            mp3ContentIdTable.put(mp3File, new Hashtable<Integer, String>());
+        // There may not be recorded sound in the whole book
+        // TODO Deal with this in the rest of the code
+        if (smilPar.getSmilAudio().size() > 0) {
+            String mp3File = smilPar.getSmilAudio().get(0).getSrc();
+            if (!mp3ContentIdTable.containsKey(mp3File)) {
+                mp3ContentIdTable.put(mp3File, new Hashtable<Integer, String>());
+            }
+            int startTime = smilPar.getSmilAudio().get(0).getClipBegin();
+            String contentId = smilPar.getContentID();
+            mp3ContentIdTable.get(mp3File).put(startTime, contentId);
         }
-        int startTime = smilPar.getSmilAudio().get(0).getClipBegin();
-        String contentId = smilPar.getContentID();
-        mp3ContentIdTable.get(mp3File).put(startTime, contentId);
     }
 
-    private SmilPar addSmilPar(Element parElement, ArrayList<String> breadCrumbs) {
+    private SmilPar addSmilPar(Element parElement, String smilFile, ArrayList<String> breadCrumbs) {
         String parElementID = parElement.attr("id");
         String systemRequired = parElement.attr("system-required");
         Element textElement = parElement.select("text").first();
