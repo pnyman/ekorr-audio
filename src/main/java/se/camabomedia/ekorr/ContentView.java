@@ -159,6 +159,8 @@ public class ContentView {
             String value = element.getTextContent();
 
             System.out.println(value);
+
+            ContentView.this.setCurrentElement((JSObject) element, elementID);
         }
 
         public void scrollToId(String elementID) {
