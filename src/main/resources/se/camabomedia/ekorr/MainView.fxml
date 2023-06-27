@@ -93,7 +93,7 @@
          <children>
             <ButtonBar buttonOrder="U+L_HE+FBIX_NCYOA_R" prefHeight="40.0" prefWidth="189.0" HBox.hgrow="ALWAYS">
               <buttons>
-                <Button mnemonicParsing="false" text="Open" />
+                <Button fx:id="btnOpen" mnemonicParsing="false" onAction="#handleBtnOpen" text="Open" />
               </buttons>
             </ButtonBar>
             <ButtonBar buttonOrder="U+L_HE+FBIX_NCYOA_R" prefHeight="40.0" prefWidth="538.0" HBox.hgrow="ALWAYS">
@@ -114,9 +114,9 @@
       </HBox>
     <SplitPane fx:id="splitPane" blendMode="SRC_ATOP" dividerPositions="0.15, 0.85" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
-            <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+            <AnchorPane fx:id="nccPane" maxWidth="250.0" minWidth="250.0" />
             <AnchorPane fx:id="contentPane" />
-        <AnchorPane>
+        <AnchorPane maxWidth="250.0" minWidth="250.0">
           <children>
             <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" style="&#10;" text="Comments" textAlignment="CENTER" wrapText="false">
                      <font>

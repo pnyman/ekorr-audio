@@ -106,28 +106,37 @@ public class MainViewController implements Initializable {
         this.stage = stage;
 
         contentView = new ContentView();
-        contentView.webView.prefWidthProperty().bind(contentPane.widthProperty());
-        contentView.webView.prefHeightProperty().bind(contentPane.heightProperty());
         contentPane.getChildren().add(contentView.getContentView());
 
+        AnchorPane.setTopAnchor(contentView.webView, 0.0);
+        AnchorPane.setRightAnchor(contentView.webView, 0.0);
+        AnchorPane.setBottomAnchor(contentView.webView, 0.0);
+        AnchorPane.setLeftAnchor(contentView.webView, 0.0);
+
         nccView = new NccView();
-        nccView.webView.prefWidthProperty().bind(nccPane.widthProperty());
-        nccView.webView.prefHeightProperty().bind(nccPane.heightProperty());
+        // nccView.webView.prefWidthProperty().bind(nccPane.widthProperty());
+        // nccView.webView.prefHeightProperty().bind(nccPane.heightProperty());
         nccPane.getChildren().add(nccView.getNccView());
+
+        AnchorPane.setTopAnchor(nccView.webView, 0.0);
+        AnchorPane.setRightAnchor(nccView.webView, 0.0);
+        AnchorPane.setBottomAnchor(nccView.webView, 0.0);
+        AnchorPane.setLeftAnchor(nccView.webView, 0.0);
+
 
         // Listen for changes in fullscreen mode
         // contentView.webView.sceneProperty().addListener((observable, oldScene, newScene) -> {
         //     if (newScene != null) {
                 // Retrieve the Stage when the WebView is added to a Scene
         // Stage splitPaneStage = (Stage) splitPane.getScene().getWindow();
-        stage.fullScreenProperty().addListener((ChangeListener<? super Boolean>) (fullscreenObservable, wasFullscreen, isFullscreen) -> {
-                    if (isFullscreen) {
-                        adjustLayoutForFullscreen(contentPane);
-                    } else {
-                        // Restore WebView size after exiting fullscreen
-                        adjustLayoutForExitFullscreen(contentPane);
-                    }
-                });
+        // stage.fullScreenProperty().addListener((ChangeListener<? super Boolean>) (fullscreenObservable, wasFullscreen, isFullscreen) -> {
+        //             if (isFullscreen) {
+        //                 adjustLayoutForFullscreen(contentPane);
+        //             } else {
+        //                 // Restore WebView size after exiting fullscreen
+        //                 adjustLayoutForExitFullscreen(contentPane);
+        //             }
+        //         });
         //     }
         // });
     }
