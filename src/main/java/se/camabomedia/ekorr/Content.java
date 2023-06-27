@@ -12,9 +12,10 @@ import org.jsoup.nodes.Document;
 public class Content {
 
     private Document doc;
+    public File contentFile;
 
     public Content(File directory, String fileName) {
-        File contentFile = new File(directory, fileName);
+        contentFile = new File(directory, fileName);
         try {
             doc = Jsoup.parse(contentFile, "UTF-8");
         }
