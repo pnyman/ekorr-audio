@@ -30,12 +30,14 @@ public class Ncc {
     private ArrayList<String> smilFiles = new ArrayList<>();
     private Hashtable<String, NccItem> parIDTable = new Hashtable<>();
     private Hashtable<String, ArrayList<String>> breadCrumbsTable = new Hashtable<>();
+    private ArrayList<String> pages = new ArrayList<>();
 
     public Ncc(String nccFileString) {
         try {
             File nccFile = new File(nccFileString);
             directory = nccFile.getParentFile();
             doc = Jsoup.parse(nccFile, "UTF-8");
+            pages.add("n/a");
             setMetadata();
             findContentFile();
             populateNccItems();
@@ -49,6 +51,7 @@ public class Ncc {
         try {
             directory = nccFile.getParentFile();
             doc = Jsoup.parse(nccFile, "UTF-8");
+            pages.add("n/a");
             setMetadata();
             findContentFile();
             populateNccItems();
@@ -98,11 +101,12 @@ public class Ncc {
 
     private void populateNccItems() {
 
-        Pattern pattern = Pattern.compile("^h(\\d)");
+    // <span class="page-normal" id="page-68">
+        Pattern headingPattern = Pattern.compile("^h(\\d)");
         ArrayList<String> breadCrumb = new ArrayList<>();
-        boolean heading;
         int thisLevel = 1;
         int previousLevel = 1;
+        String page = null;
 
         for (Element item : doc.body().children()) {
             String name = item.tagName();
@@ -113,7 +117,14 @@ public class Ncc {
             String smil = href[0];
             String parID = href[1];
 
-            Matcher m = pattern.matcher(name);
+            if (item.hasClass("page-normal")
+                || item.hasClass("page-front")
+                || item.hasClass("page-special")) {
+                page = item.text();
+                pages.add(page);
+            }
+
+            Matcher m = headingPattern.matcher(name);
             if (m.find()) {
                 thisLevel = Integer.parseInt(m.group(1));
                 if (thisLevel == 1) {
@@ -127,7 +138,8 @@ public class Ncc {
                 breadCrumb.add(parID);
             }
 
-            NccItem nccItem = new NccItem(name, cssClass, text, smil, parID, breadCrumb, thisLevel);
+            NccItem nccItem = new NccItem(name, cssClass, text, smil, parID,
+                                          breadCrumb, thisLevel,page);
             nccItems.add(nccItem);
 
             parIDTable.put(parID, nccItem);
@@ -183,6 +195,10 @@ public class Ncc {
 
     public ArrayList<String> getBreadCrumbs(String smilFile) {
         return breadCrumbsTable.get(smilFile);
+    }
+
+    public ArrayList<String> getPages() {
+        return pages;
     }
 
 }

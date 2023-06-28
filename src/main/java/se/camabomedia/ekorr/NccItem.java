@@ -13,6 +13,7 @@ public class NccItem {
     String parID;
     ArrayList<String> breadCrumb;
     int level;
+    String page;
 
     public NccItem(String name,
                    String cssClass,
@@ -20,7 +21,8 @@ public class NccItem {
                    String smil,
                    String parID,
                    ArrayList<String> breadCrumb,
-                   int level) {
+                   int level,
+                   String page) {
         this.name = name;
         this.cssClass = cssClass;
         this.text = text;
@@ -28,6 +30,7 @@ public class NccItem {
         this.parID = parID;
         this.breadCrumb = breadCrumb;
         this.level = level;
+        this.page = page;
     }
 
     public String getName() {
@@ -63,6 +66,8 @@ public class NccItem {
             + "smil=" + smil + ", "
             + "parID=" + parID + ", "
             + "breadCrumb=" + breadCrumb
+            + "level=" + level
+            + "page=" + page
             + "]";
     }
 
