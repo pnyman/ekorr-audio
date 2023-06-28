@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -111,6 +113,22 @@ public class SimpleViewController implements Initializable {
         titlePane.getChildren().add(new Label(ncc.getTitle()));
     }
 
+    @FXML
+    public void setColumns() {
+        System.out.println("GOT CALLED");
+        // add your data here from any source
+        ObservableList<Report.Comment> data = FXCollections.observableArrayList();
+        for (Report.Comment comment : report.getComments()) {
+            data.add(comment);
+        }
+        try {
+            tableComments.setItems(data);
+        }
+        catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void createNote() {
         final Stage commentStage = new Stage();
         commentStage.initModality(Modality.APPLICATION_MODAL);
@@ -123,9 +141,10 @@ public class SimpleViewController implements Initializable {
             commentStage.setScene(commentScene);
             CommentView3Controller ctrl = fxmlLoader.getController();
             ctrl.initData(report);
-            // commentStage.showAndWait();
-            commentStage.show();
+            commentStage.showAndWait();
+            // commentStage.show();
             commentStage.setResizable(false);
+            setColumns();
         }
         catch (IOException e) {
             // TODO Auto-generated catch block
