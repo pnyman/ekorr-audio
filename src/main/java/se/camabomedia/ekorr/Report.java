@@ -136,6 +136,10 @@ public class Report {
         }
     }
 
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
     /**
      * Class for individual comments
      */
