@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -13,6 +14,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -24,6 +27,15 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 
 public class SimpleViewController implements Initializable {
+
+    @FXML
+    private TableView<Report.Comment> tableComments;
+
+    @FXML
+    private TableColumn<Report.Comment, String> tableColumnPage;
+
+    @FXML
+    private TableColumn<Report.Comment, String> tableColumnComment;
 
     @FXML // fx:id="menuItemOpen"
     private MenuItem menuItemOpen; // Value injected by FXMLLoader
@@ -39,13 +51,8 @@ public class SimpleViewController implements Initializable {
 
     private Stage stage;
     private Ncc ncc;
-
-    public String page;
-    public String noteType;
-    public String seek;
-    public String wrong;
-    public String right;
-
+    public Report report;
+    private Report.Comment selectedComment;
 
     @FXML
     void handleMenuItemOpen(ActionEvent event) {
@@ -57,6 +64,20 @@ public class SimpleViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        // Set the cell value factories for each column
+        tableColumnPage.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPage()));
+        tableColumnComment.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType() + " " +
+                                                                                     cellData.getValue().getWrong() + " " +
+                                                                                     cellData.getValue().getRight()));
+
+        // Register a listener on the selection model property
+        tableComments.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+            if (newSelection != null) {
+                // The user has selected a row, do something with the selected item
+                selectedComment = newSelection;
+            }
+        });
 
     }
 
@@ -86,6 +107,7 @@ public class SimpleViewController implements Initializable {
 
     public void openProject(File selectedFile) {
         ncc = new Ncc(selectedFile);
+        report = new Report(ncc);
         titlePane.getChildren().add(new Label(ncc.getTitle()));
     }
 
@@ -94,18 +116,16 @@ public class SimpleViewController implements Initializable {
         commentStage.initModality(Modality.APPLICATION_MODAL);
         commentStage.initOwner(stage);
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CommentView3.fxml"));
-        CommentView3Controller commentCtrl = new CommentView3Controller();
         Scene commentScene;
+
         try {
             commentScene = new Scene(fxmlLoader.load());
             commentStage.setScene(commentScene);
-            commentCtrl.initData(this);
+            CommentView3Controller ctrl = fxmlLoader.getController();
+            ctrl.initData(report);
+            // commentStage.showAndWait();
+            commentStage.show();
             commentStage.setResizable(false);
-            commentStage.showAndWait();
-
-            System.out.println(seek);
-
-
         }
         catch (IOException e) {
             // TODO Auto-generated catch block

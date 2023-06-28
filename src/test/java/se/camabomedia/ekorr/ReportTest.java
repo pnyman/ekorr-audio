@@ -1,14 +1,10 @@
 package se.camabomedia.ekorr;
 
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Objects;
 
 import org.junit.Test;
 
@@ -27,9 +23,9 @@ public class ReportTest {
             Ncc ncc = new Ncc(file);
             Report r = new Report(ncc);
 
-            r.addRemark("12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
-            r.addRemark("12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
-            r.addRemark("12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
+            r.addComment("12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
+            r.addComment("12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
+            r.addComment("12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
 
             r.createAndWriteReport();
         }
@@ -48,7 +44,7 @@ public class ReportTest {
             Ncc ncc = new Ncc(file);
             Report r = new Report(ncc);
             r.readReport();
-            r.addRemark("15", "Felläsning", "att vara eller inte vara", "fara", "vara");
+            r.addComment("15", "Felläsning", "att vara eller inte vara", "fara", "vara");
             r.createAndWriteReport();
         }
         catch (URISyntaxException e1) {

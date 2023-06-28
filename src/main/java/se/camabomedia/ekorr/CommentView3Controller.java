@@ -40,9 +40,10 @@ public class CommentView3Controller implements Initializable {
     @FXML // fx:id="textFieldPage"
     private TextField textFieldPage; // Value injected by FXMLLoader
 
-    // private Stage stage;
+    private Report report;
+    private String type;
 
-    private String[] noteTypes = {
+    private String[] commentTypes = {
         "1. Felläsning",
         "2. Omtagning",
         "3. Utelämning",
@@ -53,32 +54,27 @@ public class CommentView3Controller implements Initializable {
         "8. Fritext"
     };
 
-    public String page;
-    public String noteType;
-    public String seek;
-    public String wrong;
-    public String right;
-
-    private SimpleViewController svc;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        listViewType.getItems().addAll(noteTypes);
+        listViewType.getItems().addAll(commentTypes);
 
         // This sets the initial height of the ListView:
-        // listViewType.setPrefHeight(noteTypes.length * 24 + 2);
+        // listViewType.setPrefHeight(commentTypes.length * 24 + 2);
 
+        // Handle selection of comment type
         listViewType.getSelectionModel().selectedItemProperty()
                 .addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> arg0, String arg1, String arg2) {
-                        noteType = listViewType.getSelectionModel().getSelectedItem();
+                        type = listViewType.getSelectionModel().getSelectedItem().substring(3);
                     }
                 });
 
+        // Add key events to list of comment types
         listViewType.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -113,6 +109,7 @@ public class CommentView3Controller implements Initializable {
             }
         });
 
+        // Set focus on page number field initially
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -120,18 +117,15 @@ public class CommentView3Controller implements Initializable {
             }
         });
 
-        // textFieldPage.requestFocus();
     }
 
-    public void initData(SimpleViewController svc) {
-        this.svc = svc;
+    public void initData(Report report) {
+        this.report = report;
     }
 
     private void setSelectedType(int i) {
         listViewType.getSelectionModel().select(i);
         listViewType.getFocusModel().focus(i);
-
-        System.out.println(noteType);
     }
 
     @FXML
@@ -141,13 +135,26 @@ public class CommentView3Controller implements Initializable {
 
     @FXML
     void handleBtnOk(ActionEvent event) {
-        svc.page = textFieldPage.getText();
-        svc.seek = textAreaSeek.getText();
-        svc.wrong = textAreaWrong.getText();
-        svc.right = textAreaRight.getText();
+        String page = textFieldPage.getText();
+        String seek = textAreaSeek.getText();
+        String wrong = textAreaWrong.getText();
+        String right = textAreaRight.getText();
 
-        Stage stage = (Stage) btnOk.getScene().getWindow();
-        stage.close();
+        Thread taskThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                report.addRemark(page, type, seek, wrong, right);
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Stage stage = (Stage) btnOk.getScene().getWindow();
+                        stage.close();
+                    }
+                });
+            }
+        });
+
+        taskThread.start();
     }
 
 }

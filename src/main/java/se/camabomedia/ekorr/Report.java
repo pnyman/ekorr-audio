@@ -19,7 +19,7 @@ import org.jsoup.nodes.Element;
 public class Report {
 
     private Document doc;
-    private ArrayList<Remark> remarks = new ArrayList<>();
+    private ArrayList<Comment> comments = new ArrayList<>();
     private String stub = "ReportStub.xhtml";
     private String reportDirectory = "___Korrektur_rapport";
 
@@ -59,9 +59,10 @@ public class Report {
         return doc;
     }
 
-    public void addRemark(String page, String type, String seek,
+    public void addComment(String page, String type, String seek,
                           String wrong, String right) {
-        remarks.add(new Remark(page, type, seek, wrong, right));
+        System.out.println(page + ", " + type + ", " + seek + ", " + wrong + ", " + right + ", ");
+        comments.add(new Comment(page, type, seek, wrong, right));
     }
 
     public void createAndWriteReport() {
@@ -82,9 +83,9 @@ public class Report {
         // Add metadat
         setMetadata();
 
-        // Add the remarks to the report
-        for (Remark remark : remarks) {
-            doc.getElementById("comments").append(remark.toString());
+        // Add the comments to the report
+        for (Comment comment : comments) {
+            doc.getElementById("comments").append(comment.toString());
         }
 
         // Print the report
@@ -131,26 +132,46 @@ public class Report {
             for (Element elt : comment.getElementsByClass("comment-right")) {
                 right = elt.text();
             }
-            addRemark(page, type, seek, wrong, right);
+            addComment(page, type, seek, wrong, right);
         }
     }
 
     /**
-     * Class for individual remarks
+     * Class for individual comments
      */
-    class Remark {
+    class Comment {
         String page;
         String type;
         String seek;
         String wrong;
         String right;
 
-        public Remark(String page, String type, String seek, String wrong, String right) {
+        public Comment(String page, String type, String seek, String wrong, String right) {
             this.page = page;
             this.type = type;
             this.seek = seek;
             this.wrong = wrong;
             this.right = right;
+        }
+
+        public String getPage() {
+            return page;
+        }
+
+        public String getType() {
+            return type;
+        }
+
+        public String getSeek() {
+            return seek;
+        }
+
+        public String getWrong() {
+            return wrong;
+        }
+
+        public String getRight() {
+            return right;
         }
 
         @Override

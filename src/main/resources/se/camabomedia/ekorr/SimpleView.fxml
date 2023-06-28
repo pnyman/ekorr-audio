@@ -87,11 +87,10 @@
         </Menu>
       </menus>
     </MenuBar>
-      <TableView VBox.vgrow="ALWAYS">
+      <TableView fx:id="tableComments" VBox.vgrow="ALWAYS">
         <columns>
-          <TableColumn editable="false" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" sortable="false" text="Nr" />
-          <TableColumn editable="false" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" sortable="false" text="Page" />
-            <TableColumn editable="false" maxWidth="-1.0" minWidth="777.0" prefWidth="-1.0" sortable="false" text="Comment" />
+          <TableColumn fx:id="tableColumnPage" editable="false" maxWidth="65.6000075340271" minWidth="50.0" prefWidth="65.6000075340271" sortable="false" text="Page" />
+            <TableColumn fx:id="tableColumnComment" editable="false" maxWidth="808.8001327514648" minWidth="762.4000473022461" prefWidth="806.4001083374023" sortable="false" text="Comment" />
         </columns>
          <VBox.margin>
             <Insets left="4.0" right="4.0" />
