@@ -143,7 +143,8 @@ public class CommentView3Controller implements Initializable {
         Thread taskThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                report.addRemark(page, type, seek, wrong, right);
+                report.addComment(page, type, seek, wrong, right);
+                report.createAndWriteReport();
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
