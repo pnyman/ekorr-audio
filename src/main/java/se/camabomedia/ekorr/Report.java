@@ -38,10 +38,11 @@ public class Report {
         this.identifier = ncc.getIdentifier();
         this.title = ncc.getTitle();
         this.creators = ncc.getCreators();
-        reportFile = String.join("_", ncc.getIdentifier(),
-                                 ncc.getTitle().replaceAll(" ", "_") + ".xhtml");
-        creators = ncc.getCreators();
+
         directory = new File(ncc.getDirectory(), reportDirectory);
+        reportFile = String.join("_", identifier, title.replaceAll(" ", "_") + ".xhtml");
+
+        readReport();
         directory.mkdirs();
     }
 
@@ -79,7 +80,6 @@ public class Report {
 
         // Print the report
         File file = new File(directory, reportFile);
-        System.out.println(file);
         try {
             FileUtils.writeStringToFile(file, doc.outerHtml(), StandardCharsets.UTF_8);
         } catch (IOException e) {
@@ -100,6 +100,7 @@ public class Report {
     }
 
     /**
+     * Reads and loads a report if it already exists.
      * @param directory  is a File object
      * @param reportFile is a String
      */
