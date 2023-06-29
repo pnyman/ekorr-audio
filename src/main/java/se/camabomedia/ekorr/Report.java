@@ -48,7 +48,10 @@ public class Report {
 
     private void makeReportFileName() {
         // # % & {} \ <> * ? / $ ! ' " : @+ ` | =
-        String sanitizedTitle = title.replaceAll("\\W", "").replaceAll(" ", "_");
+        String sanitizedTitle = title
+            .replaceAll(" ", "_")
+            .replaceAll("\\W", "")
+            .replaceAll("__", "_");
         reportFile = String.join("_", identifier, sanitizedTitle + ".xhtml");
     }
 
