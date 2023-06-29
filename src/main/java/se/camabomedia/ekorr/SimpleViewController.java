@@ -115,7 +115,7 @@ public class SimpleViewController implements Initializable {
         setColumns();
     }
 
-    public void makeWindowTitle() {
+    private void makeWindowTitle() {
         String windowTitle = "";
         windowTitle += stage.getTitle();
         windowTitle += "      ";
@@ -129,7 +129,7 @@ public class SimpleViewController implements Initializable {
 
     @FXML
     public void setColumns() {
-        // add your data here from any source
+        // Add data here
         ObservableList<Report.Comment> data = FXCollections.observableArrayList();
         for (Report.Comment comment : report.getComments()) {
             data.add(comment);
@@ -152,11 +152,12 @@ public class SimpleViewController implements Initializable {
         try {
             commentScene = new Scene(fxmlLoader.load());
             commentStage.setScene(commentScene);
+            commentStage.setTitle("Skapa kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
             ctrl.initData(report);
+            commentStage.setResizable(false);
             commentStage.showAndWait();
             // commentStage.show();
-            commentStage.setResizable(false);
             setColumns();
         }
         catch (IOException e) {
