@@ -10,10 +10,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
@@ -41,7 +43,7 @@ public class CommentView3Controller implements Initializable {
     private TextField textFieldPage; // Value injected by FXMLLoader
 
     private Report report;
-    private String type;
+    private String type = null;
 
     private String[] commentTypes = {
         "1. Felläsning",
@@ -135,6 +137,13 @@ public class CommentView3Controller implements Initializable {
 
     @FXML
     void handleBtnOk(ActionEvent event) {
+
+        if (type == null) {
+            warningDialog();
+            return;
+        }
+
+
         String page = textFieldPage.getText();
         String seek = textAreaSeek.getText();
         String wrong = textAreaWrong.getText();
@@ -156,6 +165,15 @@ public class CommentView3Controller implements Initializable {
         });
 
         taskThread.start();
+    }
+
+
+    void warningDialog() {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Kommentartyp saknas");
+        alert.setHeaderText("");
+        alert.setContentText("Välj typ av kommentar.");
+        alert.showAndWait();
     }
 
 }
