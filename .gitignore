@@ -1,5 +1,6 @@
 *#
 target/
+src/test/resources/
 .settings/
 pom.xml.tag
 pom.xml.releaseBackup
