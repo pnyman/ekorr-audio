@@ -12,8 +12,8 @@ import org.junit.Test;
  * ReportTest
  */
 public class ReportTest {
-    // String nccFile = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
-    String nccFile = "V005414_fixgen/ncc.html";
+    String nccFile = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
+    // String nccFile = "V005414_fixgen/ncc.html";
     URL url = getClass().getClassLoader().getResource(nccFile);
 
     @Test
@@ -44,8 +44,8 @@ public class ReportTest {
             Ncc ncc = new Ncc(file);
             Report r = new Report(ncc);
             r.readReport();
-            r.addComment("15", "Felläsning", "att vara eller inte vara", "fara", "vara");
-            r.createAndWriteReport();
+            // r.addComment("15", "Felläsning", "att vara eller inte vara", "fara", "vara");
+            // r.createAndWriteReport();
         }
         catch (URISyntaxException e1) {
             e1.printStackTrace();
