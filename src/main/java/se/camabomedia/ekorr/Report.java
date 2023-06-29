@@ -40,15 +40,18 @@ public class Report {
         this.creators = ncc.getCreators();
 
         directory = new File(ncc.getDirectory(), reportDirectory);
-        reportFile = String.join("_", identifier, title.replaceAll(" ", "_") + ".xhtml");
 
+        makeReportFileName();
         readReport();
         directory.mkdirs();
     }
 
-    // public Document getDoc() {
-    //     return doc;
-    // }
+    private void makeReportFileName() {
+        // # % & {} \ <> * ? / $ ! ' " : @+ ` | =
+        String sanitizedTitle = title.replaceAll("\\W", "").replaceAll(" ", "_");
+        reportFile = String.join("_", identifier, sanitizedTitle + ".xhtml");
+    }
+
 
     public void addComment(String page, String type, String seek,
                           String wrong, String right) {
