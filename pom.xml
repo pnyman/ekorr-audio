@@ -6,16 +6,26 @@
   <artifactId>ekorr</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Ekorr</name>
-  <url>http://www.camabomedia.se</url>
+  <!-- <name>Ekorr</name> -->
+  <!-- <url>http://www.camabomedia.se</url> -->
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>11</maven.compiler.source>
-    <maven.compiler.target>11</maven.compiler.target>
-  </properties>
+  <!-- <properties> -->
+  <!--   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding> -->
+  <!--   <maven.compiler.source>17</maven.compiler.source> -->
+  <!--   <maven.compiler.target>17</maven.compiler.target> -->
+  <!-- </properties> -->
 
-  <!-- <repositories> -->
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>17</java.version>
+        <javafx.version>19</javafx.version>
+        <jmetro.version>11.6.16</jmetro.version>
+        <maven.compiler.release>17</maven.compiler.release>
+    </properties>
+
+
+  <repositories>
 
   <!--   <repository> -->
   <!--     <id>be.0110.repo-releases</id> -->
@@ -28,7 +38,23 @@
   <!--     <url>http://clojars.org/repo/</url> -->
   <!--   </repository> -->
 
-  <!-- </repositories> -->
+    <!-- <repository> -->
+    <!--   <id>atricore</id> -->
+    <!--   <url>http://repository.atricore.org/m2-release-repository/</url> -->
+    <!-- </repository> -->
+
+    <!-- <repository> -->
+    <!--   <id>openmind</id> -->
+    <!--   <url>https://repository.openmindonline.it/</url> -->
+    <!-- </repository> -->
+
+    <!-- <repository> -->
+    <!--     <id>java.net</id> -->
+    <!--     <url>https://download.java.net/maven/2/</url> -->
+    <!-- </repository> -->
+
+
+  </repositories>
 
   <dependencies>
     <dependency>
@@ -47,25 +73,43 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>17.0.1</version>
+      <version>${javafx.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
-      <version>17.0.1</version>
+      <version>${javafx.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-media</artifactId>
-      <version>17.0.1</version>
+      <version>${javafx.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-web</artifactId>
-      <version>17.0.0.1</version>
+      <version>${javafx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jfxtras</groupId>
+      <artifactId>jmetro</artifactId>
+      <version>${jmetro.version}</version>
+      <exclusions>
+        <!-- The following exclusions are necessary to override all hard coded dependencies -->
+        <!-- on outdated or not needed external libaries -->
+        <exclusion>
+          <groupId>org.controlsfx</groupId>
+          <artifactId>controlsfx</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.openjfx</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -73,6 +117,49 @@
       <artifactId>commons-io</artifactId>
       <version>2.11.0</version>
     </dependency>
+
+
+
+    <!-- https://mvnrepository.com/artifact/javax.script/script-api -->
+    <!-- <dependency> -->
+    <!--   <groupId>javax.script</groupId> -->
+    <!--   <artifactId>script-api</artifactId> -->
+    <!--   <version>1.1</version> -->
+    <!-- </dependency> -->
+
+
+
+
+    <!-- <dependency> -->
+    <!--   <groupId>jakarta.xml.bind</groupId> -->
+    <!--   <artifactId>jakarta.xml.bind-api</artifactId> -->
+    <!--   <version>2.3.3</version> -->
+    <!-- </dependency> -->
+
+
+
+
+    <!-- <dependency> -->
+    <!--   <groupId>javax.xml.bind</groupId> -->
+    <!--   <artifactId>jaxb-api</artifactId> -->
+    <!--   <version>2.3.1</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>org.glassfish.jaxb</groupId> -->
+    <!--   <artifactId>jaxb-runtime</artifactId> -->
+    <!--   <version>2.3.1</version> -->
+    <!-- </dependency> -->
+
+    <!-- <dependency> -->
+    <!--   <groupId>javax.activation</groupId> -->
+    <!--   <artifactId>activation</artifactId> -->
+    <!--   <version>1.1.1</version> -->
+    <!-- </dependency> -->
+
+
+
+
 
 
     <!-- <dependency> -->
@@ -181,15 +268,14 @@
   </dependencies>
 
   <build>
-    <pluginManagement>
       <plugins>
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
+          <version>3.10.1</version>
           <configuration>
-            <release>11</release>
+            <release>${java.version}</release>
           </configuration>
         </plugin>
 
@@ -246,25 +332,25 @@
           </configuration>
         </plugin>
 
-        <!-- <plugin> -->
-        <!--   <groupId>com.igormaznitsa</groupId> -->
-        <!--   <artifactId>mvn-jlink-wrapper</artifactId> -->
-        <!--   <version>1.2.1</version> -->
-        <!--   <executions> -->
-        <!--     <execution> -->
-        <!--       <id>call-jdeps</id> -->
-        <!--       <goals> -->
-        <!--         <goal>jdeps</goal> -->
-        <!--       </goals> -->
-        <!--       <configuration> -->
-        <!--         <output>${project.build.directory}${file.separator}jdeps.out</output> -->
-        <!--         <options> -->
-        <!--           <option>${project.build.directory}${file.separator}${project.build.finalName}.jar</option> -->
-        <!--         </options> -->
-        <!--       </configuration> -->
-        <!--     </execution> -->
-        <!--   </executions> -->
-        <!-- </plugin> -->
+        <plugin>
+          <groupId>com.igormaznitsa</groupId>
+          <artifactId>mvn-jlink-wrapper</artifactId>
+          <version>1.2.1</version>
+          <executions>
+            <execution>
+              <id>call-jdeps</id>
+              <goals>
+                <goal>jdeps</goal>
+              </goals>
+              <configuration>
+                <output>${project.build.directory}${file.separator}jdeps.out</output>
+                <options>
+                  <option>${project.build.directory}${file.separator}${project.build.finalName}.jar</option>
+                </options>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
 
         <plugin>
           <groupId>com.igormaznitsa</groupId>
@@ -278,7 +364,7 @@
               </goals>
               <configuration>
                 <jdepsReportPath>${project.build.directory}${file.separator}jdeps.out</jdepsReportPath>
-                <output>${project.build.directory}${file.separator}preparedJDK</output>
+                <output>${project.build.directory}${file.separator}jre</output>
                 <modulePaths>
                   <path>${java.home}${file.separator}jmods</path>
                 </modulePaths>
@@ -296,6 +382,5 @@
         </plugin>
 
       </plugins>
-    </pluginManagement>
   </build>
 </project>
