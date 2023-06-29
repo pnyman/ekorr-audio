@@ -6,6 +6,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
@@ -87,8 +88,29 @@ public class Report {
         }
     }
 
+    private void addMetadata() {
+        doc.getElementsByClass("date").get(0)
+            .appendText(java.time.LocalDate.now().toString());
+        doc.getElementsByClass("identifier").get(0)
+            .appendText(identifier);
+        doc.getElementsByClass("title").get(0)
+            .appendText(title);
+        doc.getElementsByClass("creator").get(0)
+            .appendText(String.join(", ", creators));
+    }
+
+    /**
+     * @param directory  is a File object
+     * @param reportFile is a String
+     */
     public void readReport() {
+        // If a report don't already exist, do nothing
+        if (Files.notExists(Paths.get(directory.toString(), reportFile))) {
+            return;
+        }
+
         File file = new File(directory, reportFile);
+
         try {
             doc = Jsoup.parse(file);
         } catch (IOException e) {
