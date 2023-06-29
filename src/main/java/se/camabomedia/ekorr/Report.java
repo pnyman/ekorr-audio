@@ -159,11 +159,11 @@ public class Report {
         String right;
 
         public Comment(String page, String type, String seek, String wrong, String right) {
-            this.page = page;
-            this.type = type;
-            this.seek = seek;
-            this.wrong = wrong;
-            this.right = right;
+            this.page = page.trim();
+            this.type = type.trim();
+            this.seek = seek.trim();
+            this.wrong = wrong.trim();
+            this.right = right.trim();
         }
 
         public String getPage() {
@@ -194,15 +194,15 @@ public class Report {
                 + "<tr><td class='comment-head'>Typ:</td><td class='comment-type'>" + type
                 + "</td></tr>";
 
-            if (seek != null) {
+            if (!seek.equals("")) {
                 html += "<tr><td class='comment-head'>Sök:</td><td class='comment-seek'>"
                     + seek + "</td></tr>";
             }
-            if (wrong != null) {
+            if (!wrong.equals("")) {
                 html += "<tr><td class='comment-head'>Fel:</td><td class='comment-wrong'>"
                     + wrong + "</td></tr>";
             }
-            if (right != null) {
+            if (!right.equals("")) {
                 html += "<tr><td class='comment-head'>Rätt:</td><td class='comment-right'>"
                     + right + "</td></tr>";
             }
