@@ -21,7 +21,7 @@ public class Report {
     private Document doc;
     private ArrayList<Comment> comments = new ArrayList<>();
     private String stub = "ReportStub.xhtml";
-    private String reportDirectory = "___Korrektur_rapport";
+    private String reportDirectory = "___Korrektur-rapport";
 
     private File directory;
     // private Ncc ncc;
@@ -44,24 +44,12 @@ public class Report {
         directory.mkdirs();
     }
 
-    private void setMetadata() {
-        doc.getElementsByClass("date").get(0)
-            .appendText(java.time.LocalDate.now().toString());
-        doc.getElementsByClass("identifier").get(0)
-            .appendText(identifier);
-        doc.getElementsByClass("title").get(0)
-            .appendText(title);
-        doc.getElementsByClass("creator").get(0)
-            .appendText(String.join(", ", creators));
-    }
-
-    public Document getDoc() {
-        return doc;
-    }
+    // public Document getDoc() {
+    //     return doc;
+    // }
 
     public void addComment(String page, String type, String seek,
                           String wrong, String right) {
-        System.out.println(page + ", " + type + ", " + seek + ", " + wrong + ", " + right + ", ");
         comments.add(new Comment(page, type, seek, wrong, right));
     }
 
@@ -80,8 +68,8 @@ public class Report {
             e.printStackTrace();
         }
 
-        // Add metadat
-        setMetadata();
+        // Add metadata
+        addMetadata();
 
         // Add the comments to the report
         for (Comment comment : comments) {
@@ -113,8 +101,6 @@ public class Report {
         String seek = null;
         String wrong = null;
         String right = null;
-
-        // Element content = doc.getElementById("content");
 
         for (Element comment : doc.getElementsByClass("comment")) {
             for (Element elt : comment.getElementsByClass("comment-page")) {
