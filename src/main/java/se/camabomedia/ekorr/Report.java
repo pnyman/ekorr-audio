@@ -153,18 +153,23 @@ public class Report {
      * Class for individual comments
      */
     class Comment {
-        String page;
-        String type;
-        String seek;
-        String wrong;
-        String right;
+        String page = "";
+        String type = "";
+        String seek = "";
+        String wrong = "";
+        String right = "";
 
         public Comment(String page, String type, String seek, String wrong, String right) {
-            this.page = page.trim();
-            this.type = type.trim();
-            this.seek = seek.trim();
-            this.wrong = wrong.trim();
-            this.right = right.trim();
+            if (page != null)
+                this.page = page.trim();
+            if (type != null)
+                this.type = type.trim();
+            if (seek != null)
+                this.seek = seek.trim();
+            if (wrong != null)
+                this.wrong = wrong.trim();
+            if (right != null)
+                this.right = right.trim();
         }
 
         public String getPage() {
