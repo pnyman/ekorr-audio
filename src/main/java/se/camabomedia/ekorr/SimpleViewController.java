@@ -110,12 +110,25 @@ public class SimpleViewController implements Initializable {
     public void openProject(File selectedFile) {
         ncc = new Ncc(selectedFile);
         report = new Report(ncc);
-        titlePane.getChildren().add(new Label(ncc.getTitle()));
+        // titlePane.getChildren().add(new Label(ncc.getTitle()));
+        makeWindowTitle();
+        setColumns();
+    }
+
+    public void makeWindowTitle() {
+        String windowTitle = "";
+        windowTitle += stage.getTitle();
+        windowTitle += "      ";
+        windowTitle += ncc.getIdentifier();
+        windowTitle += " ";
+        windowTitle += ncc.getTitle();
+        // windowTitle += " ";
+        // windowTitle += String.join(", ", ncc.getCreators());
+        stage.setTitle(windowTitle);
     }
 
     @FXML
     public void setColumns() {
-        System.out.println("GOT CALLED");
         // add your data here from any source
         ObservableList<Report.Comment> data = FXCollections.observableArrayList();
         for (Report.Comment comment : report.getComments()) {
