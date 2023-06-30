@@ -156,7 +156,7 @@ public class SimpleViewController implements Initializable {
             commentStage.setScene(commentScene);
             commentStage.setTitle("Skapa kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
-            ctrl.initData(report);
+            ctrl.initData(commentStage, report);
             commentStage.setResizable(false);
             commentStage.showAndWait();
             // commentStage.show();
