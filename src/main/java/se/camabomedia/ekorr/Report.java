@@ -155,6 +155,16 @@ public class Report {
         return comments;
     }
 
+    public void removeComment(Comment comment) {
+        comments.remove(comment);
+    }
+
+    public void replaceComment(Comment oldComment, Comment newComment) {
+        int index = comments.indexOf(oldComment);
+        comments.set(index, newComment);
+    }
+
+
     /**
      * Class for individual comments
      */

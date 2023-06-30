@@ -47,7 +47,9 @@ public class CommentView3Controller implements Initializable {
 
     private Stage stage;
     private Report report;
+    private Report.Comment comment;
     private String type = null;
+    boolean editComment = false;
 
     private String[] commentTypes = {
         "1. Felläsning",
@@ -149,14 +151,35 @@ public class CommentView3Controller implements Initializable {
             @Override
             public void run() {
                 textFieldPage.requestFocus();
+                if (editComment) {
+                    fillForm();
+                }
             }
         });
 
     }
 
+    /**
+     * Creates a new comment
+     */
     public void initData(Stage stage, Report report) {
         this.stage = stage;
         this.report = report;
+        makeEscapeClose();
+    }
+
+    /**
+     * Edits a comment
+     */
+    public void initData(Stage stage, Report report, Report.Comment comment) {
+        this.stage = stage;
+        this.report = report;
+        this.comment = comment;
+        editComment = true;
+        makeEscapeClose();
+    }
+
+    private void makeEscapeClose() {
         stage.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
@@ -165,6 +188,14 @@ public class CommentView3Controller implements Initializable {
                     }
                 }
             });
+    }
+
+    private void fillForm() {
+        type = comment.getType();
+        textFieldPage.setText(comment.getPage());
+        textAreaSeek.setText(comment.getSeek());
+        textAreaWrong.setText(comment.getWrong());
+        textAreaRight.setText(comment.getRight());
     }
 
     private void setSelectedType(int i) {
@@ -185,7 +216,6 @@ public class CommentView3Controller implements Initializable {
             return;
         }
 
-
         String page = textFieldPage.getText();
         String seek = textAreaSeek.getText();
         String wrong = textAreaWrong.getText();
@@ -194,7 +224,13 @@ public class CommentView3Controller implements Initializable {
         Thread taskThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                report.addComment(page, type, seek, wrong, right);
+                if (editComment) {
+                    Report.Comment newComment = report.new Comment(page, type, seek, wrong, right);
+                    report.replaceComment(comment, newComment);
+                }
+                else {
+                    report.addComment(page, type, seek, wrong, right);
+                }
                 report.createAndWriteReport();
                 Platform.runLater(new Runnable() {
                     @Override

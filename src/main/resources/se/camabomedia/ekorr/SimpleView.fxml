@@ -89,7 +89,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <TableView fx:id="tableComments" VBox.vgrow="ALWAYS">
+      <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
         <columns>
           <TableColumn fx:id="tableColumnPage" editable="false" maxWidth="65.6000075340271" minWidth="50.0" prefWidth="65.6000075340271" resizable="false" sortable="false" text="Sida" />
             <TableColumn fx:id="tableColumnComment" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="710.0" resizable="false" sortable="false" text="Kommentar" />
@@ -100,9 +100,10 @@
       </TableView>
       <ButtonBar prefHeight="40.0" prefWidth="200.0">
         <buttons>
-          <Button mnemonicParsing="false" text="Redigera" />
-            <Button mnemonicParsing="false" text="Kommentar" />
-            <Button mnemonicParsing="false" text="Avsluta" />
+            <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#handleBtnCreate" text="Skapa" />
+          <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#handleBtnEdit" text="Redigera" />
+            <Button fx:id="btnRemove" mnemonicParsing="false" onAction="#handleBtnRemove" text="Ta bort" />
+            <Button fx:id="btnQuit" mnemonicParsing="false" onAction="#handleBtnQuit" text="Avsluta" />
         </buttons>
          <VBox.margin>
             <Insets right="12.0" top="4.0" />
