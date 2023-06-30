@@ -167,15 +167,22 @@ public class Report {
 
         public Comment(String page, String type, String seek, String wrong, String right) {
             if (page != null)
-                this.page = page.trim();
+                this.page = sanitize(page);
             if (type != null)
-                this.type = type.trim();
+                this.type = sanitize(type);
             if (seek != null)
-                this.seek = seek.trim();
+                this.seek = sanitize(seek);
             if (wrong != null)
-                this.wrong = wrong.trim();
+                this.wrong = sanitize(wrong);
             if (right != null)
-                this.right = right.trim();
+                this.right = sanitize(right);
+        }
+
+        private String sanitize(String s) {
+            return s
+                .replaceAll("&", "&amp")
+                .replaceAll("<", "&lt;")
+                .trim();
         }
 
         public String getPage() {
