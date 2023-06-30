@@ -30,7 +30,7 @@ import javafx.stage.Stage;
 public class SimpleViewController implements Initializable {
 
     @FXML
-    private TableView<Report.Comment> tableComments;
+    private TableView<Report.Comment> tableView;
 
     @FXML
     private TableColumn<Report.Comment, String> tableColumnPage;
@@ -73,7 +73,7 @@ public class SimpleViewController implements Initializable {
                                                                                      cellData.getValue().getRight()));
 
         // Register a listener on the selection model property
-        tableComments.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+        tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
             if (newSelection != null) {
                 // The user has selected a row, do something with the selected item
                 selectedComment = newSelection;
@@ -89,7 +89,7 @@ public class SimpleViewController implements Initializable {
                 public void handle(KeyEvent event) {
                     switch (event.getCode()) {
                     case ENTER:
-                        createNote();
+                        createComment();
                         break;
                     case ESCAPE:
                         stage.close();
@@ -136,14 +136,14 @@ public class SimpleViewController implements Initializable {
             data.add(comment);
         }
         try {
-            tableComments.setItems(data);
+            tableView.setItems(data);
         }
         catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
 
-    private void createNote() {
+    private void createComment() {
         final Stage commentStage = new Stage();
         commentStage.initModality(Modality.APPLICATION_MODAL);
         commentStage.initOwner(stage);
