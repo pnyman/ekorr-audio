@@ -112,32 +112,34 @@ public class CommentView3Controller implements Initializable {
             @Override
             public void handle(KeyEvent event) {
                 switch (event.getCode()) {
-                    case DIGIT1:
-                        setSelectedType(0);
-                        break;
-                    case DIGIT2:
-                        setSelectedType(1);
-                        break;
-                    case DIGIT3:
-                        setSelectedType(2);
-                        break;
-                    case DIGIT4:
-                        setSelectedType(3);
-                        break;
-                    case DIGIT5:
-                        setSelectedType(4);
-                        break;
-                    case DIGIT6:
-                        setSelectedType(5);
-                        break;
-                    case DIGIT7:
-                        setSelectedType(6);
-                        break;
-                    case DIGIT8:
-                        setSelectedType(7);
-                        break;
-                    default:
-                        break;
+                case DIGIT1:
+                    setSelectedType(0);
+                    break;
+                case DIGIT2:
+                    setSelectedType(1);
+                    break;
+                case DIGIT3:
+                    setSelectedType(2);
+                    break;
+                case DIGIT4:
+                    setSelectedType(3);
+                    break;
+                case DIGIT5:
+                    setSelectedType(4);
+                    break;
+                case DIGIT6:
+                    setSelectedType(5);
+                    break;
+                case DIGIT7:
+                    setSelectedType(6);
+                    break;
+                case DIGIT8:
+                    setSelectedType(7);
+                    break;
+                case ESCAPE:
+                    stage.close();
+                default:
+                    break;
                 }
             }
         });
