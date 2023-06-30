@@ -2,17 +2,10 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
-    <title>Korrekturrapport</title>
+    <title>Korrektur talbok</title>
     <style>
-      body {
-          background-color: #dae1ed;
-          font-family: arial, helvetica, verdana, sans-serif;
-          font-size: 115%;
-          margin-left: 5%;
-          margin-right: 5%;
-      }
       .company {
-          font-size: 150%;
+          font-size: 100%;
       }
       .report-title {
           font-size: 125%;
@@ -20,9 +13,45 @@
       .project {
           font-size: 115%;
       }
-      .comment { padding-bottom: 1em }
-      /* .comment-head { font-style: italic; } */
+      .comment {
+          padding-bottom: 1em
+      }
+      td {
+          vertical-align: top;
+      }
+      @media screen {
+          body {
+              background-color: #dae1ed;
+              font-family: arial, helvetica, verdana, sans-serif;
+              font-size: 100%;
+              width: 50em;
+              margin: auto;
+              margin-bottom: 1%;
+          }
+      }
+      @media print {
+          .comment {
+              page-break-inside: avoid;
+          }
+          @page {
+              size: auto;
+              margin: 10%;
+          }
+      }
 </style>
+<script>
+  function copyToClipboard(textToCopy) {
+      var input = document.createElement("input");
+      document.body.appendChild(input);
+      input.value = textToCopy;
+      input.select();
+      document.execCommand("Copy");
+      input.remove();
+  }
+  function copyLastColumn(tr) {
+      copyToClipboard(tr.lastElementChild.innerHTML);
+  }
+</script>
   </head>
   <body id="content">
     <div class="head">
