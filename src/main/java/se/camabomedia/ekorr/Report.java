@@ -207,7 +207,8 @@ public class Report {
                 + "</td></tr>";
 
             if (!seek.equals("")) {
-                html += "<tr><td class='comment-head'>Sök:</td><td class='comment-seek'>"
+                html += "<tr onclick=\"copyLastColumn(this)\">"
+                    + "<td class='comment-head'>Sök:</td><td class='comment-seek'>"
                     + seek + "</td></tr>";
             }
             if (!wrong.equals("")) {
