@@ -92,6 +92,8 @@ public class SimpleViewController implements Initializable {
                     case ENTER:
                         createNote();
                         break;
+                    case ESCAPE:
+                        stage.close();
                     default:
                         break;
                     }

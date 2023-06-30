@@ -152,8 +152,17 @@ public class CommentView3Controller implements Initializable {
 
     }
 
-    public void initData(Report report) {
+    public void initData(Stage stage, Report report) {
+        this.stage = stage;
         this.report = report;
+        stage.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    if (event.getCode() == KeyCode.ESCAPE) {
+                        stage.close();
+                    }
+                }
+            });
     }
 
     private void setSelectedType(int i) {
