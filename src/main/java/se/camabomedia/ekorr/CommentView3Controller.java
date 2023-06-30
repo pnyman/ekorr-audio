@@ -1,6 +1,7 @@
 package se.camabomedia.ekorr;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
@@ -10,12 +11,14 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
@@ -30,11 +33,11 @@ public class CommentView3Controller implements Initializable {
     @FXML // fx:id="listViewType"
     private ListView<String> listViewType; // Value injected by FXMLLoader
 
-    @FXML // fx:id="textAreaRight"
-    private TextArea textAreaRight; // Value injected by FXMLLoader
-
     @FXML // fx:id="textAreaSeek"
     private TextArea textAreaSeek; // Value injected by FXMLLoader
+
+    @FXML // fx:id="textAreaRight"
+    private TextArea textAreaRight; // Value injected by FXMLLoader
 
     @FXML // fx:id="textAreaWrong"
     private TextArea textAreaWrong; // Value injected by FXMLLoader
@@ -42,6 +45,7 @@ public class CommentView3Controller implements Initializable {
     @FXML // fx:id="textFieldPage"
     private TextField textFieldPage; // Value injected by FXMLLoader
 
+    private Stage stage;
     private Report report;
     private String type = null;
 
@@ -66,6 +70,33 @@ public class CommentView3Controller implements Initializable {
 
         // This sets the initial height of the ListView:
         // listViewType.setPrefHeight(commentTypes.length * 24 + 2);
+
+        // Make Tab focus next element in text areas
+        ArrayList<TextArea> areas = new ArrayList<>();
+        areas.add(textAreaSeek);
+        areas.add(textAreaWrong);
+        areas.add(textAreaRight);
+
+        for (TextArea area : areas) {
+            area.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    KeyCode code = event.getCode();
+                    if (code == KeyCode.TAB && !event.isShiftDown() && !event.isControlDown()) {
+                        event.consume();
+                        Node node = (Node) event.getSource();
+                        KeyEvent newEvent = new KeyEvent(event.getSource(),
+                                event.getTarget(), event.getEventType(),
+                                event.getCharacter(), event.getText(),
+                                event.getCode(), event.isShiftDown(),
+                                true, event.isAltDown(),
+                                event.isMetaDown());
+                        node.fireEvent(newEvent);
+                    }
+                }
+            });
+        }
+
 
         // Handle selection of comment type
         listViewType.getSelectionModel().selectedItemProperty()
