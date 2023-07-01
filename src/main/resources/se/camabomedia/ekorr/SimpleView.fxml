@@ -84,7 +84,7 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            <MenuItem fx:id="menuItemManual" mnemonicParsing="false" onAction="#handleMenuItemManual" text="Läs manual" />
           </items>
         </Menu>
       </menus>

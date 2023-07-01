@@ -1,9 +1,15 @@
 package se.camabomedia.ekorr;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ResourceBundle;
+import java.awt.Desktop;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -44,6 +50,9 @@ public class SimpleViewController implements Initializable {
 
     @FXML // fx:id="menuItemOpen"
     private MenuItem menuItemOpen; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuItemManual"
+    private MenuItem menuItemManual; // Value injected by FXMLLoader
 
     @FXML // fx:id="titlePane"
     private Pane titlePane;
@@ -252,9 +261,38 @@ public class SimpleViewController implements Initializable {
         taskThread.start();
     }
 
+    void viewManual() throws FileNotFoundException, IOException {
+        InputStream inputStream = getClass().getResourceAsStream("/se/camabomedia/ekorr/Manual.html");
+        File tempFile;
+        tempFile = File.createTempFile("Manual", ".html");
+
+        // Write the InputStream contents to the temporary file
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+        }
+
+        inputStream.close();
+        Desktop.getDesktop().browse(tempFile.toURI());
+    }
+
     @FXML
     void handleMenuItemOpen(ActionEvent event) {
         selectProject();
+    }
+
+    @FXML
+    void handleMenuItemManual(ActionEvent event) {
+        try {
+            viewManual();
+        }
+        catch (IOException e) {
+            System.out.println("Error " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @FXML

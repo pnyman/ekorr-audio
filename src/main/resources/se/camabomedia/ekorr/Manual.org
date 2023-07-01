@@ -1,0 +1,71 @@
+#+STARTUP: overview indent
+#+OPTIONS: num:t toc:t ':t
+#+LANGUAGE: sv
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+
+#+TITLE: Ekorr
+
+* Översikt
+
+Ekorr är till för att skriva korrektur-rapporter för talböcker.
+
+* Öppna en talbok
+
+Gå till menyn File > Open... och navigera till aktuell talbok.
+Välj filen ncc.html i talboksmappen, och klicka på Öppna.
+
+* Skapa en kommentar
+
+En ny kommentar kan skapas genom att antingen trycka på returtangenten,
+eller på knappen Skapa.
+Ett nytt fönster öppas med ett antal fält att fylla i,
+och val att göra.
+
+- Sidan:
+  Det sidnummer som kommentaren gäller.
+  Finns inget sidnummer lämnas fältet blankt.
+- Typ:
+  Välj en typ genom att skriva en siffra 1--8,
+  eller klicka på en typ,
+  eller välj en hjälp av piltangenterna.
+- Sök:
+  Här skivs eller kopieras in en bit text från talboken som kommentaren gäller.
+  Detta kan sedan användas av inläsaren vid rättning för att hitta
+  rätt ställe i talboken.
+- Fel:
+  Om typen är Felläsning skriver man här den felaktiga läsningen.
+- Rätt:
+  Om typen är Felläsning skriver man här den korrekta läsningen.
+
+
+Man kan navigera mellan de olika fälten met Tab-tangenten,
+för att gå bakåt trycker man Skift-Tab.
+När man är klar klickar man på OK.
+Vill man inte spara kommentaren klickar man på Avbryt,
+eller trycker på Escape-tangenten.
+
+* Redigera en kommentar
+
+En kommentar kan redigeras genom att välja en kommentar i listan,
+med musen eller piltangenterna, och antingen trycka på mellanslagstangenten,
+eller klicka på knappen Redigera.
+Man kan också dubbelklicka på en kommentar.
+Samma fönster som vid Skapa kommentar kommer upp,
+men nu redan ifyllt med de aktuella uppgifterna.
+Ändra det som behövs, och klicka på OK.
+
+* Ta bort en kommentar
+
+Man kan ta bort en kommentar genom att välja en kommentar i listan,
+med musen eller piltangenterna,
+och klicka på knappen Ta bort.
+
+* Rapporten
+
+Rapporten återfinns i mappen =___Korrektur-rapport= i talboksmappen.
+
+Alla operationer -- skapa, redigera eller ta bort en kommentar --
+sparas i rapporten automatiskt.
+Om man stänger en talbok med en påbörjad rapport och sedan öppnar den på nytt,
+kommer rapporten att läsas in i programmet, s
+å att man kan fortsätta med korrekturet.
