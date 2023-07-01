@@ -125,7 +125,7 @@ public class SimpleViewController implements Initializable {
             }
         });
 
-        // Edit comment by pressing SPACE, remove by pressing Delete
+        // Key events
         tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -140,7 +140,6 @@ public class SimpleViewController implements Initializable {
                             event.consume();
                             break;
                         default:
-                            // Handle other key events, if needed
                             break;
                     }
                 }
@@ -158,6 +157,18 @@ public class SimpleViewController implements Initializable {
                 }
             }
         });
+
+        tableView.setOnKeyTyped(evt -> {
+                if (evt.getCharacter().equals("?")) {
+                    try {
+                        viewManual();
+                    }
+                    catch (IOException e) {
+                        System.out.println("Error " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            });
 
         tableView.setRowFactory(tv -> {
             TableRow<Report.Comment> row = new TableRow<>();
