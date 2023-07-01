@@ -176,8 +176,7 @@ public class Report {
         String right = "";
 
         public Comment(String page, String type, String seek, String wrong, String right) {
-            if (page != null)
-                this.page = sanitize(page);
+            makePageNumber(page);
             if (type != null)
                 this.type = sanitize(type);
             if (seek != null)
@@ -186,6 +185,15 @@ public class Report {
                 this.wrong = sanitize(wrong);
             if (right != null)
                 this.right = sanitize(right);
+        }
+
+        private void makePageNumber(String page) {
+            if (page == null || page == "") {
+                this.page = "saknas";
+            }
+            else {
+                this.page = sanitize(page);
+            }
         }
 
         private String sanitize(String s) {
