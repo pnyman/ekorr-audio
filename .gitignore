@@ -1,6 +1,7 @@
 *#
 target/
 src/test/resources/
+src/main/resources/se/camabomedia/ekorr/Manual.html
 .settings/
 pom.xml.tag
 pom.xml.releaseBackup
