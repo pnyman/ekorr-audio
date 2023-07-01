@@ -58,13 +58,21 @@ men nu redan ifyllt med de aktuella uppgifterna.
 
 Man kan ta bort en kommentar genom att välja en kommentar i listan,
 med musen eller piltangenterna,
-och klicka på knappen Ta bort.
+och klicka på knappen Ta bort,
+eller trycka på tangenten Delete.
+OBS: det finns ingen ångra-funktion.
+
+* Ändra ordningen på kommentarer
+
+För att flytta en kommentar uppåt eller nedåt i listan
+kan man dra den med musen
+eller trycka Alt+piltangent.
 
 * Rapporten
 
 Rapporten återfinns i mappen =___Korrektur-rapport= i talboksmappen.
 
-Alla operationer -- skapa, redigera eller ta bort en kommentar --
+Alla operationer -- skapa, redigera, ta bort eller flytta en kommentar --
 sparas i rapporten automatiskt.
 Om man stänger en talbok med en påbörjad rapport och sedan öppnar den på nytt,
 kommer rapporten att läsas in i programmet, s

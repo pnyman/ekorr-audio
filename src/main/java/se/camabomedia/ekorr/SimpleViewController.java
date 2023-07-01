@@ -1,15 +1,14 @@
 package se.camabomedia.ekorr;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.awt.Desktop;
 
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
@@ -26,8 +25,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.input.KeyCode;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -79,6 +81,7 @@ public class SimpleViewController implements Initializable {
     private Ncc ncc;
     public Report report;
     private Report.Comment selected;
+    private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
 
     /**
      * Initializes the controller class.
@@ -104,26 +107,93 @@ public class SimpleViewController implements Initializable {
         tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
+                if (event.isAltDown()) {
                     switch (event.getCode()) {
-                    case SPACE:
-                        editComment();
-                        break;
-                    case DELETE:
-                        removeComment();
-                    default:
-                        break;
+                        case UP:
+                            moveSelectedRowUp();
+                            event.consume();
+                            break;
+                        case DOWN:
+                            moveSelectedRowDown();
+                            event.consume();
+                            break;
+                        default:
+                            // Handle other key events, if needed
+                            break;
                     }
+                }
+
+                else {
+                    switch (event.getCode()) {
+                        case SPACE:
+                            editComment();
+                            break;
+                        case DELETE:
+                            removeComment();
+                        default:
+                            break;
+                    }
+                }
             }
         });
 
-        // Edit comment with double click
         tableView.setRowFactory(tv -> {
             TableRow<Report.Comment> row = new TableRow<>();
+
+            // Edit comment with double click
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     editComment();
                 }
             });
+
+            // Rearrange order of comment by drag and drop
+            row.setOnDragDetected(event -> {
+                if (! row.isEmpty()) {
+                    Integer index = row.getIndex();
+                    Dragboard db = row.startDragAndDrop(TransferMode.MOVE);
+                    db.setDragView(row.snapshot(null, null));
+                    ClipboardContent cc = new ClipboardContent();
+                    cc.put(SERIALIZED_MIME_TYPE, index);
+                    db.setContent(cc);
+                    event.consume();
+                }
+            });
+
+            row.setOnDragOver(event -> {
+                Dragboard db = event.getDragboard();
+                if (db.hasContent(SERIALIZED_MIME_TYPE)) {
+                    if (row.getIndex() != ((Integer)db.getContent(SERIALIZED_MIME_TYPE)).intValue()) {
+                        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                        event.consume();
+                    }
+                }
+            });
+
+            row.setOnDragDropped(event -> {
+                Dragboard db = event.getDragboard();
+                if (db.hasContent(SERIALIZED_MIME_TYPE)) {
+                    int draggedIndex = (Integer) db.getContent(SERIALIZED_MIME_TYPE);
+                    Report.Comment draggedComment = tableView.getItems().remove(draggedIndex);
+                    int dropIndex ;
+
+                    if (row.isEmpty()) {
+                        dropIndex = tableView.getItems().size() ;
+                    }
+                    else {
+                        dropIndex = row.getIndex();
+                    }
+
+                    tableView.getItems().add(dropIndex, draggedComment);
+                    event.setDropCompleted(true);
+                    tableView.getSelectionModel().select(dropIndex);
+                    event.consume();
+
+                    rearrangeOrderOfComments();
+                }
+            });
+            // Ends rearrange order of comments by drag and drop
+
             return row;
         });
 
@@ -259,6 +329,35 @@ public class SimpleViewController implements Initializable {
             }
         });
         taskThread.start();
+    }
+
+    private void rearrangeOrderOfComments() {
+        ObservableList<Report.Comment> obComments = tableView.getItems();
+        ArrayList<Report.Comment> comments = new ArrayList<Report.Comment>(obComments);
+        report.setComments(comments);
+        report.createAndWriteReport();
+    }
+
+    private void moveSelectedRowUp() {
+        int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+        if (selectedIndex > 0) {
+            ObservableList<Report.Comment> items = tableView.getItems();
+            Report.Comment selectedItem = items.remove(selectedIndex);
+            items.add(selectedIndex - 1, selectedItem);
+            tableView.getSelectionModel().clearAndSelect(selectedIndex - 1);
+            rearrangeOrderOfComments();
+        }
+    }
+
+    private void moveSelectedRowDown() {
+        int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
+        ObservableList<Report.Comment> items = tableView.getItems();
+        if (selectedIndex < items.size() - 1) {
+            Report.Comment selectedItem = items.remove(selectedIndex);
+            items.add(selectedIndex + 1, selectedItem);
+            tableView.getSelectionModel().clearAndSelect(selectedIndex + 1);
+            rearrangeOrderOfComments();
+        }
     }
 
     void viewManual() throws FileNotFoundException, IOException {

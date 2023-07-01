@@ -151,6 +151,10 @@ public class Report {
         }
     }
 
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
     public ArrayList<Comment> getComments() {
         return comments;
     }
