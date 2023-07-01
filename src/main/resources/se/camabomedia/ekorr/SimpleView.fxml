@@ -76,8 +76,9 @@
     </MenuBar>
       <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
         <columns>
-          <TableColumn fx:id="tableColumnPage" editable="false" maxWidth="65.6000075340271" minWidth="50.0" prefWidth="65.6000075340271" resizable="false" sortable="false" text="Sida" />
-            <TableColumn fx:id="tableColumnComment" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="710.0" resizable="false" sortable="false" text="Kommentar" />
+          <TableColumn fx:id="tableColumnPage" editable="false" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" resizable="false" sortable="false" text="Sida" />
+            <TableColumn fx:id="tableColumnType" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" sortable="false" text="Typ" />
+            <TableColumn fx:id="tableColumnComment" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="608.0" resizable="false" sortable="false" text="Kommentar" />
         </columns>
          <VBox.margin>
             <Insets left="4.0" right="4.0" />

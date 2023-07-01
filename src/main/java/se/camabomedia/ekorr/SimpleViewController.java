@@ -48,6 +48,9 @@ public class SimpleViewController implements Initializable {
     @FXML
     private TableColumn<Report.Comment, String> tableColumnPage;
 
+    @FXML // fx:id="tableColumnType"
+    private TableColumn<Report.Comment, String> tableColumnType; // Value injected by FXMLLoader
+
     @FXML
     private TableColumn<Report.Comment, String> tableColumnComment;
 
@@ -113,8 +116,8 @@ public class SimpleViewController implements Initializable {
 
         // Set the cell value factories for each column
         tableColumnPage.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPage()));
-        tableColumnComment.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType() + " " +
-                                                                                     cellData.getValue().getWrong() + " " +
+        tableColumnType.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType()));
+        tableColumnComment.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getWrong() + " " +
                                                                                      cellData.getValue().getRight()));
 
         // Register a listener on the selection model property
