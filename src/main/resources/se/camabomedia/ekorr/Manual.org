@@ -7,17 +7,20 @@
 
 * Översikt
 
-Ekorr är till för att skriva korrektur-rapporter för talböcker.
+Ekorr är till för att skriva korrektur-rapporter för talböcker i Daisy-format.
 
 * Öppna en talbok
 
-Gå till menyn File > Open... och navigera till aktuell talbok.
+Gå till menyn File > Öppna... och navigera till aktuell talbok.
 Välj filen ncc.html i talboksmappen, och klicka på Öppna.
 
 * Skapa en kommentar
 
-En ny kommentar kan skapas genom att antingen trycka på returtangenten,
-eller på knappen Skapa.
+En ny kommentar kan skapas genom att antingen
+trycka på returtangenten,
+klicka på knappen Skapa,
+eller välja Skapa kommentar från menyn Edit.
+
 Ett nytt fönster öppas med ett antal fält att fylla i,
 och val att göra.
 
@@ -47,9 +50,12 @@ eller trycker på Escape-tangenten.
 * Redigera en kommentar
 
 En kommentar kan redigeras genom att välja en kommentar i listan,
-med musen eller piltangenterna, och antingen trycka på mellanslagstangenten,
-eller klicka på knappen Redigera.
+med musen eller piltangenterna, och antingen
+trycka på mellanslagstangenten,
+klicka på knappen Redigera,
+eller välja Redigera kommentar från menyn Edit.
 Man kan också dubbelklicka på en kommentar.
+
 Samma fönster som vid Skapa kommentar kommer upp,
 men nu redan ifyllt med de aktuella uppgifterna.
 Ändra det som behövs, och klicka på OK.
@@ -57,9 +63,11 @@ men nu redan ifyllt med de aktuella uppgifterna.
 * Ta bort en kommentar
 
 Man kan ta bort en kommentar genom att välja en kommentar i listan,
-med musen eller piltangenterna,
-och klicka på knappen Ta bort,
-eller trycka på tangenten Delete.
+med musen eller piltangenterna, och antingen
+klicka på knappen Ta bort,
+trycka på tangenten Delete,
+eller välja Ta bort kommentar från menyn Edit.
+
 OBS: det finns ingen ångra-funktion.
 
 * Ändra ordningen på kommentarer
@@ -79,3 +87,8 @@ sparas i rapporten automatiskt.
 Om man stänger en talbok med en påbörjad rapport och sedan öppnar den på nytt,
 kommer rapporten att läsas in i programmet, s
 å att man kan fortsätta med korrekturet.
+
+* Manualen
+Denna manual kan läsas genom att
+välja Läs manual från menyn Help
+eller skriva ett "?".
