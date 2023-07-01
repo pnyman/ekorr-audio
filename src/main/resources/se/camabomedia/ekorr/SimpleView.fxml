@@ -54,32 +54,17 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
+            <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Öppna…" />
+            <Menu fx:id="menuOpenRecent" mnemonicParsing="false" onAction="#handleMenuOpenRecent" text="Öppna senaste..." />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
+            <MenuItem fx:id="menuItemQuit" mnemonicParsing="false" onAction="#handleMenuItemQuit" text="Avsluta" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
           <items>
-            <MenuItem mnemonicParsing="false" text="Undo" />
-            <MenuItem mnemonicParsing="false" text="Redo" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Cut" />
-            <MenuItem mnemonicParsing="false" text="Copy" />
-            <MenuItem mnemonicParsing="false" text="Paste" />
-            <MenuItem mnemonicParsing="false" text="Delete" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Select All" />
-            <MenuItem mnemonicParsing="false" text="Unselect All" />
+            <MenuItem fx:id="menuItemCreateComment" mnemonicParsing="false" onAction="#handleMenuItemCreateComment" text="Skapa kommentar" />
+            <MenuItem fx:id="menuItemEditComment" mnemonicParsing="false" onAction="#handleMenuItemEditComment" text="Redigera kommentar" />
+            <MenuItem fx:id="menuItemRemoveComment" mnemonicParsing="false" onAction="#handleMenuItemRemoveComment" text="Ta bort kommentar" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">

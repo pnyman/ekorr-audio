@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -52,6 +53,21 @@ public class SimpleViewController implements Initializable {
 
     @FXML // fx:id="menuItemOpen"
     private MenuItem menuItemOpen; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuOpenRecent"
+    private Menu menuOpenRecent; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuItemQuit"
+    private MenuItem menuItemQuit; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuItemCreateComment"
+    private MenuItem menuItemCreateComment; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuItemEditComment"
+    private MenuItem menuItemEditComment; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuItemRemoveComment"
+    private MenuItem menuItemRemoveComment; // Value injected by FXMLLoader
 
     @FXML // fx:id="menuItemManual"
     private MenuItem menuItemManual; // Value injected by FXMLLoader
@@ -407,6 +423,31 @@ public class SimpleViewController implements Initializable {
     @FXML
     void handleMenuItemOpen(ActionEvent event) {
         selectProject();
+    }
+
+    @FXML
+    void handleMenuOpenRecent(ActionEvent event) {
+
+    }
+
+    @FXML
+    void handleMenuItemQuit(ActionEvent event) {
+        stage.close();
+    }
+
+    @FXML
+    void handleMenuItemCreateComment(ActionEvent event) {
+        createComment();
+    }
+
+    @FXML
+    void handleMenuItemEditComment(ActionEvent event) {
+        editComment();
+    }
+
+    @FXML
+    void handleMenuItemRemoveComment(ActionEvent event) {
+        removeComment();
     }
 
     @FXML
