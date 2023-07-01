@@ -205,7 +205,7 @@ public class CommentView3Controller implements Initializable {
 
     @FXML
     void handleBtnCancel(ActionEvent event) {
-
+        stage.close();
     }
 
     @FXML
