@@ -54,7 +54,7 @@ public class CommentView3Controller implements Initializable {
     private String[] commentTypes = {
         "1. Felläsning",
         "2. Omtagning",
-        "3. Utelämning",
+        "3. Lucka",
         "4. Stakning",
         "5. Paus",
         "6. Extra ljud",

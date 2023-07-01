@@ -200,7 +200,7 @@ public class Report {
 
         private void makePageNumber(String page) {
             if (page == null || page == "") {
-                this.page = "saknas";
+                this.page = "–";
             }
             else {
                 this.page = sanitize(page);
