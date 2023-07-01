@@ -151,14 +151,6 @@ public class Report {
         }
     }
 
-    public void setComments(ArrayList<Comment> comments) {
-        this.comments = comments;
-    }
-
-    public ArrayList<Comment> getComments() {
-        return comments;
-    }
-
     public void removeComment(Comment comment) {
         comments.remove(comment);
     }
@@ -168,6 +160,21 @@ public class Report {
         comments.set(index, newComment);
     }
 
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public File getReportDirectory() {
+        return directory;
+    }
+
+    public File getReportFile() {
+        return new File(directory, reportFile);
+    }
 
     /**
      * Class for individual comments

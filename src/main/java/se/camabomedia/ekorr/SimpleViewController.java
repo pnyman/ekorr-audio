@@ -65,6 +65,12 @@ public class SimpleViewController implements Initializable {
     @FXML // fx:id="x4"
     private Color x4; // Value injected by FXMLLoader
 
+    @FXML // fx:id="btnViewReport"
+    private Button btnViewReport; // Value injected by FXMLLoader
+
+    @FXML // fx:id="btnOpenFolder"
+    private Button btnOpenReportDirectory; // Value injected by FXMLLoader
+
     @FXML // fx:id="btnCreate"
     private Button btnCreate; // Value injected by FXMLLoader
 
@@ -378,6 +384,26 @@ public class SimpleViewController implements Initializable {
         Desktop.getDesktop().browse(tempFile.toURI());
     }
 
+    private void viewReport() {
+        File file = report.getReportFile();
+        try {
+            Desktop.getDesktop().browse(file.toURI());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    private void openReportDirectory() {
+        File directory = report.getReportDirectory();
+        try {
+            Desktop.getDesktop().open(directory);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     void handleMenuItemOpen(ActionEvent event) {
         selectProject();
@@ -392,6 +418,16 @@ public class SimpleViewController implements Initializable {
             System.out.println("Error " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    void handleBtnViewReport(ActionEvent event) {
+        viewReport();
+    }
+
+    @FXML
+    void handleBtnOpenReportDirectory(ActionEvent event) {
+        openReportDirectory();
     }
 
     @FXML

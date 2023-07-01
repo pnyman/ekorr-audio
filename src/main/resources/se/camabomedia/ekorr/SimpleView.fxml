@@ -98,17 +98,30 @@
             <Insets left="4.0" right="4.0" />
          </VBox.margin>
       </TableView>
-      <ButtonBar prefHeight="40.0" prefWidth="200.0">
-        <buttons>
-            <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#handleBtnCreate" text="Skapa" />
-          <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#handleBtnEdit" text="Redigera" />
-            <Button fx:id="btnRemove" mnemonicParsing="false" onAction="#handleBtnRemove" text="Ta bort" />
-            <Button fx:id="btnQuit" mnemonicParsing="false" onAction="#handleBtnQuit" text="Avsluta" />
-        </buttons>
+      <HBox>
          <VBox.margin>
             <Insets right="12.0" top="4.0" />
          </VBox.margin>
-      </ButtonBar>
+         <children>
+            <ButtonBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0">
+              <buttons>
+                  <Button fx:id="btnOpenReportDirectory" mnemonicParsing="false" onAction="#handleBtnOpenReportDirectory" text="Öppna mapp" />
+                <Button fx:id="btnViewReport" mnemonicParsing="false" onAction="#handleBtnViewReport" text="Se rapport" />
+              </buttons>
+               <HBox.margin>
+                  <Insets left="12.0" />
+               </HBox.margin>
+            </ButtonBar>
+            <ButtonBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" HBox.hgrow="ALWAYS">
+              <buttons>
+                  <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#handleBtnCreate" text="Skapa" />
+                <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#handleBtnEdit" text="Redigera" />
+                  <Button fx:id="btnRemove" mnemonicParsing="false" onAction="#handleBtnRemove" text="Ta bort" />
+                  <Button fx:id="btnQuit" mnemonicParsing="false" onAction="#handleBtnQuit" text="Avsluta" />
+              </buttons>
+            </ButtonBar>
+         </children>
+      </HBox>
     <HBox id="HBox" alignment="CENTER_LEFT" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="25.0" spacing="5.0" VBox.vgrow="NEVER">
       <children>
         <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" text="Antal kommentarer: " HBox.hgrow="ALWAYS">
