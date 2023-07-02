@@ -41,7 +41,7 @@ public class App extends Application {
         // ctrl.openProject(new File("C:/Users/qwfwq/programmering/ekorr/src/test/resources/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html"));
 
 
-        ctrl.openProject(new File("C:/Users/qwfwq/filfixaren/workspace/leverans/CA54896_Industrial_PUBLISHER_fixgen/CA_Daisy_202_audioFullText/ncc.html"));
+        // ctrl.openProject(new File("C:/Users/qwfwq/filfixaren/workspace/leverans/CA54896_Industrial_PUBLISHER_fixgen/CA_Daisy_202_audioFullText/ncc.html"));
 
         // ctrl.contentView.openContent(new File("C:/Users/qwfwq/programmering/ekorr/src/test/resources/CA60564_Box_PUBLISHER_fixgen/Daisy_202/v001618.html"));
 
