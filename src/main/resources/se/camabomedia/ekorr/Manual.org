@@ -24,17 +24,17 @@ eller välja Skapa kommentar från menyn Edit.
 Ett nytt fönster öppas med ett antal fält att fylla i,
 och val att göra.
 
-- Sidan:
+- Sida:
   Det sidnummer som kommentaren gäller.
   Finns inget sidnummer lämnas fältet blankt.
 - Typ:
   Välj en typ genom att skriva en siffra 1--8,
   eller klicka på en typ,
-  eller välj en hjälp av piltangenterna.
+  eller med hjälp av piltangenterna.
 - Sök:
-  Här skivs eller kopieras in en bit text från talboken som kommentaren gäller.
+  Här skivs eller kopieras in en bit text från talboken.
   Detta kan sedan användas av inläsaren vid rättning för att hitta
-  rätt ställe i talboken.
+  rätt ställe.
 - Fel:
   Om typen är Felläsning skriver man här den felaktiga läsningen.
 - Rätt:
@@ -70,7 +70,7 @@ eller välja Ta bort kommentar från menyn Edit.
 
 OBS: det finns ingen ångra-funktion.
 
-* Ändra ordningen på kommentarer
+* Ändra kommentarernas ordning
 
 För att flytta en kommentar uppåt eller nedåt i listan
 kan man dra den med musen
