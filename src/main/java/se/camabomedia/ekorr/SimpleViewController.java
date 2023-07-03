@@ -156,6 +156,7 @@ public class SimpleViewController implements Initializable {
                             break;
                         case DELETE:
                             removeComment();
+                            break;
                         default:
                             break;
                     }
