@@ -74,8 +74,8 @@
             <TextArea fx:id="textAreaRight" wrapText="true" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
             <ButtonBar maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" prefWidth="358.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
               <buttons>
-                <Button fx:id="btnCancel" cancelButton="true" mnemonicParsing="false" onAction="#handleBtnCancel" text="Avbryt" />
-                  <Button fx:id="btnOk" mnemonicParsing="false" onAction="#handleBtnOk" text="OK" />
+                <Button fx:id="btnCancel" cancelButton="true" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnCancel" text="Avbryt" />
+                  <Button fx:id="btnOk" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnOk" text="OK" />
               </buttons>
                <GridPane.margin>
                   <Insets bottom="12.0" />

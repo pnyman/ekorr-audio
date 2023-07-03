@@ -78,7 +78,7 @@
         <columns>
           <TableColumn fx:id="tableColumnPage" editable="false" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" resizable="false" sortable="false" text="Sida" />
             <TableColumn fx:id="tableColumnType" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" sortable="false" text="Typ" />
-            <TableColumn fx:id="tableColumnComment" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="608.0" resizable="false" sortable="false" text="Kommentar" />
+            <TableColumn fx:id="tableColumnComment" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="608.0" resizable="false" sortable="false" text="Kontext                                                                                                                                                 " />
         </columns>
          <VBox.margin>
             <Insets left="4.0" right="4.0" />
@@ -91,8 +91,8 @@
          <children>
             <ButtonBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0">
               <buttons>
-                  <Button fx:id="btnOpenReportDirectory" mnemonicParsing="false" onAction="#handleBtnOpenReportDirectory" text="Öppna mapp" />
-                <Button fx:id="btnViewReport" mnemonicParsing="false" onAction="#handleBtnViewReport" text="Se rapport" />
+                  <Button fx:id="btnOpenReportDirectory" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnOpenReportDirectory" text="Öppna mapp" />
+                <Button fx:id="btnViewReport" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnViewReport" text="Se rapport" />
               </buttons>
                <HBox.margin>
                   <Insets left="12.0" />
@@ -100,10 +100,10 @@
             </ButtonBar>
             <ButtonBar nodeOrientation="LEFT_TO_RIGHT" prefHeight="40.0" HBox.hgrow="ALWAYS">
               <buttons>
-                  <Button fx:id="btnCreate" mnemonicParsing="false" onAction="#handleBtnCreate" text="Skapa" />
-                <Button fx:id="btnEdit" mnemonicParsing="false" onAction="#handleBtnEdit" text="Redigera" />
-                  <Button fx:id="btnRemove" mnemonicParsing="false" onAction="#handleBtnRemove" text="Ta bort" />
-                  <Button fx:id="btnQuit" mnemonicParsing="false" onAction="#handleBtnQuit" text="Avsluta" />
+                  <Button fx:id="btnCreate" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnCreate" text="Skapa" />
+                <Button fx:id="btnEdit" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnEdit" text="Redigera" />
+                  <Button fx:id="btnRemove" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnRemove" text="Ta bort" />
+                  <Button fx:id="btnQuit" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnQuit" text="Avsluta" />
               </buttons>
             </ButtonBar>
          </children>
