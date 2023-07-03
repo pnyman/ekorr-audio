@@ -249,6 +249,7 @@ public class SimpleViewController implements Initializable {
                         break;
                     case ESCAPE:
                         stage.close();
+                        break;
                     default:
                         break;
                     }
