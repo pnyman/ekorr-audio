@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -20,6 +21,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -117,8 +120,7 @@ public class SimpleViewController implements Initializable {
         // Set the cell value factories for each column
         tableColumnPage.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPage()));
         tableColumnType.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType()));
-        tableColumnComment.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getWrong() + " " +
-                                                                                     cellData.getValue().getRight()));
+        tableColumnComment.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getSeek()));
 
         // Register a listener on the selection model property
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -354,8 +356,15 @@ public class SimpleViewController implements Initializable {
         Thread taskThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                report.removeComment(selected);
-                report.createAndWriteReport();
+                try {
+                    report.removeComment(selected);
+                    report.createAndWriteReport();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -364,14 +373,31 @@ public class SimpleViewController implements Initializable {
                 });
             }
         });
+
         taskThread.start();
+    }
+
+    private void warning(String text) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle(text);
+        alert.setHeaderText("");
+        alert.setContentText(text);
+        alert.showAndWait();
     }
 
     private void rearrangeOrderOfComments() {
         ObservableList<Report.Comment> obComments = tableView.getItems();
         ArrayList<Report.Comment> comments = new ArrayList<Report.Comment>(obComments);
-        report.setComments(comments);
-        report.createAndWriteReport();
+
+        try {
+            report.setComments(comments);
+            report.createAndWriteReport();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void moveSelectedRowUp() {

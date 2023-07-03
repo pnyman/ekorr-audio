@@ -1,12 +1,14 @@
 package se.camabomedia.ekorr;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
@@ -61,7 +63,37 @@ public class Report {
         comments.add(new Comment(page, type, seek, wrong, right));
     }
 
-    public void createAndWriteReport() {
+    public void createAndWriteReport() throws URISyntaxException, IOException {
+        InputStream inputStream = getClass().getResourceAsStream("/se/camabomedia/ekorr/ReportStub.xhtml");
+        File tempFile = File.createTempFile("reportstub", ".xhtml");
+
+        // Write the InputStream contents to the temporary file
+        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+        }
+        inputStream.close();
+
+        // Read and parse the report stub
+        doc = Jsoup.parse(tempFile);
+
+        addMetadata();
+        for (Comment comment : comments) {
+            doc.getElementById("comments").append(comment.toString());
+        }
+
+        // Print the report
+        File file2 = new File(directory, reportFile);
+        FileUtils.writeStringToFile(file2, doc.outerHtml(), StandardCharsets.UTF_8);
+
+        // Delete the tempfile
+        tempFile.delete();
+    }
+
+    public void createAndWriteReport_OLD() {
         // Read and parse the report stub
         URL url = getClass().getResource(stub);
 

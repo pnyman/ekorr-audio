@@ -1,5 +1,7 @@
 package se.camabomedia.ekorr;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -212,7 +214,7 @@ public class CommentView3Controller implements Initializable {
     void handleBtnOk(ActionEvent event) {
 
         if (type == null) {
-            warningDialog();
+            warningDialogType();
             return;
         }
 
@@ -220,6 +222,12 @@ public class CommentView3Controller implements Initializable {
         String seek = textAreaSeek.getText();
         String wrong = textAreaWrong.getText();
         String right = textAreaRight.getText();
+
+        if (seek == null || seek.strip() == "") {
+            warningDialogSeek();
+            return;
+        }
+
 
         Thread taskThread = new Thread(new Runnable() {
             @Override
@@ -231,7 +239,15 @@ public class CommentView3Controller implements Initializable {
                 else {
                     report.addComment(page, type, seek, wrong, right);
                 }
-                report.createAndWriteReport();
+                try {
+                    report.createAndWriteReport();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                }
+
                 Platform.runLater(new Runnable() {
                     @Override
                     public void run() {
@@ -243,14 +259,26 @@ public class CommentView3Controller implements Initializable {
         });
 
         taskThread.start();
+
+        // Stage stage = (Stage) btnOk.getScene().getWindow();
+        // stage.close();
     }
 
 
-    void warningDialog() {
+    void warningDialogType() {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("Kommentartyp saknas");
         alert.setHeaderText("");
         alert.setContentText("Välj typ av kommentar.");
+        alert.showAndWait();
+    }
+
+
+    void warningDialogSeek() {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Söktext saknas");
+        alert.setHeaderText("");
+        alert.setContentText("Infoga kontext i fältet Sök");
         alert.showAndWait();
     }
 

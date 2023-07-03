@@ -2,6 +2,7 @@ package se.camabomedia.ekorr;
 
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -29,8 +30,11 @@ public class ReportTest {
 
             r.createAndWriteReport();
         }
-        catch (URISyntaxException e1) {
-            e1.printStackTrace();
+        catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
         }
         catch (Exception e) {
             fail(e.getMessage());
