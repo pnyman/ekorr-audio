@@ -32,6 +32,8 @@ import javafx.scene.control.TableView;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
@@ -110,6 +112,8 @@ public class SimpleViewController implements Initializable {
     public Report report;
     private Report.Comment selected;
     private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
+    KeyCombination ctrlO = KeyCodeCombination.keyCombination("Ctrl+O");
+    KeyCombination ctrlQ = KeyCodeCombination.keyCombination("Ctrl+Q");
 
     /**
      * Initializes the controller class.
@@ -134,7 +138,13 @@ public class SimpleViewController implements Initializable {
         tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.isAltDown()) {
+                if (ctrlO.match(event)) {
+                    selectProject();
+                }
+                else if (ctrlQ.match(event)) {
+                    stage.close();
+                }
+                else if (event.isAltDown()) {
                     switch (event.getCode()) {
                         case UP:
                             moveSelectedRowUp();
@@ -151,14 +161,14 @@ public class SimpleViewController implements Initializable {
 
                 else {
                     switch (event.getCode()) {
-                        case SPACE:
-                            editComment();
-                            break;
-                        case DELETE:
-                            removeComment();
-                            break;
-                        default:
-                            break;
+                    case SPACE:
+                        editComment();
+                        break;
+                    case DELETE:
+                        removeComment();
+                        break;
+                    default:
+                        break;
                     }
                 }
             }
@@ -246,9 +256,6 @@ public class SimpleViewController implements Initializable {
                     switch (event.getCode()) {
                     case ENTER:
                         createComment();
-                        break;
-                    case ESCAPE:
-                        stage.close();
                         break;
                     default:
                         break;
