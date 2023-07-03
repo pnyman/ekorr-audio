@@ -97,6 +97,10 @@ public class CommentView3Controller implements Initializable {
                                 event.isMetaDown());
                         node.fireEvent(newEvent);
                     }
+                    if (code == KeyCode.ENTER && !event.isShiftDown() && !event.isControlDown()) {
+                        event.consume();
+                        saveAndClose();
+                    }
                 }
             });
         }
@@ -140,8 +144,12 @@ public class CommentView3Controller implements Initializable {
                 case DIGIT8:
                     setSelectedType(7);
                     break;
+                case ENTER:
+                    saveAndClose();
+                    break;
                 case ESCAPE:
                     stage.close();
+                    break;
                 default:
                     break;
                 }
@@ -175,8 +183,9 @@ public class CommentView3Controller implements Initializable {
     public void initData(Stage stage, Report report) {
         this.stage = stage;
         this.report = report;
-        makeEscapeClose();
+        bindKeys();
     }
+
 
     /**
      * Edits a comment
@@ -186,19 +195,28 @@ public class CommentView3Controller implements Initializable {
         this.report = report;
         this.comment = comment;
         editComment = true;
-        makeEscapeClose();
+        bindKeys();
     }
 
-    private void makeEscapeClose() {
+
+    private void bindKeys() {
         stage.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
-                    if (event.getCode() == KeyCode.ESCAPE) {
+                    switch (event.getCode()) {
+                    case ENTER:
+                        saveAndClose();
+                        break;
+                    case ESCAPE:
                         stage.close();
+                        break;
+                    default:
+                        break;
                     }
                 }
             });
     }
+
 
     private void fillForm() {
         type = comment.getType();
@@ -213,14 +231,7 @@ public class CommentView3Controller implements Initializable {
         listViewType.getFocusModel().focus(i);
     }
 
-    @FXML
-    void handleBtnCancel(ActionEvent event) {
-        stage.close();
-    }
-
-    @FXML
-    void handleBtnOk(ActionEvent event) {
-
+    private void saveAndClose() {
         if (type == null) {
             warningDialogType();
             return;
@@ -235,7 +246,6 @@ public class CommentView3Controller implements Initializable {
             warningDialogSeek();
             return;
         }
-
 
         Thread taskThread = new Thread(new Runnable() {
             @Override
@@ -270,6 +280,16 @@ public class CommentView3Controller implements Initializable {
 
         // Stage stage = (Stage) btnOk.getScene().getWindow();
         // stage.close();
+    }
+
+    @FXML
+    void handleBtnCancel(ActionEvent event) {
+        stage.close();
+    }
+
+    @FXML
+    void handleBtnOk(ActionEvent event) {
+        saveAndClose();
     }
 
 
