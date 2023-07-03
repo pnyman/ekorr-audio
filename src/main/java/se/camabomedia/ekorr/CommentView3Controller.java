@@ -159,6 +159,14 @@ public class CommentView3Controller implements Initializable {
             }
         });
 
+        // Set default type
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                listViewType.getSelectionModel().select(0);
+            }
+        });
+
     }
 
     /**
