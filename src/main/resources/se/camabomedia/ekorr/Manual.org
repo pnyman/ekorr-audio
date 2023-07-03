@@ -11,8 +11,10 @@ Ekorr är till för att skriva korrektur-rapporter för talböcker i Daisy-forma
 
 * Öppna en talbok
 
-Gå till menyn File > Öppna... och navigera till aktuell talbok.
-Välj filen ncc.html i talboksmappen, och klicka på Öppna.
+För att öppna en talbok och börja redigera, antingen:
+- tryck Ctrl-O
+- gå till menyn File > Öppna...
+Välj filen ncc.html i talboksmappen.
 
 * Skapa en kommentar
 
