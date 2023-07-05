@@ -284,6 +284,7 @@ public class SimpleViewController implements Initializable {
         report = new Report(ncc);
         // titlePane.getChildren().add(new Label(ncc.getTitle()));
         makeWindowTitle();
+        tableView.setPlaceholder(null);
         setColumns();
     }
 
