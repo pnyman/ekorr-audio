@@ -20,10 +20,13 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
@@ -37,8 +40,10 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -246,6 +251,8 @@ public class SimpleViewController implements Initializable {
             return row;
         });
 
+        tableView.setPlaceholder(splashScreen1());
+
     }
 
     void initData(Stage stage) {
@@ -292,6 +299,45 @@ public class SimpleViewController implements Initializable {
         stage.setTitle(windowTitle);
     }
 
+    private VBox splashScreen1() {
+        VBox vb = new VBox();
+
+        Label topLabel = makeLabel("Öppna en talbok");
+        topLabel.setOnMouseClicked((click) -> selectProject());
+
+        Label middleLabel = makeLabel("Öppna senaste");
+
+        Label bottomLabel = makeLabel("Läs manual");
+        bottomLabel.setOnMouseClicked((click) -> {
+            try {
+                viewManual();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        vb.setAlignment(Pos.CENTER);
+        vb.getChildren().addAll(topLabel, middleLabel, bottomLabel);
+        return vb;
+    }
+
+    private Label makeLabel(String text) {
+        int fontSize = 32;
+        int padding = 32;
+        String color = "#2E86C1";
+
+        Label label = new Label(text);
+        label.setStyle("-fx-font-weight: normal; -fx-font-size: 32");
+        label.setPadding(new Insets(0, 0, padding, 0)); // top, right, bottom, left
+        label.setTextFill(Color.web(color));
+        label.setOnMouseEntered(event -> label.setStyle("-fx-font-weight: bold; -fx-font-size: 32"));
+        label.setOnMouseExited(event -> label.setStyle("-fx-font-weight: normal; -fx-font-size: 32"));
+
+        return label;
+    }
+
     @FXML
     public void setColumns() {
         // Add data here
@@ -308,6 +354,11 @@ public class SimpleViewController implements Initializable {
     }
 
     private void createComment() {
+        if (report == null) {
+            warning("Ingen talbok är öppen.");
+            return;
+        }
+
         final Stage commentStage = new Stage();
         commentStage.initModality(Modality.APPLICATION_MODAL);
         commentStage.initOwner(stage);
@@ -344,7 +395,7 @@ public class SimpleViewController implements Initializable {
         try {
             commentScene = new Scene(fxmlLoader.load());
             commentStage.setScene(commentScene);
-            commentStage.setTitle("Skapa kommentar");
+            commentStage.setTitle("Redigera kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
             ctrl.initData(commentStage, report, selected);
             commentStage.setResizable(false);
@@ -388,7 +439,7 @@ public class SimpleViewController implements Initializable {
 
     private void warning(String text) {
         Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle(text);
+        alert.setTitle("");
         alert.setHeaderText("");
         alert.setContentText(text);
         alert.showAndWait();
@@ -450,6 +501,11 @@ public class SimpleViewController implements Initializable {
     }
 
     private void viewReport() {
+        if (report == null) {
+            warning("Ingen talbok är öppen.");
+            return;
+        }
+
         File file = report.getReportFile();
         try {
             Desktop.getDesktop().browse(file.toURI());
@@ -460,6 +516,11 @@ public class SimpleViewController implements Initializable {
     }
 
     private void openReportDirectory() {
+        if (report == null) {
+            warning("Ingen talbok är öppen.");
+            return;
+        }
+
         File directory = report.getReportDirectory();
         try {
             Desktop.getDesktop().open(directory);
