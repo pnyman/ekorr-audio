@@ -13,7 +13,7 @@ Ekorr är till för att skriva korrektur-rapporter för talböcker i Daisy-forma
 
 För att öppna en talbok och börja redigera, antingen:
 - tryck Ctrl-O
-- gå till menyn File > Öppna...
+- gå till menyn Arkiv > Öppna...
 Välj filen ncc.html i talboksmappen.
 
 * Skapa en kommentar
@@ -21,7 +21,7 @@ Välj filen ncc.html i talboksmappen.
 En ny kommentar kan skapas genom att antingen:
 - trycka på Retur-tangenten
 - klicka på knappen Skapa
-- välja Skapa kommentar från menyn Edit.
+- välja Skapa kommentar från menyn Redigera.
 
 Ett nytt fönster öppas med ett antal fält att fylla i,
 och val att göra.
@@ -58,7 +58,7 @@ med musen eller piltangenterna, och antingen:
 - trycka på mellanslagstangenten
 - dubbelklicka på kommentaren
 - klicka på knappen Redigera
-- välja Redigera kommentar från menyn Edit.
+- välja Redigera kommentar från menyn Redigera.
 
 Samma fönster som vid Skapa kommentar kommer upp,
 men nu redan ifyllt med de aktuella uppgifterna.
@@ -70,7 +70,7 @@ Man kan ta bort en kommentar genom att välja en kommentar i listan,
 med musen eller piltangenterna, och antingen:
 - klicka på knappen Ta bort
 - trycka på tangenten Delete
-- välja Ta bort kommentar från menyn Edit.
+- välja Ta bort kommentar från menyn Redigera.
 
 OBS: Det finns ingen ångra-funktion.
 
@@ -94,5 +94,5 @@ så att man kan fortsätta med korrekturet.
 
 * Manualen
 Denna manual kan läsas genom att
-välja Läs manual från menyn Help
+välja Läs manual från menyn Hjälp
 eller skriva ett "?".

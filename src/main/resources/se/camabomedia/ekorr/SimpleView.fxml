@@ -52,7 +52,7 @@
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
-        <Menu mnemonicParsing="false" text="File">
+        <Menu mnemonicParsing="false" text="Arkiv">
           <items>
             <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Öppna…" />
             <Menu fx:id="menuOpenRecent" mnemonicParsing="false" onAction="#handleMenuOpenRecent" text="Öppna senaste..." />
@@ -60,14 +60,14 @@
             <MenuItem fx:id="menuItemQuit" mnemonicParsing="false" onAction="#handleMenuItemQuit" text="Avsluta" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
+        <Menu mnemonicParsing="false" text="Redigera">
           <items>
             <MenuItem fx:id="menuItemCreateComment" mnemonicParsing="false" onAction="#handleMenuItemCreateComment" text="Skapa kommentar" />
             <MenuItem fx:id="menuItemEditComment" mnemonicParsing="false" onAction="#handleMenuItemEditComment" text="Redigera kommentar" />
             <MenuItem fx:id="menuItemRemoveComment" mnemonicParsing="false" onAction="#handleMenuItemRemoveComment" text="Ta bort kommentar" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Help">
+        <Menu mnemonicParsing="false" text="Hjälp">
           <items>
             <MenuItem fx:id="menuItemManual" mnemonicParsing="false" onAction="#handleMenuItemManual" text="Läs manual" />
           </items>
