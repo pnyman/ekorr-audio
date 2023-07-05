@@ -61,7 +61,7 @@ public class CommentView3Controller implements Initializable {
         "5. Paus",
         "6. Extra ljud",
         "7. Bakgrundsljud",
-        "8. Fritext"
+        "8. Övrigt"
     };
 
 
