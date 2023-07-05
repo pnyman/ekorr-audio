@@ -1,0 +1,14 @@
+jpackage --type msi ^
+         --input .\target ^
+         --dest . ^
+         --main-jar ekorr-1.0-SNAPSHOT-shaded.jar ^
+         --main-class se.camabomedia.ekorr.Main ^
+         --module-path "C:\Program Files (x86)\Java\javafx-jmods-17.0.7" ^
+         --add-modules javafx.controls,javafx.fxml,java.base,java.desktop,java.net.http,java.scripting,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.xml.dom ^
+         --win-shortcut ^
+         --win-menu ^
+         --name Ekorr ^
+         --app-version 0.1 ^
+         --description "Skapa korrektur-rapporter för talböcker" ^
+         --vendor "Camabo Media" ^
+         --copyright "Copyright 2023, All rights reserved"
