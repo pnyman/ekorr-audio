@@ -54,7 +54,7 @@ public class Report {
             .replaceAll(" ", "_")
             .replaceAll("\\W", "")
             .replaceAll("__", "_");
-        reportFile = String.join("_", identifier, sanitizedTitle + ".xhtml");
+        reportFile = String.join("_", identifier, sanitizedTitle + ".html");
     }
 
 
