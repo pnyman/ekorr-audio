@@ -79,52 +79,22 @@ public class Report {
 
         // Read and parse the report stub
         doc = Jsoup.parse(tempFile);
-
-        addMetadata();
-        for (Comment comment : comments) {
-            doc.getElementById("comments").append(comment.toString());
-        }
-
-        // Print the report
-        File file2 = new File(directory, reportFile);
-        FileUtils.writeStringToFile(file2, doc.outerHtml(), StandardCharsets.UTF_8);
-
-        // Delete the tempfile
-        tempFile.delete();
-    }
-
-    public void createAndWriteReport_OLD() {
-        // Read and parse the report stub
-        URL url = getClass().getResource(stub);
-
-        try {
-            File file = new File(Paths.get(url.toURI()).toString());
-            doc = Jsoup.parse(file);
-        } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        // Add metadata
         addMetadata();
 
-        // Add the comments to the report
+        int nr = 0;
         for (Comment comment : comments) {
+            comment.setNr(++nr);
             doc.getElementById("comments").append(comment.toString());
         }
 
         // Print the report
         File file = new File(directory, reportFile);
-        try {
-            FileUtils.writeStringToFile(file, doc.outerHtml(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        FileUtils.writeStringToFile(file, doc.outerHtml(), StandardCharsets.UTF_8);
+
+        // Delete the tempfile
+        tempFile.delete();
     }
+
 
     private void addMetadata() {
         doc.getElementsByClass("date").get(0)
@@ -217,6 +187,7 @@ public class Report {
         String seek = "";
         String wrong = "";
         String right = "";
+        int commentNr;
 
         public Comment(String page, String type, String seek, String wrong, String right) {
             makePageNumber(page);
@@ -266,29 +237,36 @@ public class Report {
             return right;
         }
 
+        public void setNr(int nr) {
+            commentNr = nr;
+        }
+
         @Override
         public String toString() {
-            String html = "<div class='comment'>"
-                + "<table class='comment-table'>"
-                + "<tr><td class='comment-head'>Sida:</td><td class='comment-page'>" + page
-                + "<tr><td class='comment-head'>Typ:</td><td class='comment-type'>" + type
-                + "</td></tr>";
+            String html = "<div class='comment'><table class='comment-table'><tbody>";
+
+            html += "<tr><th class='comment-nr'>" + commentNr + ".</th><th class='comment-type'>" + type + "</th></tr>";
+            // html += "<tr><td class='comment-head'>Typ:</td><td class='comment-type'>" + type + "</td></tr>";
+
+            html += "<tr><td></td><td><table class='inner-table'><tbody>";
+
+            if (!wrong.equals("")) {
+                html += "<tr><td class='comment-head'>Fel:</td><td class='comment-wrong'>" + wrong + "</td></tr>";
+            }
+
+            if (!right.equals("")) {
+                html += "<tr><td class='comment-head'>Rätt:</td><td class='comment-right'>" + right + "</td></tr>";
+            }
+
+            html += "<tr><td class='comment-head'>Sida:</td><td class='comment-page'>" + page + "</td></tr>";
 
             if (!seek.equals("")) {
                 html += "<tr onclick=\"copyLastColumn(this)\">"
                     + "<td class='comment-head'>Sök:</td><td class='comment-seek'>"
                     + seek + "</td></tr>";
             }
-            if (!wrong.equals("")) {
-                html += "<tr><td class='comment-head'>Fel:</td><td class='comment-wrong'>"
-                    + wrong + "</td></tr>";
-            }
-            if (!right.equals("")) {
-                html += "<tr><td class='comment-head'>Rätt:</td><td class='comment-right'>"
-                    + right + "</td></tr>";
-            }
 
-            html += "</table></div>";
+            html += "</tbody></table></td></tr></tbody></table></div>";
             return html;
         }
     }
