@@ -91,7 +91,7 @@
          <children>
             <ButtonBar nodeOrientation="RIGHT_TO_LEFT" prefHeight="40.0">
               <buttons>
-                  <Button fx:id="btnOpenReportDirectory" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnOpenReportDirectory" text="Öppna mapp" />
+                  <Button fx:id="btnOpenReportDirectory" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnOpenReportDirectory" text="Rapportmapp" />
                 <Button fx:id="btnViewReport" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnViewReport" text="Se rapport" />
               </buttons>
                <HBox.margin>
