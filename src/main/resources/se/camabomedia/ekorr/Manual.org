@@ -83,7 +83,7 @@ För att flytta en kommentar uppåt eller nedåt i listan kan man antingen:
 * Rapporten
 
 Rapporten återfinns i mappen =___Korrektur-rapport= i talboksmappen.
-För att öppna den mappen, klicka på knappen Öppna mapp.
+För att öppna den mappen, klicka på knappen Rapportmapp.
 För att se rapporten i webbläsare, klicka på knappen Se rapport.
 
 Alla operationer -- skapa, redigera, ta bort eller ändra ordningen på kommentarer --
