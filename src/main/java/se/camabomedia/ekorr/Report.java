@@ -266,7 +266,12 @@ public class Report {
                     + seek + "</td></tr>";
             }
 
-            html += "</tbody></table></td></tr></tbody></table></div>";
+            // Close elements....
+            html += "</tbody></table></td></tr>";
+            // Extra tr for spacing when pasted into email
+            html += "<tr><td>&nbsp;</td></tr>";
+            // Close rest of elements
+            html += "</tbody></table></div>";
             return html;
         }
     }
