@@ -134,6 +134,8 @@ public class SimpleViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        tableView.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
+
         // Set the cell value factories for each column
         tableColumnPage.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPage()));
         tableColumnType.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType()));
