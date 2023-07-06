@@ -1,6 +1,5 @@
 package se.camabomedia.ekorr;
 
-import java.io.File;
 import java.io.IOException;
 
 import javafx.application.Application;
@@ -12,6 +11,7 @@ import javafx.stage.Stage;
 public class App extends Application {
 
     private static Scene scene;
+    public Settings settings = new Settings();
 
     @Override
     public void start(Stage stage) throws IOException {
@@ -24,7 +24,7 @@ public class App extends Application {
         SimpleViewController ctrl = fxmlLoader.getController();
         stage.setScene(scene);
         // stage.setMaximized(true);
-        ctrl.initData(stage);
+        ctrl.initData(stage, settings);
 
         // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
         //         @Override
@@ -43,7 +43,7 @@ public class App extends Application {
 
         // ctrl.openProject(new File("C:/Users/qwfwq/filfixaren/workspace/leverans/CA54896_Industrial_PUBLISHER_fixgen/CA_Daisy_202_audioFullText/ncc.html"));
 
-        // ctrl.contentView.openContent(new File("C:/Users/qwfwq/programmering/ekorr/src/test/resources/CA60564_Box_PUBLISHER_fixgen/Daisy_202/v001618.html"));
+        // ctrl.openProject(new File("C:/Users/qwfwq/programmering/ekorr/src/test/resources/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html"));
 
         // ctrl.setFirstElement();
 

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
@@ -22,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -32,6 +34,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -39,6 +42,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -119,6 +123,10 @@ public class SimpleViewController implements Initializable {
     private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
     KeyCombination ctrlO = KeyCodeCombination.keyCombination("Ctrl+O");
     KeyCombination ctrlQ = KeyCodeCombination.keyCombination("Ctrl+Q");
+
+    private Settings settings;
+
+    private Hashtable<String, String> proofreaderName;
 
     /**
      * Initializes the controller class.
@@ -251,12 +259,19 @@ public class SimpleViewController implements Initializable {
             return row;
         });
 
-        tableView.setPlaceholder(splashScreen1());
 
     }
 
-    void initData(Stage stage) {
+    void initData(Stage stage, Settings settings) {
         this.stage = stage;
+        this.settings = settings;
+
+        try {
+            proofreaderName = settings.getProofreaderName();
+        }
+        catch (FileNotFoundException ignore) {
+        }
+
         stage.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
@@ -269,7 +284,23 @@ public class SimpleViewController implements Initializable {
                     }
                 }
             });
+
+
+        makeTableViewPlaceholder();
     }
+
+
+    private void makeTableViewPlaceholder() {
+        if (proofreaderName == null) {
+            tableView.setPlaceholder(splashScreen1());
+        }
+        else if (report == null) {
+            tableView.setPlaceholder(splashScreen2());
+        }
+
+        // tableView.setPlaceholder(null);
+    }
+
 
     private void selectProject() {
         FileChooser fileChooser = new FileChooser();
@@ -284,7 +315,7 @@ public class SimpleViewController implements Initializable {
         report = new Report(ncc);
         // titlePane.getChildren().add(new Label(ncc.getTitle()));
         makeWindowTitle();
-        tableView.setPlaceholder(null);
+        makeTableViewPlaceholder();
         setColumns();
     }
 
@@ -301,6 +332,68 @@ public class SimpleViewController implements Initializable {
     }
 
     private VBox splashScreen1() {
+        Label label = new Label("Skriv in ditt namn");
+        label.setStyle("-fx-font-weight: normal; -fx-font-size: 32");
+        label.setPadding(new Insets(0, 0, 24, 0)); // top, right, bottom, left
+
+        Label firstNameLabel = new Label("Förnamn:");
+        firstNameLabel.setPrefWidth(65);
+        TextField firstNameField = new TextField();
+        Platform.runLater(() -> firstNameField.requestFocus());
+
+
+        Label lastNameLabel = new Label("Efternamn:");
+        lastNameLabel.setPrefWidth(65);
+        TextField lastNameField = new TextField();
+
+        Button okBtn = new Button("OK");
+        okBtn.setOnMouseClicked((click) -> {
+                settings.addProofreaderName(firstNameField.getText(), lastNameField.getText());
+            try {
+                proofreaderName = settings.getProofreaderName();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            makeTableViewPlaceholder();
+        });
+
+        int width = 270;
+        int height = 35;
+
+        HBox rowOne = new HBox();
+        rowOne.setAlignment(Pos.CENTER_LEFT);
+        rowOne.setPrefWidth(width);
+        rowOne.setMinWidth(width);
+        rowOne.setMaxWidth(width);
+        rowOne.setPrefHeight(height);
+        rowOne.setMinHeight(height);
+        rowOne.setMaxHeight(height);
+        rowOne.setSpacing(12);
+        rowOne.getChildren().addAll(firstNameLabel, firstNameField);
+
+        HBox rowTwo = new HBox();
+        rowTwo.setAlignment(Pos.CENTER_LEFT);
+        rowTwo.setPrefWidth(width);
+        rowTwo.setMinWidth(width);
+        rowTwo.setMaxWidth(width);
+        rowTwo.setPrefHeight(height);
+        rowTwo.setMinHeight(height);
+        rowTwo.setMaxHeight(height);
+        rowTwo.setSpacing(12);
+        rowTwo.getChildren().addAll(lastNameLabel, lastNameField, okBtn);
+
+        VBox innerVb = new VBox();
+        innerVb.setAlignment(Pos.CENTER);
+        innerVb.getChildren().addAll(rowOne, rowTwo);
+
+        VBox vb = new VBox();
+        vb.setAlignment(Pos.CENTER);
+        vb.getChildren().addAll(label, innerVb);
+        return vb;
+    }
+
+    private VBox splashScreen2() {
         VBox vb = new VBox();
 
         Label topLabel = makeLabel("Öppna en talbok");
