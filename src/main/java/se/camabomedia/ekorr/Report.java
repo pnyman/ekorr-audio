@@ -23,7 +23,6 @@ public class Report {
 
     private Document doc;
     private ArrayList<Comment> comments = new ArrayList<>();
-    private String stub = "ReportStub.xhtml";
     private String reportDirectory = "___Korrektur-rapport";
 
     private File directory;
@@ -64,8 +63,8 @@ public class Report {
     }
 
     public void createAndWriteReport() throws URISyntaxException, IOException {
-        InputStream inputStream = getClass().getResourceAsStream("/se/camabomedia/ekorr/ReportStub.xhtml");
-        File tempFile = File.createTempFile("reportstub", ".xhtml");
+        InputStream inputStream = getClass().getResourceAsStream("/se/camabomedia/ekorr/ReportStub.html");
+        File tempFile = File.createTempFile("reportstub", ".html");
 
         // Write the InputStream contents to the temporary file
         try (FileOutputStream fos = new FileOutputStream(tempFile)) {
@@ -268,8 +267,8 @@ public class Report {
 
             // Close elements....
             html += "</tbody></table></td></tr>";
-            // Extra tr for spacing when pasted into email
-            html += "<tr><td>&nbsp;</td></tr>";
+            // Extra tr for spacing when pasted into Outlook
+            html += "<tr><td>&nbsp;</td><td>&nbsp;</td></tr>";
             // Close rest of elements
             html += "</tbody></table></div>";
             return html;
