@@ -30,7 +30,10 @@ public class Report {
     private String reportFile;
     private String identifier;
     private String title;
+    private String narrator;
+    private String totalTime;
     private ArrayList<String> creators;
+    private String proofreader;
 
     /**
      * Constructor
@@ -40,6 +43,8 @@ public class Report {
         this.identifier = ncc.getIdentifier();
         this.title = ncc.getTitle();
         this.creators = ncc.getCreators();
+        this.narrator = ncc.getNarrator();
+        this.totalTime = ncc.getTotalTime();
 
         directory = new File(ncc.getDirectory(), reportDirectory);
 
@@ -96,6 +101,9 @@ public class Report {
     }
 
 
+    /**
+     * Sets the metadata in the report file.
+     */
     private void addMetadata() {
         doc.getElementsByClass("date").get(0)
             .appendText(java.time.LocalDate.now().toString());
@@ -105,6 +113,20 @@ public class Report {
             .appendText(title);
         doc.getElementsByClass("creator").get(0)
             .appendText(String.join(", ", creators));
+        if (narrator != null) {
+            doc.getElementsByClass("narrator").get(0)
+                .appendText("Inläsare: " + narrator)
+                .appendElement("br");
+        }
+        if (proofreader != null) {
+            doc.getElementsByClass("proofreader").get(0)
+                .appendText("Korrektur: " + proofreader)
+                .appendElement("br");
+        }
+        if (totalTime != null) {
+            doc.getElementsByClass("total-time").get(0)
+                .appendText("Tid: " + totalTime);
+        }
     }
 
     /**
@@ -180,6 +202,10 @@ public class Report {
 
     public String getNccFile() {
         return ncc.getNccFile().toString();
+    }
+
+    public void setProofreader(String proofreader) {
+        this.proofreader = proofreader;
     }
 
 

@@ -23,8 +23,10 @@ public class Ncc {
     private Document doc;
     private File nccFile;
     private File directory;
-    private String title;
     private String identifier;
+    private String title;
+    private String narrator;
+    private String totalTime;
     private String contentFile = null;
     private ArrayList<String> creators = new ArrayList<>();
     private ArrayList<NccItem> nccItems = new ArrayList<>();
@@ -99,6 +101,10 @@ public class Ncc {
                 identifier = elt.attr("content");
             else if (elt.attr("name").equals("dc:creator"))
                 creators.add(elt.attr("content"));
+            else if (elt.attr("name").equals("ncc:totalTime"))
+                totalTime = elt.attr("content");
+            else if (elt.attr("name").equals("ncc:narrator"))
+                narrator = elt.attr("content");
         }
     }
 
@@ -206,6 +212,14 @@ public class Ncc {
 
     public ArrayList<String> getPages() {
         return pages;
+    }
+
+    public String getTotalTime() {
+        return totalTime;
+    }
+
+    public String getNarrator() {
+        return narrator;
     }
 
 }

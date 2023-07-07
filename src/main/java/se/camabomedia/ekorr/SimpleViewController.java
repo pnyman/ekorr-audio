@@ -127,7 +127,6 @@ public class SimpleViewController implements Initializable {
 
     private Settings settings;
 
-    private Hashtable<String, String> proofreaderName;
 
     /**
      * Initializes the controller class.
@@ -275,8 +274,6 @@ public class SimpleViewController implements Initializable {
                 onExitApplication();
             });
 
-        proofreaderName = settings.getProofreaderName();
-
         stage.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
@@ -330,7 +327,7 @@ public class SimpleViewController implements Initializable {
 
 
     private void makeTableViewPlaceholder() {
-        if (proofreaderName == null) {
+        if (settings.getProofreader() == null) {
             tableView.setPlaceholder(splashScreen1());
         }
         else if (report == null) {
@@ -359,6 +356,12 @@ public class SimpleViewController implements Initializable {
 
         ncc = new Ncc(selectedFile);
         report = new Report(ncc);
+
+        String proofreader = settings.getProofreader();
+        if (proofreader != null) {
+            report.setProofreader(proofreader);
+        }
+
         // titlePane.getChildren().add(new Label(ncc.getTitle()));
         makeWindowTitle();
         makeTableViewPlaceholder();
@@ -394,8 +397,7 @@ public class SimpleViewController implements Initializable {
 
         Button okBtn = new Button("OK");
         okBtn.setOnMouseClicked((click) -> {
-                settings.addProofreaderName(firstNameField.getText(), lastNameField.getText());
-                proofreaderName = settings.getProofreaderName();
+                settings.addProofreader(firstNameField.getText(), lastNameField.getText());
 
             makeTableViewPlaceholder();
         });

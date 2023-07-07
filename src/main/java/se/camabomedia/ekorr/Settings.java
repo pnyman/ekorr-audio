@@ -42,30 +42,21 @@ public class Settings {
     }
 
     @SuppressWarnings("unchecked")
-    public void addProofreaderName(String proofreaderFirstName, String proofreaderLastName) {
+    public void addProofreader(String proofreaderFirstName, String proofreaderLastName) {
         settings.put("proofreaderFirstName", proofreaderFirstName);
         settings.put("proofreaderLastName", proofreaderLastName);
         writeJSON();
     }
 
-    public Hashtable<String, String> getProofreaderName() {
-        String firstName = null;
-        String lastName = null;
-        Hashtable<String, String> name = null;
-
-        if (!settingsFile.exists()) {
-            return name;
+    public String getProofreader() {
+        if (!settingsFile.exists()
+            || settings.get("proofreaderFirstName") == null
+            || settings.get("proofreaderLastName") == null) {
+            return null;
         }
 
-        try {
-            name = new Hashtable<>();
-            name.put("firstName", (String) settings.get("proofreaderFirstName"));
-            name.put("lastName", (String) settings.get("proofreaderLastName"));
-        }
-        catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-
+        String name = (String) settings.get("proofreaderFirstName");
+        name += " " + (String) settings.get("proofreaderLastName");
         return name;
     }
 
@@ -78,27 +69,30 @@ public class Settings {
         writeJSON();
     }
 
+    /**
+     * Gets data from the json-file about last project.
+     * @return Hashtable.
+     *         If data about last project is not in the json-file,
+     *         the hashtable is returned empty.
+     */
     public Hashtable<String, String> getLastProject() {
         String lastProjectNcc = null;
         String lastProjectTitle = null;
         String lastProjectAuthor = null;
         String lastProjectID = null;
-        Hashtable<String, String> lastProject = null;
+        Hashtable<String, String> lastProject = new Hashtable<>();
 
         if (!settingsFile.exists()) {
             return lastProject;
         }
 
         try {
-           lastProject = new Hashtable<>();
            lastProject.put("lastProjectNcc", (String) settings.get("lastProjectNcc"));
            lastProject.put("lastProjectTitle", (String) settings.get("lastProjectTitle"));
            lastProject.put("lastProjectAuthor", (String) settings.get("lastProjectAuthor"));
            lastProject.put("lastProjectID", (String) settings.get("lastProjectID"));
         }
-        catch (NullPointerException ignore) {
-            return lastProject;
-        }
+        catch (NullPointerException ignore) {}
 
         return lastProject;
     }
