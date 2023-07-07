@@ -1,6 +1,7 @@
 package se.camabomedia.ekorr;
 
 import java.awt.Desktop;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -262,17 +263,19 @@ public class SimpleViewController implements Initializable {
         });
 
 
+
     }
+
 
     void initData(Stage stage, Settings settings) {
         this.stage = stage;
         this.settings = settings;
 
-        try {
-            proofreaderName = settings.getProofreaderName();
-        }
-        catch (FileNotFoundException ignore) {
-        }
+        stage.setOnHiding( event -> {
+                onExitApplication();
+            });
+
+        proofreaderName = settings.getProofreaderName();
 
         stage.getScene().setOnKeyPressed(new EventHandler<KeyEvent>() {
                 @Override
@@ -292,6 +295,40 @@ public class SimpleViewController implements Initializable {
     }
 
 
+    private void onExitApplication() {
+        if (report != null) {
+
+            String nccFile = "";
+            String title = "";
+            String author = "";
+            String ID = "";
+
+            try {
+                nccFile = ncc.getNccFile().toString();
+            }
+            catch (Exception ignore) {}
+
+            try {
+                title = ncc.getTitle();
+            }
+            catch (Exception ignore) {}
+
+            try {
+                author = ncc.getCreators().get(0);
+            }
+            catch (Exception ignore) {}
+
+            try {
+                ID = ncc.getIdentifier();
+            }
+            catch (Exception ignore) {}
+
+            settings.addLastProject(nccFile, title, author, ID);
+
+        }
+    }
+
+
     private void makeTableViewPlaceholder() {
         if (proofreaderName == null) {
             tableView.setPlaceholder(splashScreen1());
@@ -299,8 +336,9 @@ public class SimpleViewController implements Initializable {
         else if (report == null) {
             tableView.setPlaceholder(splashScreen2());
         }
-
-        // tableView.setPlaceholder(null);
+        else {
+            tableView.setPlaceholder(null);
+        }
     }
 
 
@@ -313,6 +351,12 @@ public class SimpleViewController implements Initializable {
     }
 
     public void openProject(File selectedFile) {
+
+        if (!selectedFile.exists()) {
+            warning("Filen\n" + selectedFile.toString() + "\n" + "existerar inte.");
+            return;
+        }
+
         ncc = new Ncc(selectedFile);
         report = new Report(ncc);
         // titlePane.getChildren().add(new Label(ncc.getTitle()));
@@ -351,11 +395,7 @@ public class SimpleViewController implements Initializable {
         Button okBtn = new Button("OK");
         okBtn.setOnMouseClicked((click) -> {
                 settings.addProofreaderName(firstNameField.getText(), lastNameField.getText());
-            try {
                 proofreaderName = settings.getProofreaderName();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
 
             makeTableViewPlaceholder();
         });
@@ -392,16 +432,25 @@ public class SimpleViewController implements Initializable {
         VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);
         vb.getChildren().addAll(label, innerVb);
+
+        // Default values from modena.css
+        vb.setStyle("-fx-focus-color: #039ED3; -fx-faint-focus-color: #039ED322;");
+
         return vb;
     }
 
     private VBox splashScreen2() {
-        VBox vb = new VBox();
+        Label middleLabel = null;
+        Hashtable<String, String> lastProj = settings.getLastProject();
 
         Label topLabel = makeLabel("Öppna en talbok");
         topLabel.setOnMouseClicked((click) -> selectProject());
 
-        Label middleLabel = makeLabel("Öppna senaste");
+        if (!lastProj.isEmpty()) {
+            middleLabel = makeLabel("Öppna senaste");
+            middleLabel.setOnMouseClicked((click) ->
+                                          openProject(new File(lastProj.get("lastProjectNcc"))));
+        }
 
         Label bottomLabel = makeLabel("Läs manual");
         bottomLabel.setOnMouseClicked((click) -> {
@@ -414,8 +463,14 @@ public class SimpleViewController implements Initializable {
             }
         });
 
+        VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);
-        vb.getChildren().addAll(topLabel, middleLabel, bottomLabel);
+        if (middleLabel != null) {
+            vb.getChildren().addAll(topLabel, middleLabel, bottomLabel);
+        }
+        else {
+            vb.getChildren().addAll(topLabel, bottomLabel);
+        }
         return vb;
     }
 
@@ -536,8 +591,8 @@ public class SimpleViewController implements Initializable {
     private void warning(String text) {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("");
-        alert.setHeaderText("");
-        alert.setContentText(text);
+        alert.setHeaderText(text);
+        alert.setContentText("");
         alert.showAndWait();
     }
 

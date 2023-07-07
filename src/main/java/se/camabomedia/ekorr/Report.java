@@ -26,7 +26,7 @@ public class Report {
     private String reportDirectory = "___Korrektur-rapport";
 
     private File directory;
-    // private Ncc ncc;
+    private Ncc ncc;
     private String reportFile;
     private String identifier;
     private String title;
@@ -36,6 +36,7 @@ public class Report {
      * Constructor
      */
     public Report(Ncc ncc) {
+        this.ncc = ncc;
         this.identifier = ncc.getIdentifier();
         this.title = ncc.getTitle();
         this.creators = ncc.getCreators();
@@ -176,6 +177,14 @@ public class Report {
     public File getReportFile() {
         return new File(directory, reportFile);
     }
+
+    public String getNccFile() {
+        return ncc.getNccFile().toString();
+    }
+
+
+
+    //------------------------------------------------------------------------------------------------------------
 
     /**
      * Class for individual comments

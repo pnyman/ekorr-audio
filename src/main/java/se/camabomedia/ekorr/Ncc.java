@@ -21,6 +21,7 @@ import org.jsoup.select.Elements;
  */
 public class Ncc {
     private Document doc;
+    private File nccFile;
     private File directory;
     private String title;
     private String identifier;
@@ -35,6 +36,7 @@ public class Ncc {
     public Ncc(String nccFileString) {
         try {
             File nccFile = new File(nccFileString);
+            this.nccFile = nccFile;
             directory = nccFile.getParentFile();
             doc = Jsoup.parse(nccFile, "UTF-8");
             pages.add("n/a");
@@ -49,6 +51,7 @@ public class Ncc {
 
     public Ncc(File nccFile) {
         try {
+            this.nccFile = nccFile;
             directory = nccFile.getParentFile();
             doc = Jsoup.parse(nccFile, "UTF-8");
             pages.add("n/a");
@@ -154,6 +157,10 @@ public class Ncc {
 
     public NccItem getNccItem(String parID) {
         return parIDTable.get(parID);
+    }
+
+    public File getNccFile() {
+        return nccFile;
     }
 
     public ArrayList<NccItem> getNccItems() {

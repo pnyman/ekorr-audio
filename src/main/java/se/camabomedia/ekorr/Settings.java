@@ -17,7 +17,6 @@ import org.json.simple.parser.ParseException;
 public class Settings {
 
     JSONObject settings = new JSONObject();
-    JSONParser jsonParser = new JSONParser();
     String localAppData = System.getenv("LOCALAPPDATA");
     String appDirectory = "CamaboMediaEkorr";
     File settingsDirectory = new File(localAppData, appDirectory);
@@ -25,6 +24,21 @@ public class Settings {
 
     public Settings() {
         settingsDirectory.mkdirs();
+
+        if (settingsFile.exists()) {
+            try {
+                FileReader jsonFile = new FileReader(settingsFile);
+                Object obj = new JSONParser().parse(jsonFile);
+                settings = (JSONObject) obj;
+            } catch (ParseException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            settings = new JSONObject();
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -32,6 +46,61 @@ public class Settings {
         settings.put("proofreaderFirstName", proofreaderFirstName);
         settings.put("proofreaderLastName", proofreaderLastName);
         writeJSON();
+    }
+
+    public Hashtable<String, String> getProofreaderName() {
+        String firstName = null;
+        String lastName = null;
+        Hashtable<String, String> name = null;
+
+        if (!settingsFile.exists()) {
+            return name;
+        }
+
+        try {
+            name = new Hashtable<>();
+            name.put("firstName", (String) settings.get("proofreaderFirstName"));
+            name.put("lastName", (String) settings.get("proofreaderLastName"));
+        }
+        catch (NullPointerException e) {
+            e.printStackTrace();
+        }
+
+        return name;
+    }
+
+    @SuppressWarnings("unchecked")
+    public void addLastProject(String ncc, String title, String author, String ID) {
+        settings.put("lastProjectNcc", ncc);
+        settings.put("lastProjectTitle", title);
+        settings.put("lastProjectAuthor", author);
+        settings.put("lastProjectID", ID);
+        writeJSON();
+    }
+
+    public Hashtable<String, String> getLastProject() {
+        String lastProjectNcc = null;
+        String lastProjectTitle = null;
+        String lastProjectAuthor = null;
+        String lastProjectID = null;
+        Hashtable<String, String> lastProject = null;
+
+        if (!settingsFile.exists()) {
+            return lastProject;
+        }
+
+        try {
+           lastProject = new Hashtable<>();
+           lastProject.put("lastProjectNcc", (String) settings.get("lastProjectNcc"));
+           lastProject.put("lastProjectTitle", (String) settings.get("lastProjectTitle"));
+           lastProject.put("lastProjectAuthor", (String) settings.get("lastProjectAuthor"));
+           lastProject.put("lastProjectID", (String) settings.get("lastProjectID"));
+        }
+        catch (NullPointerException ignore) {
+            return lastProject;
+        }
+
+        return lastProject;
     }
 
     private void writeJSON() {
@@ -43,32 +112,6 @@ public class Settings {
         }
     }
 
-    public Hashtable<String, String> getProofreaderName() throws FileNotFoundException {
-        String firstName = null;
-        String lastName = null;
-        Hashtable<String, String> name = null;
 
-        try {
-            FileReader jsonFile = new FileReader(settingsFile);
-            Object obj = new JSONParser().parse(jsonFile);
-            JSONObject jo = (JSONObject) obj;
-            firstName = (String) jo.get("proofreaderFirstName");
-            lastName = (String) jo.get("proofreaderLastName");
-            name = new Hashtable<>();
-            name.put("firstName", firstName);
-            name.put("lastName", lastName);
-        }
-        catch (ParseException e) {
-            e.printStackTrace();
-        }
-        // catch (FileNotFoundException e) {
-        //     e.printStackTrace();
-        // }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return name;
-    }
 
 }
