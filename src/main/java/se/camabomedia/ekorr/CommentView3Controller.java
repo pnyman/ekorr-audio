@@ -55,14 +55,15 @@ public class CommentView3Controller implements Initializable {
     private final String ENDASH = "–";
 
     private String[] commentTypes = {
-        "1. Felläsning",
-        "2. Omtagning",
-        "3. Lucka",
-        "4. Stakning",
-        "5. Paus",
-        "6. Extra ljud",
-        "7. Bakgrundsljud",
-        "8. Övrigt"
+        "1. Läsfel",
+        "2. Talsyntes",
+        "3. Omtagning",
+        "4. Lucka",
+        "5. Stakning",
+        "6. Paus",
+        "7. Extra ljud",
+        "8. Bakgrundsljud",
+        "9. Övrigt"
     };
 
     private Ncc ncc;
@@ -146,6 +147,9 @@ public class CommentView3Controller implements Initializable {
                     break;
                 case DIGIT8:
                     setSelectedType(7);
+                    break;
+                case DIGIT9:
+                    setSelectedType(8);
                     break;
                 case ENTER:
                     saveAndClose();
@@ -333,7 +337,7 @@ public class CommentView3Controller implements Initializable {
         Alert alert = new Alert(AlertType.WARNING);
         alert.setTitle("Söktext saknas");
         alert.setHeaderText("");
-        alert.setContentText("Infoga kontext i fältet Sök");
+        alert.setContentText("Infoga kontext i fältet Se");
         alert.showAndWait();
     }
 
