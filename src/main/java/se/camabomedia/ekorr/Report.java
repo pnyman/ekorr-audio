@@ -115,7 +115,7 @@ public class Report {
             .appendText(String.join(", ", creators));
         if (narrator != null) {
             doc.getElementsByClass("narrator").get(0)
-                .appendText("Inläsare: " + narrator)
+                .appendText("Inläsning: " + narrator)
                 .appendElement("br");
         }
         if (proofreader != null) {
