@@ -509,7 +509,7 @@ public class SimpleViewController implements Initializable {
             commentStage.setScene(commentScene);
             commentStage.setTitle("Skapa kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
-            ctrl.initData(commentStage, report);
+            ctrl.initData(commentStage, report, ncc);
             commentStage.setResizable(false);
             commentStage.showAndWait();
             setColumns();
@@ -536,7 +536,7 @@ public class SimpleViewController implements Initializable {
             commentStage.setScene(commentScene);
             commentStage.setTitle("Redigera kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
-            ctrl.initData(commentStage, report, selected);
+            ctrl.initData(commentStage, report, selected, ncc);
             commentStage.setResizable(false);
             commentStage.showAndWait();
             setColumns();

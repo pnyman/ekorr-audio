@@ -52,6 +52,7 @@ public class CommentView3Controller implements Initializable {
     private Report.Comment comment;
     private String type = null;
     boolean editComment = false;
+    private final String ENDASH = "–";
 
     private String[] commentTypes = {
         "1. Felläsning",
@@ -63,6 +64,8 @@ public class CommentView3Controller implements Initializable {
         "7. Bakgrundsljud",
         "8. Övrigt"
     };
+
+    private Ncc ncc;
 
 
     /**
@@ -180,9 +183,10 @@ public class CommentView3Controller implements Initializable {
     /**
      * Creates a new comment
      */
-    public void initData(Stage stage, Report report) {
+    public void initData(Stage stage, Report report, Ncc ncc) {
         this.stage = stage;
         this.report = report;
+        this.ncc = ncc;
         bindKeys();
     }
 
@@ -190,10 +194,11 @@ public class CommentView3Controller implements Initializable {
     /**
      * Edits a comment
      */
-    public void initData(Stage stage, Report report, Report.Comment comment) {
+    public void initData(Stage stage, Report report, Report.Comment comment, Ncc ncc) {
         this.stage = stage;
         this.report = report;
         this.comment = comment;
+        this.ncc = ncc;
         editComment = true;
         bindKeys();
     }
@@ -220,7 +225,15 @@ public class CommentView3Controller implements Initializable {
 
     private void fillForm() {
         type = comment.getType();
-        textFieldPage.setText(comment.getPage());
+
+        String pageNr = comment.getPage();
+        if (pageNr == ENDASH) {
+            textFieldPage.setText("");
+        }
+        else {
+            textFieldPage.setText(pageNr);
+        }
+
         textAreaSeek.setText(comment.getSeek());
         textAreaWrong.setText(comment.getWrong());
         textAreaRight.setText(comment.getRight());
@@ -232,12 +245,20 @@ public class CommentView3Controller implements Initializable {
     }
 
     private void saveAndClose() {
+        String page = textFieldPage.getText();
+
+        if (!checkPageNr(page)) {
+            warningDialogPageNr(page);
+            textFieldPage.setText("");
+            Platform.runLater(() -> textFieldPage.requestFocus());
+            return;
+        }
+
         if (type == null) {
             warningDialogType();
             return;
         }
 
-        String page = textFieldPage.getText();
         String seek = textAreaSeek.getText();
         String wrong = textAreaWrong.getText();
         String right = textAreaRight.getText();
@@ -282,14 +303,20 @@ public class CommentView3Controller implements Initializable {
         // stage.close();
     }
 
-    @FXML
-    void handleBtnCancel(ActionEvent event) {
-        stage.close();
+    private boolean checkPageNr(String pageNr) {
+        if (pageNr.strip() == "" || pageNr.strip() == ENDASH) {
+            return true;
+        }
+        return ncc.getPages().contains(pageNr);
     }
 
-    @FXML
-    void handleBtnOk(ActionEvent event) {
-        saveAndClose();
+
+    void warningDialogPageNr(String pageNr) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("Felaktigt sidnummer");
+        alert.setHeaderText("Detta sidnummer finns inte i talboken:");
+        alert.setContentText(pageNr);
+        alert.showAndWait();
     }
 
 
@@ -308,6 +335,16 @@ public class CommentView3Controller implements Initializable {
         alert.setHeaderText("");
         alert.setContentText("Infoga kontext i fältet Sök");
         alert.showAndWait();
+    }
+
+    @FXML
+    void handleBtnCancel(ActionEvent event) {
+        stage.close();
+    }
+
+    @FXML
+    void handleBtnOk(ActionEvent event) {
+        saveAndClose();
     }
 
 }

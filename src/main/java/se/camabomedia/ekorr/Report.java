@@ -34,6 +34,7 @@ public class Report {
     private String totalTime;
     private ArrayList<String> creators;
     private String proofreader;
+    private final String ENDASH = "–";
 
     /**
      * Constructor
@@ -242,8 +243,8 @@ public class Report {
         }
 
         private void makePageNumber(String page) {
-            if (page == null || page == "") {
-                this.page = "–";
+            if (page == null || page.strip() == "") {
+                this.page = ENDASH;
             }
             else {
                 this.page = sanitize(page);
