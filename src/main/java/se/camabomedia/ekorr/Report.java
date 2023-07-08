@@ -217,6 +217,9 @@ public class Report {
         this.proofreader = proofreader;
     }
 
+    public String getNumberOfComments() {
+        return Integer.toString(comments.size());
+    }
 
 
     //------------------------------------------------------------------------------------------------------------

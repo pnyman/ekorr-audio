@@ -108,8 +108,8 @@ public class SimpleViewController implements Initializable {
     @FXML // fx:id="menuItemManual"
     private MenuItem menuItemManual; // Value injected by FXMLLoader
 
-    @FXML // fx:id="titlePane"
-    private Pane titlePane;
+    @FXML // fx:id="labelNrOfComments"
+    private Label labelNrOfComments;
 
     @FXML // fx:id="x3"
     private Font x3; // Value injected by FXMLLoader
@@ -643,6 +643,7 @@ public class SimpleViewController implements Initializable {
         catch (NullPointerException e) {
             e.printStackTrace();
         }
+        labelNrOfComments.setText(report.getNumberOfComments());
     }
 
     private void createComment() {
