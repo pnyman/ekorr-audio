@@ -74,8 +74,8 @@ public class SimpleViewController implements Initializable {
     @FXML // fx:id="menuItemOpen"
     private MenuItem menuItemOpen; // Value injected by FXMLLoader
 
-    @FXML // fx:id="menuOpenRecent"
-    private Menu menuOpenRecent; // Value injected by FXMLLoader
+    @FXML // fx:id="menuItemOpenLast"
+    private MenuItem menuItemOpenLast; // Value injected by FXMLLoader
 
     @FXML // fx:id="menuItemQuit"
     private MenuItem menuItemQuit; // Value injected by FXMLLoader
@@ -757,8 +757,11 @@ public class SimpleViewController implements Initializable {
     }
 
     @FXML
-    void handleMenuOpenRecent(ActionEvent event) {
-
+    void handleMenuItemOpenLast(ActionEvent event) {
+        Hashtable<String, String> lastProj = settings.getLastProject();
+        if (!lastProj.isEmpty()) {
+            openProject(new File(lastProj.get("lastProjectNcc")));
+        }
     }
 
     @FXML

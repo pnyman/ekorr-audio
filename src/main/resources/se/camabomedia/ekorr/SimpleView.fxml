@@ -55,7 +55,8 @@
         <Menu mnemonicParsing="false" text="Arkiv">
           <items>
             <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Öppna…" />
-            <Menu fx:id="menuOpenRecent" mnemonicParsing="false" onAction="#handleMenuOpenRecent" text="Öppna senaste..." />
+                  <MenuItem fx:id="menuItemOpenLast" mnemonicParsing="false" onAction="#handleMenuItemOpenLast" text="Öppna senaste" />
+                  <MenuItem mnemonicParsing="false" text="Spara rapport..." />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="menuItemQuit" mnemonicParsing="false" onAction="#handleMenuItemQuit" text="Avsluta" />
           </items>
