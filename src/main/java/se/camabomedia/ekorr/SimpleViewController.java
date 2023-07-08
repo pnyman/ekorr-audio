@@ -831,6 +831,7 @@ public class SimpleViewController implements Initializable {
     @FXML
     void handleMenuItemOpenLast(ActionEvent event) {
         Hashtable<String, String> lastProj = settings.getLastProject();
+        onExitApplication();
         if (!lastProj.isEmpty()) {
             openProject(new File(lastProj.get("lastProjectNcc")));
         }
