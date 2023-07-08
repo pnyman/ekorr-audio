@@ -63,9 +63,9 @@ public class Report {
     }
 
 
-    public void addComment(String page, String type, String seek,
+    public void addComment(String nr, String page, String type, String seek,
                           String wrong, String right) {
-        comments.add(new Comment(page, type, seek, wrong, right));
+        comments.add(new Comment(nr, page, type, seek, wrong, right));
     }
 
     public void createAndWriteReport() throws URISyntaxException, IOException {
@@ -88,7 +88,7 @@ public class Report {
 
         int nr = 0;
         for (Comment comment : comments) {
-            comment.setNr(++nr);
+            comment.setNr(Integer.toString(++nr));
             doc.getElementById("comments").append(comment.toString());
         }
 
@@ -149,6 +149,7 @@ public class Report {
             e.printStackTrace();
         }
 
+        String nr = null;
         String page = null;
         String type = null;
         String seek = null;
@@ -156,6 +157,9 @@ public class Report {
         String right = null;
 
         for (Element comment : doc.getElementsByClass("comment")) {
+            for (Element elt : comment.getElementsByClass("comment-nr")) {
+                nr = elt.text().replaceAll("\\.$", "");
+            }
             for (Element elt : comment.getElementsByClass("comment-page")) {
                 page = elt.text();
             }
@@ -171,7 +175,7 @@ public class Report {
             for (Element elt : comment.getElementsByClass("comment-right")) {
                 right = elt.text();
             }
-            addComment(page, type, seek, wrong, right);
+            addComment(nr, page, type, seek, wrong, right);
         }
     }
 
@@ -216,14 +220,16 @@ public class Report {
      * Class for individual comments
      */
     class Comment {
+        String commentNr = "";
         String page = "";
         String type = "";
         String seek = "";
         String wrong = "";
         String right = "";
-        int commentNr;
 
-        public Comment(String page, String type, String seek, String wrong, String right) {
+        public Comment(String commentNr, String page, String type, String seek, String wrong, String right) {
+            if (commentNr != null)
+                this.commentNr = commentNr;
             makePageNumber(page);
             if (type != null)
                 this.type = sanitize(type);
@@ -271,9 +277,14 @@ public class Report {
             return right;
         }
 
-        public void setNr(int nr) {
+        public void setNr(String nr) {
             commentNr = nr;
         }
+
+        public String getNr() {
+            return commentNr;
+        }
+
 
         @Override
         public String toString() {

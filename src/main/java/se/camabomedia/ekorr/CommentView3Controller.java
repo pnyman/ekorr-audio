@@ -251,11 +251,11 @@ public class CommentView3Controller implements Initializable {
             @Override
             public void run() {
                 if (editComment) {
-                    Report.Comment newComment = report.new Comment(page, type, seek, wrong, right);
+                    Report.Comment newComment = report.new Comment(null, page, type, seek, wrong, right);
                     report.replaceComment(comment, newComment);
                 }
                 else {
-                    report.addComment(page, type, seek, wrong, right);
+                    report.addComment(null, page, type, seek, wrong, right);
                 }
                 try {
                     report.createAndWriteReport();

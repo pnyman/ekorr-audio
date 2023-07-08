@@ -60,6 +60,9 @@ public class SimpleViewController implements Initializable {
     @FXML
     private TableView<Report.Comment> tableView;
 
+    @FXML // fx:id="tableColumnNr"
+    private TableColumn<Report.Comment, String> tableColumnNr; // Value injected by FXMLLoader
+
     @FXML
     private TableColumn<Report.Comment, String> tableColumnPage;
 
@@ -137,6 +140,7 @@ public class SimpleViewController implements Initializable {
         tableView.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
 
         // Set the cell value factories for each column
+        tableColumnNr.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getNr()));
         tableColumnPage.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPage()));
         tableColumnType.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType()));
         tableColumnComment.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getSeek()));
