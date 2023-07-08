@@ -29,6 +29,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -391,55 +392,34 @@ public class SimpleViewController implements Initializable {
         label.setStyle("-fx-font-weight: normal; -fx-font-size: 32");
         label.setPadding(new Insets(0, 0, 24, 0)); // top, right, bottom, left
 
-        Label firstNameLabel = new Label("Förnamn:");
-        firstNameLabel.setPrefWidth(65);
-        TextField firstNameField = new TextField();
-        Platform.runLater(() -> firstNameField.requestFocus());
-
-
-        Label lastNameLabel = new Label("Efternamn:");
-        lastNameLabel.setPrefWidth(65);
-        TextField lastNameField = new TextField();
+        TextField nameField = new TextField();
+        nameField.setPrefWidth(250);
+        nameField.setMinWidth(Control.USE_PREF_SIZE);
+        nameField.setMaxWidth(Control.USE_PREF_SIZE);
+        Platform.runLater(() -> nameField.requestFocus());
 
         Button okBtn = new Button("OK");
+        okBtn.setPrefWidth(Control.USE_COMPUTED_SIZE);
+        okBtn.setMinWidth(Control.USE_PREF_SIZE);
+        okBtn.setMaxWidth(Control.USE_PREF_SIZE);
         okBtn.setOnMouseClicked((click) -> {
-                settings.addProofreader(firstNameField.getText(), lastNameField.getText());
-
-            makeTableViewPlaceholder();
+                settings.addProofreader(nameField.getText());
+                makeTableViewPlaceholder();
         });
 
-        int width = 270;
+        int width = 290;
         int height = 35;
 
-        HBox rowOne = new HBox();
-        rowOne.setAlignment(Pos.CENTER_LEFT);
-        rowOne.setPrefWidth(width);
-        rowOne.setMinWidth(width);
-        rowOne.setMaxWidth(width);
-        rowOne.setPrefHeight(height);
-        rowOne.setMinHeight(height);
-        rowOne.setMaxHeight(height);
-        rowOne.setSpacing(12);
-        rowOne.getChildren().addAll(firstNameLabel, firstNameField);
-
-        HBox rowTwo = new HBox();
-        rowTwo.setAlignment(Pos.CENTER_LEFT);
-        rowTwo.setPrefWidth(width);
-        rowTwo.setMinWidth(width);
-        rowTwo.setMaxWidth(width);
-        rowTwo.setPrefHeight(height);
-        rowTwo.setMinHeight(height);
-        rowTwo.setMaxHeight(height);
-        rowTwo.setSpacing(12);
-        rowTwo.getChildren().addAll(lastNameLabel, lastNameField, okBtn);
-
-        VBox innerVb = new VBox();
-        innerVb.setAlignment(Pos.CENTER);
-        innerVb.getChildren().addAll(rowOne, rowTwo);
+        HBox hb = new HBox();
+        hb.getChildren().addAll(nameField, okBtn);
+        hb.setSpacing(12);
+        hb.setPrefSize(width, Control.USE_COMPUTED_SIZE);
+        hb.setMinSize(width, Control.USE_PREF_SIZE);
+        hb.setMaxSize(width, Control.USE_PREF_SIZE);
 
         VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);
-        vb.getChildren().addAll(label, innerVb);
+        vb.getChildren().addAll(label, hb);
 
         // Default values from modena.css
         vb.setStyle("-fx-focus-color: #039ED3; -fx-faint-focus-color: #039ED322;");

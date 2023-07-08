@@ -42,22 +42,18 @@ public class Settings {
     }
 
     @SuppressWarnings("unchecked")
-    public void addProofreader(String proofreaderFirstName, String proofreaderLastName) {
-        settings.put("proofreaderFirstName", proofreaderFirstName);
-        settings.put("proofreaderLastName", proofreaderLastName);
+    public void addProofreader(String proofreaderName) {
+        settings.put("proofreaderName", proofreaderName);
         writeJSON();
     }
 
     public String getProofreader() {
         if (!settingsFile.exists()
-            || settings.get("proofreaderFirstName") == null
-            || settings.get("proofreaderLastName") == null) {
+            || settings.get("proofreaderName") == null) {
             return null;
         }
 
-        String name = (String) settings.get("proofreaderFirstName");
-        name += " " + (String) settings.get("proofreaderLastName");
-        return name;
+        return (String) settings.get("proofreaderName");
     }
 
     @SuppressWarnings("unchecked")
