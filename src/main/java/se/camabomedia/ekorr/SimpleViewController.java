@@ -144,6 +144,8 @@ public class SimpleViewController implements Initializable {
     private Report.Comment selected;
     private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
     KeyCombination ctrlO = KeyCodeCombination.keyCombination("Ctrl+O");
+    KeyCombination ctrlW = KeyCodeCombination.keyCombination("Ctrl+W");
+    KeyCombination ctrlE = KeyCodeCombination.keyCombination("Ctrl+E");
     KeyCombination ctrlQ = KeyCodeCombination.keyCombination("Ctrl+Q");
 
     private Settings settings;
@@ -177,6 +179,12 @@ public class SimpleViewController implements Initializable {
             public void handle(KeyEvent event) {
                 if (ctrlO.match(event)) {
                     selectProject();
+                }
+                else if (ctrlW.match(event)) {
+                    closeProject();
+                }
+                else if (ctrlE.match(event)) {
+                    openLastProject();
                 }
                 else if (ctrlQ.match(event)) {
                     stage.close();
@@ -403,65 +411,64 @@ public class SimpleViewController implements Initializable {
         setColumns();
     }
 
-    private void saveReport() {
-        // if (report == null) {
-        //     return;
-        // }
-
-        System.out.println("Hej");
-
-        // FileChooser fileChooser = new FileChooser();
-        // fileChooser.setTitle("Spara rapport");
-        // fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Html-fil", "*.html"));
-        // if (settings.getWantsPrivateDefaultLocation()
-        //     && settings.getPrivateDefaultLocation() != null) {
-        //     fileChooser.setInitialDirectory(new File(settings.getPrivateDefaultLocation()));
-        // }
-        // fileChooser.setInitialFileName(report.getReportFileName());
-        // File file = fileChooser.showSaveDialog(stage);
-
+    private void copyReport() {
+        if (report == null) {
+            return;
+        }
 
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Spara rapport");
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Html-fil", "*.html"));
+        if (settings.getWantsPrivateDefaultLocation()
+            && settings.getPrivateDefaultLocation() != null) {
+            fileChooser.setInitialDirectory(new File(settings.getPrivateDefaultLocation()));
+        }
         fileChooser.setInitialFileName(report.getReportFileName());
         File file = fileChooser.showSaveDialog(stage);
 
-
-        if (file != null) {
-
-            System.out.println(file);
-
-            if (file.exists()) {
-                saveReport();
-
-                // Alert alert = new Alert(AlertType.CONFIRMATION);
-                // alert.setTitle("Filen existerar");
-                // alert.setHeaderText("Denna fil finns redan:");
-                // alert.setContentText(file.getPath());
-
-                // ButtonType btnCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-                // ButtonType btnOK = new ButtonType("OK");
-                // alert.getButtonTypes().setAll(btnOK, btnCancel);
-
-                // alert.showAndWait();
-            }
-            else {
-                try {
-                    FileUtils.copyFile(report.getReportFile(), file);
-                }
-                catch (IOException e) {
-                    System.out.println("Could not copy " + report.getReportFile() + " to " + file);
-                }
-            }
-
-            // if (new File(settings.getPrivateDefaultLocation(), report.getReportFileName()
-
+        try {
+            FileUtils.copyFile(report.getReportFile(), file);
         }
+        catch (IOException e) {
+            System.out.println("Could not copy " + report.getReportFile() + " to " + file);
+        }
+
+        // if (file != null) {
+
+        //     System.out.println(file);
+
+        //     if (file.exists()) {
+        //         // saveReport();
+
+        //         // Alert alert = new Alert(AlertType.CONFIRMATION);
+        //         // alert.setTitle("Filen existerar");
+        //         // alert.setHeaderText("Denna fil finns redan:");
+        //         // alert.setContentText(file.getPath());
+
+        //         // ButtonType btnCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+        //         // ButtonType btnOK = new ButtonType("OK");
+        //         // alert.getButtonTypes().setAll(btnOK, btnCancel);
+
+        //         // alert.showAndWait();
+        //     }
+        //     else {
+        //         try {
+        //             FileUtils.copyFile(report.getReportFile(), file);
+        //         }
+        //         catch (IOException e) {
+        //             System.out.println("Could not copy " + report.getReportFile() + " to " + file);
+        //         }
+        //     }
+
+        //     // if (new File(settings.getPrivateDefaultLocation(), report.getReportFileName())
+
+        // }
 
 
     }
 
 
-    private void closeReport() {
+    private void closeProject() {
         onExitApplication();
         report = null;
         tableView.setItems(null);
@@ -826,13 +833,7 @@ public class SimpleViewController implements Initializable {
         }
     }
 
-    @FXML
-    void handleMenuItemOpen(ActionEvent event) {
-        selectProject();
-    }
-
-    @FXML
-    void handleMenuItemOpenLast(ActionEvent event) {
+    private void openLastProject() {
         Hashtable<String, String> lastProj = settings.getLastProject();
         onExitApplication();
         if (!lastProj.isEmpty()) {
@@ -841,13 +842,23 @@ public class SimpleViewController implements Initializable {
     }
 
     @FXML
+    void handleMenuItemOpen(ActionEvent event) {
+        selectProject();
+    }
+
+    @FXML
+    void handleMenuItemOpenLast(ActionEvent event) {
+        openLastProject();
+    }
+
+    @FXML
     void handleMenuItemSaveReport(ActionEvent event) {
-        saveReport();
+        copyReport();
     }
 
     @FXML
     void handleMenuItemClose(ActionEvent event) {
-        closeReport();
+        closeProject();
     }
 
     @FXML
