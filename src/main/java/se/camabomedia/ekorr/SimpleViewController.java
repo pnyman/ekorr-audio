@@ -108,6 +108,9 @@ public class SimpleViewController implements Initializable {
     @FXML // fx:id="menuItemManual"
     private MenuItem menuItemManual; // Value injected by FXMLLoader
 
+    @FXML // fx:id="menuItemAbout"
+    private MenuItem menuItemAbout; // Value injected by FXMLLoader
+
     @FXML // fx:id="labelNrOfComments"
     private Label labelNrOfComments;
 
@@ -876,6 +879,15 @@ public class SimpleViewController implements Initializable {
             System.out.println("Error " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    void handleMenuItemAbout(ActionEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Om Ekorr");
+        alert.setHeaderText(null);
+        alert.setContentText("Ekorr v. 1.0\n© 2023 Camabo Media Production");
+        alert.showAndWait();
     }
 
     @FXML
