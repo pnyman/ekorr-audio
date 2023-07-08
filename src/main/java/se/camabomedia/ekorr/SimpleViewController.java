@@ -459,6 +459,7 @@ public class SimpleViewController implements Initializable {
 
 
     private void closeReport() {
+        onExitApplication();
         report = null;
         tableView.setItems(null);
         putTableViewPlaceholder();
