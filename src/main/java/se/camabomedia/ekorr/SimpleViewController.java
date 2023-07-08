@@ -338,7 +338,9 @@ public class SimpleViewController implements Initializable {
             tableView.setPlaceholder(splashScreen2());
         }
         else {
-            tableView.setPlaceholder(null);
+            Label label = new Label("Inga kommentarer");
+            label.setStyle("-fx-font-weight: normal; -fx-font-size: 32");
+            tableView.setPlaceholder(label);
         }
     }
 
