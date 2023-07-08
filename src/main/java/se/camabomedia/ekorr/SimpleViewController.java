@@ -1,7 +1,6 @@
 package se.camabomedia.ekorr;
 
 import java.awt.Desktop;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,7 +23,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -49,7 +47,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -293,7 +291,7 @@ public class SimpleViewController implements Initializable {
             });
 
 
-        makeTableViewPlaceholder();
+        putTableViewPlaceholder();
     }
 
 
@@ -331,12 +329,16 @@ public class SimpleViewController implements Initializable {
     }
 
 
-    private void makeTableViewPlaceholder() {
+    private void putTableViewPlaceholder() {
         if (settings.getProofreader() == null) {
-            tableView.setPlaceholder(splashScreen1());
+            tableView.setPlaceholder(placeHolder1());
+        }
+        else if (settings.getWantsDefaultLocation()
+                 && settings.getDefaultLocation() == null) {
+            tableView.setPlaceholder(placeHolder2());
         }
         else if (report == null) {
-            tableView.setPlaceholder(splashScreen2());
+            tableView.setPlaceholder(placeHolder3());
         }
         else {
             Label label = new Label("Inga kommentarer");
@@ -348,14 +350,17 @@ public class SimpleViewController implements Initializable {
 
     private void selectProject() {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
+        fileChooser.setTitle("Öppna en talbok");
         fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Ncc file", "ncc.html"));
+        if (settings.getWantsDefaultLocation()
+            && settings.getDefaultLocation() != null) {
+            fileChooser.setInitialDirectory(new File(settings.getDefaultLocation()));
+        }
         File selectedFile = fileChooser.showOpenDialog(stage);
         openProject(selectedFile);
     }
 
     public void openProject(File selectedFile) {
-
         if (!selectedFile.exists()) {
             warning("Filen\n" + selectedFile.toString() + "\n" + "existerar inte.");
             return;
@@ -371,8 +376,21 @@ public class SimpleViewController implements Initializable {
 
         // titlePane.getChildren().add(new Label(ncc.getTitle()));
         makeWindowTitle();
-        makeTableViewPlaceholder();
+        putTableViewPlaceholder();
         setColumns();
+    }
+
+    private void setDefaultLocation(boolean b) {
+        if (!b) {
+            settings.addWantsDefaultLocation(b);
+            return;
+        }
+
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Välj mapp för talböcker");
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        settings.addDefaultLocation(selectedDirectory.getPath());
+        settings.addWantsDefaultLocation(b);
     }
 
     private void makeWindowTitle() {
@@ -387,7 +405,7 @@ public class SimpleViewController implements Initializable {
         stage.setTitle(windowTitle);
     }
 
-    private VBox splashScreen1() {
+    private VBox placeHolder1() {
         Label label = new Label("Skriv in ditt namn");
         label.setStyle("-fx-font-weight: normal; -fx-font-size: 32");
         label.setPadding(new Insets(0, 0, 24, 0)); // top, right, bottom, left
@@ -404,7 +422,7 @@ public class SimpleViewController implements Initializable {
         okBtn.setMaxWidth(Control.USE_PREF_SIZE);
         okBtn.setOnMouseClicked((click) -> {
                 settings.addProofreader(nameField.getText());
-                makeTableViewPlaceholder();
+                putTableViewPlaceholder();
         });
 
         int width = 290;
@@ -427,7 +445,26 @@ public class SimpleViewController implements Initializable {
         return vb;
     }
 
-    private VBox splashScreen2() {
+    private VBox placeHolder2() {
+        Label topLabel = makeLabel("Välj mapp för talböcker");
+        topLabel.setOnMouseClicked((click) -> {
+                setDefaultLocation(true);
+                putTableViewPlaceholder();
+            });
+
+        Label bottomLabel = makeLabel("Nej tack");
+        bottomLabel.setOnMouseClicked((click) -> {
+                setDefaultLocation(false);
+                putTableViewPlaceholder();
+            });
+
+        VBox vb = new VBox();
+        vb.setAlignment(Pos.CENTER);
+        vb.getChildren().addAll(topLabel, bottomLabel);
+        return vb;
+    }
+
+    private VBox placeHolder3() {
         Label middleLabel = null;
         Hashtable<String, String> lastProj = settings.getLastProject();
 

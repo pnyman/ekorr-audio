@@ -1,7 +1,6 @@
 package se.camabomedia.ekorr;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -57,6 +56,36 @@ public class Settings {
     }
 
     @SuppressWarnings("unchecked")
+    public void addDefaultLocation(String defaultLocation) {
+        settings.put("defaultLocation", defaultLocation);
+        writeJSON();
+    }
+
+    public String getDefaultLocation() {
+        if (!settingsFile.exists()
+            || settings.get("defaultLocation") == null) {
+            return null;
+        }
+
+        return (String) settings.get("defaultLocation");
+    }
+
+    @SuppressWarnings("unchecked")
+    public void addWantsDefaultLocation(Boolean b) {
+        settings.put("wantsDefaultLocation", b);
+        writeJSON();
+    }
+
+    public boolean getWantsDefaultLocation() {
+        if (!settingsFile.exists()
+            || settings.get("wantsDefaultLocation") == null) {
+            return true;
+        }
+
+        return (Boolean) settings.get("wantsDefaultLocation");
+    }
+
+    @SuppressWarnings("unchecked")
     public void addLastProject(String ncc, String title, String author, String ID) {
         settings.put("lastProjectNcc", ncc);
         settings.put("lastProjectTitle", title);
@@ -72,10 +101,6 @@ public class Settings {
      *         the hashtable is returned empty.
      */
     public Hashtable<String, String> getLastProject() {
-        String lastProjectNcc = null;
-        String lastProjectTitle = null;
-        String lastProjectAuthor = null;
-        String lastProjectID = null;
         Hashtable<String, String> lastProject = new Hashtable<>();
 
         if (!settingsFile.exists()) {
