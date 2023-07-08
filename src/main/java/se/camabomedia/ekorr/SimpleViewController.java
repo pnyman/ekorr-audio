@@ -492,8 +492,7 @@ public class SimpleViewController implements Initializable {
     }
 
     private void makeWindowTitle() {
-        String windowTitle = "";
-        windowTitle += stage.getTitle();
+        String windowTitle = "Ekorr";
         windowTitle += "      ";
         windowTitle += ncc.getIdentifier();
         windowTitle += " ";
