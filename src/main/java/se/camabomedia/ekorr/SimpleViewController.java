@@ -89,6 +89,15 @@ public class SimpleViewController implements Initializable {
     @FXML // fx:id="menuItemRemoveComment"
     private MenuItem menuItemRemoveComment; // Value injected by FXMLLoader
 
+    @FXML // fx:id="menuItemName"
+    private MenuItem menuItemName; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuItemTalkingBooks"
+    private MenuItem menuItemTalkingBooks; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuItemReports"
+    private MenuItem menuItemReports; // Value injected by FXMLLoader
+
     @FXML // fx:id="menuItemManual"
     private MenuItem menuItemManual; // Value injected by FXMLLoader
 
@@ -781,6 +790,21 @@ public class SimpleViewController implements Initializable {
             System.out.println("Error " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    void handleMenuItemName(ActionEvent event) {
+        tableView.setPlaceholder(placeHolder1());
+    }
+
+    @FXML
+    void handleMenuItemTalkingBooks(ActionEvent event) {
+        tableView.setPlaceholder(placeHolder2());
+    }
+
+    @FXML
+    void handleMenuItemReports(ActionEvent event) {
+        tableView.setPlaceholder(placeHolder3());
     }
 
     @FXML

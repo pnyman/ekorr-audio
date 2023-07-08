@@ -67,6 +67,13 @@
             <MenuItem fx:id="menuItemRemoveComment" mnemonicParsing="false" onAction="#handleMenuItemRemoveComment" text="Ta bort kommentar" />
           </items>
         </Menu>
+            <Menu mnemonicParsing="false" text="Inställningar">
+              <items>
+                <MenuItem fx:id="menuItemName" mnemonicParsing="false" onAction="#handleMenuItemName" text="Namn" />
+                  <MenuItem fx:id="menuItemTalkingBooks" mnemonicParsing="false" onAction="#handleMenuItemTalkingBooks" text="Mapp för talböcker" />
+                  <MenuItem fx:id="menuItemReports" mnemonicParsing="false" onAction="#handleMenuItemReports" text="Mapp för rapporter" />
+              </items>
+            </Menu>
         <Menu mnemonicParsing="false" text="Hjälp">
           <items>
             <MenuItem fx:id="menuItemManual" mnemonicParsing="false" onAction="#handleMenuItemManual" text="Läs manual" />
