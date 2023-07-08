@@ -78,6 +78,12 @@ public class SimpleViewController implements Initializable {
     @FXML // fx:id="menuItemOpenLast"
     private MenuItem menuItemOpenLast; // Value injected by FXMLLoader
 
+    @FXML // fx:id="menuItemSaveReport"
+    private MenuItem menuItemSaveReport; // Value injected by FXMLLoader
+
+    @FXML // fx:id="menuItemClose"
+    private MenuItem menuItemClose; // Value injected by FXMLLoader
+
     @FXML // fx:id="menuItemQuit"
     private MenuItem menuItemQuit; // Value injected by FXMLLoader
 
@@ -392,6 +398,70 @@ public class SimpleViewController implements Initializable {
         makeWindowTitle();
         putTableViewPlaceholder();
         setColumns();
+    }
+
+    private void saveReport() {
+        // if (report == null) {
+        //     return;
+        // }
+
+        System.out.println("Hej");
+
+        // FileChooser fileChooser = new FileChooser();
+        // fileChooser.setTitle("Spara rapport");
+        // fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Html-fil", "*.html"));
+        // if (settings.getWantsPrivateDefaultLocation()
+        //     && settings.getPrivateDefaultLocation() != null) {
+        //     fileChooser.setInitialDirectory(new File(settings.getPrivateDefaultLocation()));
+        // }
+        // fileChooser.setInitialFileName(report.getReportFileName());
+        // File file = fileChooser.showSaveDialog(stage);
+
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialFileName(report.getReportFileName());
+        File file = fileChooser.showSaveDialog(stage);
+
+
+        if (file != null) {
+
+            System.out.println(file);
+
+            if (file.exists()) {
+                saveReport();
+
+                // Alert alert = new Alert(AlertType.CONFIRMATION);
+                // alert.setTitle("Filen existerar");
+                // alert.setHeaderText("Denna fil finns redan:");
+                // alert.setContentText(file.getPath());
+
+                // ButtonType btnCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+                // ButtonType btnOK = new ButtonType("OK");
+                // alert.getButtonTypes().setAll(btnOK, btnCancel);
+
+                // alert.showAndWait();
+            }
+            else {
+                try {
+                    FileUtils.copyFile(report.getReportFile(), file);
+                }
+                catch (IOException e) {
+                    System.out.println("Could not copy " + report.getReportFile() + " to " + file);
+                }
+            }
+
+            // if (new File(settings.getPrivateDefaultLocation(), report.getReportFileName()
+
+        }
+
+
+    }
+
+
+    private void closeReport() {
+        report = null;
+        tableView.setItems(null);
+        putTableViewPlaceholder();
     }
 
     private void setDefaultLocation(boolean b) {
@@ -763,6 +833,16 @@ public class SimpleViewController implements Initializable {
         if (!lastProj.isEmpty()) {
             openProject(new File(lastProj.get("lastProjectNcc")));
         }
+    }
+
+    @FXML
+    void handleMenuItemSaveReport(ActionEvent event) {
+        saveReport();
+    }
+
+    @FXML
+    void handleMenuItemClose(ActionEvent event) {
+        closeReport();
     }
 
     @FXML

@@ -56,7 +56,8 @@
           <items>
             <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Öppna…" />
                   <MenuItem fx:id="menuItemOpenLast" mnemonicParsing="false" onAction="#handleMenuItemOpenLast" text="Öppna senaste" />
-                  <MenuItem mnemonicParsing="false" text="Spara rapport..." />
+                  <MenuItem fx:id="menuItemSaveReport" mnemonicParsing="false" onAction="#handleMenuItemSaveReport" text="Kopiera rapport..." />
+                  <MenuItem fx:id="menuItemClose" mnemonicParsing="false" onAction="#handleMenuItemClose" text="Stäng talboken" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem fx:id="menuItemQuit" mnemonicParsing="false" onAction="#handleMenuItemQuit" text="Avsluta" />
           </items>
