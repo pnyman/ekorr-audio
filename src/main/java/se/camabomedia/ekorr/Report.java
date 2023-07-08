@@ -27,7 +27,7 @@ public class Report {
 
     private File directory;
     private Ncc ncc;
-    private String reportFile;
+    private String reportFileName;
     private String identifier;
     private String title;
     private String narrator;
@@ -60,7 +60,7 @@ public class Report {
             .replaceAll(" ", "_")
             .replaceAll("\\W", "")
             .replaceAll("__", "_");
-        reportFile = String.join("_", identifier, sanitizedTitle + ".html");
+        reportFileName = String.join("_", identifier, sanitizedTitle + ".html");
     }
 
 
@@ -94,7 +94,7 @@ public class Report {
         }
 
         // Print the report
-        File file = new File(directory, reportFile);
+        File file = new File(directory, reportFileName);
         FileUtils.writeStringToFile(file, doc.outerHtml(), StandardCharsets.UTF_8);
 
         // Delete the tempfile
@@ -133,15 +133,15 @@ public class Report {
     /**
      * Reads and loads a report if it already exists.
      * @param directory  is a File object
-     * @param reportFile is a String
+     * @param reportFileName is a String
      */
     public void readReport() {
         // If a report don't already exist, do nothing
-        if (Files.notExists(Paths.get(directory.toString(), reportFile))) {
+        if (Files.notExists(Paths.get(directory.toString(), reportFileName))) {
             return;
         }
 
-        File file = new File(directory, reportFile);
+        File file = new File(directory, reportFileName);
 
         try {
             doc = Jsoup.parse(file);
@@ -202,7 +202,11 @@ public class Report {
     }
 
     public File getReportFile() {
-        return new File(directory, reportFile);
+        return new File(directory, reportFileName);
+    }
+
+    public String getReportFileName() {
+        return reportFileName;
     }
 
     public String getNccFile() {

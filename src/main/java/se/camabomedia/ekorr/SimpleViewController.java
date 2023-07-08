@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.ResourceBundle;
 
+import org.apache.commons.io.FileUtils;
+
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -29,7 +31,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -364,7 +365,7 @@ public class SimpleViewController implements Initializable {
     private void selectProject() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Öppna en talbok");
-        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Ncc file", "ncc.html"));
+        fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Ncc-fil", "ncc.html"));
         if (settings.getWantsDefaultLocation()
             && settings.getDefaultLocation() != null) {
             fileChooser.setInitialDirectory(new File(settings.getDefaultLocation()));
