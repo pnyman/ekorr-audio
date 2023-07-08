@@ -337,8 +337,12 @@ public class SimpleViewController implements Initializable {
                  && settings.getDefaultLocation() == null) {
             tableView.setPlaceholder(placeHolder2());
         }
-        else if (report == null) {
+        else if (settings.getWantsPrivateDefaultLocation()
+                 && settings.getPrivateDefaultLocation() == null) {
             tableView.setPlaceholder(placeHolder3());
+        }
+        else if (report == null) {
+            tableView.setPlaceholder(placeHolder4());
         }
         else {
             Label label = new Label("Inga kommentarer");
@@ -391,6 +395,19 @@ public class SimpleViewController implements Initializable {
         File selectedDirectory = directoryChooser.showDialog(stage);
         settings.addDefaultLocation(selectedDirectory.getPath());
         settings.addWantsDefaultLocation(b);
+    }
+
+    private void setPrivateDefaultLocation(boolean b) {
+        if (!b) {
+            settings.addWantsPrivateDefaultLocation(b);
+            return;
+        }
+
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        directoryChooser.setTitle("Välj mapp för rapporter");
+        File selectedDirectory = directoryChooser.showDialog(stage);
+        settings.addPrivateDefaultLocation(selectedDirectory.getPath());
+        settings.addWantsPrivateDefaultLocation(b);
     }
 
     private void makeWindowTitle() {
@@ -465,6 +482,25 @@ public class SimpleViewController implements Initializable {
     }
 
     private VBox placeHolder3() {
+        Label topLabel = makeLabel("Välj privat mapp för rapporter");
+        topLabel.setOnMouseClicked((click) -> {
+                setPrivateDefaultLocation(true);
+                putTableViewPlaceholder();
+            });
+
+        Label bottomLabel = makeLabel("Nej tack");
+        bottomLabel.setOnMouseClicked((click) -> {
+                setPrivateDefaultLocation(false);
+                putTableViewPlaceholder();
+            });
+
+        VBox vb = new VBox();
+        vb.setAlignment(Pos.CENTER);
+        vb.getChildren().addAll(topLabel, bottomLabel);
+        return vb;
+    }
+
+    private VBox placeHolder4() {
         Label middleLabel = null;
         Hashtable<String, String> lastProj = settings.getLastProject();
 

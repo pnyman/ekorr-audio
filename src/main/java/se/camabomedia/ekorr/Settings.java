@@ -85,6 +85,38 @@ public class Settings {
         return (Boolean) settings.get("wantsDefaultLocation");
     }
 
+
+    @SuppressWarnings("unchecked")
+    public void addPrivateDefaultLocation(String privateDefaultLocation) {
+        settings.put("privateDefaultLocation", privateDefaultLocation);
+        writeJSON();
+    }
+
+    public String getPrivateDefaultLocation() {
+        if (!settingsFile.exists()
+            || settings.get("privateDefaultLocation") == null) {
+            return null;
+        }
+
+        return (String) settings.get("privateDefaultLocation");
+    }
+
+    @SuppressWarnings("unchecked")
+    public void addWantsPrivateDefaultLocation(Boolean b) {
+        settings.put("wantsPrivateDefaultLocation", b);
+        writeJSON();
+    }
+
+    public boolean getWantsPrivateDefaultLocation() {
+        if (!settingsFile.exists()
+            || settings.get("wantsPrivateDefaultLocation") == null) {
+            return true;
+        }
+
+        return (Boolean) settings.get("wantsPrivateDefaultLocation");
+    }
+
+
     @SuppressWarnings("unchecked")
     public void addLastProject(String ncc, String title, String author, String ID) {
         settings.put("lastProjectNcc", ncc);
