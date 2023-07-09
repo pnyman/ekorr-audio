@@ -18,6 +18,9 @@
       .project {
           font-size: 120%;
       }
+      .comments {
+          font-size = 100%;
+      }
       .comment-type {
           text-align: left;
       }
@@ -66,27 +69,45 @@
   }
 </script>
   </head>
+
   <body id="content">
-    <div class="head">
-      <p class="company">Camabo Media</p>
-      <p class="report-title">Korrektur talbok <span class="date"></span></p>
-    </div>
+
+    <table class="header">
+      <tr>
+        <td class="company">Camabo Media</td>
+      </tr>
+      <tr>
+        <td class="report-title">Korrektur talbok <span class="date"></td>
+      </tr>
+    </table>
+
     <br/>
-    <div class="project">
-      <p>
-        <span class="identifier"></span>
-        <span class="title"></span>
-        <span class="creator"></span>
-      </p>
-    </div>
+
+    <table class="project">
+      <tr>
+        <td>
+          <span class="identifier"></span>
+          <span class="title"></span>
+          <span class="creator"></span>
+        </td>
+      </tr>
+    </table>
+
     <br/>
-    <div class="metadata">
-      <span class="narrator"></span>
-      <span class="proofreader"></span>
-      <span class="total-time"></span>
-    </div>
+
+    <table class="metadata">
+      <tr>
+        <td>
+          <span class="narrator"></span>
+          <span class="proofreader"></span>
+          <span class="total-time"></span>
+        </td>
+      </tr>
+    </table>
+
     <br/>
-    <div id="comments">
-    </div>
+
+    <div id="comments"></div>
+
   </body>
 </html>
