@@ -9,12 +9,48 @@
 
 Ekorr är till för att skriva korrektur-rapporter för talböcker i Daisy-format.
 
+* Inställningar
+
+När programmet öppnas för första gången får man göra några inställningar.
+
+[[./settings-1.png]] \\
+   Detta namn skrivs sedan in i rappporten. \\
+   Denna inställning är obligatorisk.
+
+[[./settings-2.png]] \\
+   Här anger du den mapp du brukar lägga talböcker i för korrektur. \\
+   Klicka på översta raden för att välja mapp. \\
+   Därefter kommer Filväljaren starta i den mappen när man skall öppna en talbok. \\
+   Denna inställning är frivillig.
+
+[[./settings-3.png]] \\
+   Här anger du om du vill att rapporter du jobbar med skall kopieras automatiskt
+   till en mapp du väljer. \\
+   Klicka på översta raden för att välja mapp. \\
+   Denna inställning är frivillig.
+
+
+Man kan ändra gjorda inställningar under menyn Inställningar.
+
 * Öppna en talbok
 
-För att öppna en talbok och börja redigera, antingen:
-- tryck Ctrl-O
+Efter inställningarna i föregående rubrik är gjorda, möts man av följande vy: \\
+[[./open-book.png]] \\
+Klicka på översta raden för att öppna en talbok och börja redigera.
+Välj filen ncc.html i talbokens mapp.
+
+Man kan också öppna en talbok genom att antingen:
 - gå till menyn Arkiv > Öppna...
-Välj filen ncc.html i talboksmappen.
+- trycka Ctrl+O
+
+
+Efterföljande gånger man startar programmet ser det ut så här: \\
+[[./open-book-2.png]] \\
+Nu kan man även välja att öppna på nytt den bok som man hade öppen senast. \\
+
+Man kan också öppna senaste talbok genom att antingen:
+- gå till menyn Arkiv > Öppna senaste
+- trycka Ctrl+E
 
 * Skapa en kommentar
 
@@ -91,6 +127,12 @@ sparas i rapporten automatiskt.
 Om man stänger en talbok med en påbörjad rapport och sedan öppnar den på nytt,
 kommer rapporten att läsas in i programmet,
 så att man kan fortsätta med korrekturet.
+
+** Privat mapp<<private-report-folder>>
+
+Man kan välja om man vill att rapporten skall kopieras automatiskt
+till en egen personlig mapp.
+Denna kopiering sker vid varje förändring av rapporten.
 
 * Manualen
 Denna manual kan läsas genom att
