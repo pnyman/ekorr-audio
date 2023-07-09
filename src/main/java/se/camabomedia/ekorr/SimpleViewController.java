@@ -44,7 +44,6 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -77,9 +76,6 @@ public class SimpleViewController implements Initializable {
 
     @FXML // fx:id="menuItemOpenLast"
     private MenuItem menuItemOpenLast; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemSaveReport"
-    private MenuItem menuItemSaveReport; // Value injected by FXMLLoader
 
     @FXML // fx:id="menuItemClose"
     private MenuItem menuItemClose; // Value injected by FXMLLoader
@@ -142,6 +138,8 @@ public class SimpleViewController implements Initializable {
     private Ncc ncc;
     public Report report;
     private Report.Comment selected;
+    private ReportCopy reportCopy;
+
     private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
     KeyCombination ctrlO = KeyCodeCombination.keyCombination("Ctrl+O");
     KeyCombination ctrlW = KeyCodeCombination.keyCombination("Ctrl+W");
@@ -405,66 +403,50 @@ public class SimpleViewController implements Initializable {
             report.setProofreader(proofreader);
         }
 
+        if (settings.getWantsPrivateDefaultLocation()
+            && settings.getPrivateDefaultLocation() != null) {
+            reportCopy = new ReportCopy(report, new File(settings.getPrivateDefaultLocation()));
+        }
+
         // titlePane.getChildren().add(new Label(ncc.getTitle()));
         makeWindowTitle();
         putTableViewPlaceholder();
         setColumns();
     }
 
+
+    // Automatic copy of report
     private void copyReport() {
+        if (report == null || reportCopy == null) {
+            return;
+        }
+        reportCopy.copy();
+    }
+
+
+    // Method with file chooser, if we decide that ot should be done manually
+    private void XXXcopyReport() {
         if (report == null) {
             return;
         }
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Spara rapport");
+        fileChooser.setTitle("Kopiera rapport");
         fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Html-fil", "*.html"));
         if (settings.getWantsPrivateDefaultLocation()
             && settings.getPrivateDefaultLocation() != null) {
             fileChooser.setInitialDirectory(new File(settings.getPrivateDefaultLocation()));
         }
         fileChooser.setInitialFileName(report.getReportFileName());
-        File file = fileChooser.showSaveDialog(stage);
+        File dest = fileChooser.showSaveDialog(stage);
 
-        try {
-            FileUtils.copyFile(report.getReportFile(), file);
+        if (dest != null) {
+            try {
+                FileUtils.copyFile(report.getReportFile(), dest);
+            } catch (IOException e) {
+                System.out.println("Could not copy " + report.getReportFile() + " to " + dest);
+            }
         }
-        catch (IOException e) {
-            System.out.println("Could not copy " + report.getReportFile() + " to " + file);
-        }
-
-        // if (file != null) {
-
-        //     System.out.println(file);
-
-        //     if (file.exists()) {
-        //         // saveReport();
-
-        //         // Alert alert = new Alert(AlertType.CONFIRMATION);
-        //         // alert.setTitle("Filen existerar");
-        //         // alert.setHeaderText("Denna fil finns redan:");
-        //         // alert.setContentText(file.getPath());
-
-        //         // ButtonType btnCancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
-        //         // ButtonType btnOK = new ButtonType("OK");
-        //         // alert.getButtonTypes().setAll(btnOK, btnCancel);
-
-        //         // alert.showAndWait();
-        //     }
-        //     else {
-        //         try {
-        //             FileUtils.copyFile(report.getReportFile(), file);
-        //         }
-        //         catch (IOException e) {
-        //             System.out.println("Could not copy " + report.getReportFile() + " to " + file);
-        //         }
-        //     }
-
-        //     // if (new File(settings.getPrivateDefaultLocation(), report.getReportFileName())
-
-        // }
-
-
     }
 
 
@@ -536,6 +518,7 @@ public class SimpleViewController implements Initializable {
         int height = 35;
 
         HBox hb = new HBox();
+        hb.setAlignment(Pos.CENTER);
         hb.getChildren().addAll(nameField, okBtn);
         hb.setSpacing(12);
         hb.setPrefSize(width, Control.USE_COMPUTED_SIZE);
@@ -572,7 +555,7 @@ public class SimpleViewController implements Initializable {
     }
 
     private VBox placeHolder3() {
-        Label topLabel = makeLabel("Välj privat mapp för rapporter");
+        Label topLabel = makeLabel("Kopiera rapporter till en privat mapp");
         topLabel.setOnMouseClicked((click) -> {
                 setPrivateDefaultLocation(true);
                 putTableViewPlaceholder();
@@ -682,6 +665,8 @@ public class SimpleViewController implements Initializable {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        copyReport();
     }
 
     private void editComment() {
@@ -709,6 +694,8 @@ public class SimpleViewController implements Initializable {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        copyReport();
     }
 
     private void removeComment() {
@@ -722,6 +709,7 @@ public class SimpleViewController implements Initializable {
                 try {
                     report.removeComment(selected);
                     report.createAndWriteReport();
+                    copyReport();
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
@@ -740,14 +728,6 @@ public class SimpleViewController implements Initializable {
         taskThread.start();
     }
 
-    private void warning(String text) {
-        Alert alert = new Alert(AlertType.WARNING);
-        alert.setTitle("");
-        alert.setHeaderText(text);
-        alert.setContentText("");
-        alert.showAndWait();
-    }
-
     private void rearrangeOrderOfComments() {
         ObservableList<Report.Comment> obComments = tableView.getItems();
         ArrayList<Report.Comment> comments = new ArrayList<Report.Comment>(obComments);
@@ -755,12 +735,21 @@ public class SimpleViewController implements Initializable {
         try {
             report.setComments(comments);
             report.createAndWriteReport();
+            copyReport();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void warning(String text) {
+        Alert alert = new Alert(AlertType.WARNING);
+        alert.setTitle("");
+        alert.setHeaderText(text);
+        alert.setContentText("");
+        alert.showAndWait();
     }
 
     private void moveSelectedRowUp() {
@@ -849,11 +838,6 @@ public class SimpleViewController implements Initializable {
     @FXML
     void handleMenuItemOpenLast(ActionEvent event) {
         openLastProject();
-    }
-
-    @FXML
-    void handleMenuItemSaveReport(ActionEvent event) {
-        copyReport();
     }
 
     @FXML

@@ -5,16 +5,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 /**
  * Report
@@ -23,9 +24,10 @@ public class Report {
 
     private Document doc;
     private ArrayList<Comment> comments = new ArrayList<>();
-    private String reportDirectory = "___Korrektur-rapport";
+    private final String reportDirectory = "___Korrektur-rapport";
 
     private File directory;
+    private File projectDirectory;
     private Ncc ncc;
     private String reportFileName;
     private String identifier;
@@ -34,6 +36,7 @@ public class Report {
     private String totalTime;
     private ArrayList<String> creators;
     private String proofreader;
+    private String checksum;
     private final String ENDASH = "–";
 
     /**
@@ -46,12 +49,20 @@ public class Report {
         this.creators = ncc.getCreators();
         this.narrator = ncc.getNarrator();
         this.totalTime = ncc.getTotalTime();
+        this.projectDirectory = ncc.getDirectory();
 
-        directory = new File(ncc.getDirectory(), reportDirectory);
+        directory = new File(projectDirectory, reportDirectory);
 
         makeReportFileName();
         readReport();
         directory.mkdirs();
+        checksum = getChecksum();
+        try {
+            createAndWriteReport();
+        } catch (URISyntaxException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     private void makeReportFileName() {
@@ -128,7 +139,29 @@ public class Report {
             doc.getElementsByClass("total-time").get(0)
                 .appendText("Tid: " + totalTime);
         }
+
+        // Check to see if the metadata tag exists
+        // (for reports made with earlier versions of the program)
+        Elements cs = doc.select("meta[name=checksum]");
+        if (cs.isEmpty()) {
+            doc.selectFirst("head").child(0).before("<meta name='checksum' content=''>");
+        }
+        doc.select("meta[name=checksum]").attr("content", checksum);
     }
+
+
+    private String getChecksum() {
+        String cs = null;
+        try {
+            cs = CompoundChecksum.checksum(projectDirectory.getPath(), ".smil");
+        }
+        catch (NoSuchAlgorithmException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return cs;
+    }
+
 
     /**
      * Reads and loads a report if it already exists.

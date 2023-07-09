@@ -1,11 +1,13 @@
 package se.camabomedia.ekorr;
 
+// import java.awt.Image;
 import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.image.Image;
 
 
 public class App extends Application {
@@ -23,8 +25,10 @@ public class App extends Application {
         // MainViewController ctrl = fxmlLoader.getController();
         SimpleViewController ctrl = fxmlLoader.getController();
         stage.setScene(scene);
+        stage.getIcons().add(new Image(App.class.getResourceAsStream("icon3.png")));
         // stage.setMaximized(true);
         ctrl.initData(stage, settings);
+
 
         // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
         //         @Override
