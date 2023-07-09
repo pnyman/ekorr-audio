@@ -13,18 +13,18 @@ Ekorr är till för att skriva korrektur-rapporter för talböcker i Daisy-forma
 
 När programmet öppnas för första gången får man göra några inställningar.
 
-[[./settings-1.png]] \\
+1. Skriv in ditt namn. \\
    Detta namn skrivs sedan in i rappporten. \\
    Denna inställning är obligatorisk.
 
-[[./settings-2.png]] \\
+2. Välj mapp för talböcker. \\
    Här anger du den mapp du brukar lägga talböcker i för korrektur. \\
    Klicka på översta raden för att välja mapp. \\
    Därefter kommer Filväljaren starta i den mappen när man skall öppna en talbok. \\
    Denna inställning är frivillig.
 
-[[./settings-3.png]] \\
-   Här anger du om du vill att rapporter du jobbar med skall kopieras automatiskt
+3. Kopiera rapporter till provat mapp. \\
+   Här anger du om du vill att rapporterna skall kopieras automatiskt
    till en mapp du väljer. \\
    Klicka på översta raden för att välja mapp. \\
    Denna inställning är frivillig.
@@ -34,19 +34,16 @@ Man kan ändra gjorda inställningar under menyn Inställningar.
 
 * Öppna en talbok
 
-Efter inställningarna i föregående rubrik är gjorda, möts man av följande vy: \\
-[[./open-book.png]] \\
-Klicka på översta raden för att öppna en talbok och börja redigera.
+Efter inställningarna i föregående rubrik är gjorda, möts man av en vy där man kan
+välja att öppna en talbok eller läsa manualen.
 Välj filen ncc.html i talbokens mapp.
 
 Man kan också öppna en talbok genom att antingen:
 - gå till menyn Arkiv > Öppna...
 - trycka Ctrl+O
 
-
-Efterföljande gånger man startar programmet ser det ut så här: \\
-[[./open-book-2.png]] \\
-Nu kan man även välja att öppna på nytt den bok som man hade öppen senast. \\
+Efterföljande gånger man startar programmet kan man även välja
+att öppna den talbok som man hade öppen senast.
 
 Man kan också öppna senaste talbok genom att antingen:
 - gå till menyn Arkiv > Öppna senaste
