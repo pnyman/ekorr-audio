@@ -140,9 +140,12 @@ public class Report {
                 .appendText("Korrektur: " + proofreader)
                 .appendElement("br");
         }
+        doc.getElementsByClass("nr-of-comments").get(0)
+            .appendText("Antal kommentarer: " + getNumberOfComments())
+            .appendElement("br");
         if (totalTime != null) {
             doc.getElementsByClass("total-time").get(0)
-                .appendText("Tid: " + totalTime);
+                .appendText("Bokens längd: " + totalTime);
         }
 
         // Check to see if the metadata tag exists

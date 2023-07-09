@@ -403,12 +403,19 @@ public class SimpleViewController implements Initializable {
             report.setProofreader(proofreader);
         }
 
+        // We need to do this is we want proofreader to be shown immediately.
+        try {
+            report.createAndWriteReport();
+        } catch (URISyntaxException | IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
         if (settings.getWantsPrivateDefaultLocation()
             && settings.getPrivateDefaultLocation() != null) {
             reportCopy = new ReportCopy(report, new File(settings.getPrivateDefaultLocation()));
         }
 
-        // titlePane.getChildren().add(new Label(ncc.getTitle()));
         makeWindowTitle();
         putTableViewPlaceholder();
         setColumns();
