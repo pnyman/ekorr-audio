@@ -12,6 +12,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -66,12 +67,16 @@ public class Report {
     }
 
     private void makeReportFileName() {
+        String temp;
         // # % & {} \ <> * ? / $ ! ' " : @+ ` | =
         String sanitizedTitle = title
             .replaceAll(" ", "_")
             .replaceAll("\\W", "")
             .replaceAll("__", "_");
-        reportFileName = String.join("_", identifier, sanitizedTitle + ".html");
+        temp = String.join("_", identifier, sanitizedTitle);
+        temp = StringUtils.substring(temp, 0, 50); // max filename length is 255
+        temp = temp.replace("_$", "");
+        reportFileName = temp + ".html";
     }
 
 
