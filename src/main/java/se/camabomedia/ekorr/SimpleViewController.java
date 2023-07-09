@@ -533,9 +533,21 @@ public class SimpleViewController implements Initializable {
         hb.setMinSize(width, Control.USE_PREF_SIZE);
         hb.setMaxSize(width, Control.USE_PREF_SIZE);
 
+        Label bottomLabel = makeLabel("Läs manual");
+        bottomLabel.setPadding(new Insets(32, 0, 0, 0)); // top, right, bottom, left
+        bottomLabel.setOnMouseClicked((click) -> {
+            try {
+                viewManual();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);
-        vb.getChildren().addAll(label, hb);
+        vb.getChildren().addAll(label, hb, bottomLabel);
 
         // Default values from modena.css
         vb.setStyle("-fx-focus-color: #039ED3; -fx-faint-focus-color: #039ED322;");
@@ -550,15 +562,26 @@ public class SimpleViewController implements Initializable {
                 putTableViewPlaceholder();
             });
 
-        Label bottomLabel = makeLabel("Nej tack");
-        bottomLabel.setOnMouseClicked((click) -> {
+        Label middleLabel = makeLabel("Nej tack");
+        middleLabel.setOnMouseClicked((click) -> {
                 setDefaultLocation(false);
                 putTableViewPlaceholder();
             });
 
+        Label bottomLabel = makeLabel("Läs manual");
+        bottomLabel.setOnMouseClicked((click) -> {
+            try {
+                viewManual();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);
-        vb.getChildren().addAll(topLabel, bottomLabel);
+        vb.getChildren().addAll(topLabel, middleLabel, bottomLabel);
         return vb;
     }
 
@@ -569,15 +592,26 @@ public class SimpleViewController implements Initializable {
                 putTableViewPlaceholder();
             });
 
-        Label bottomLabel = makeLabel("Nej tack");
-        bottomLabel.setOnMouseClicked((click) -> {
+        Label middleLabel = makeLabel("Nej tack");
+        middleLabel.setOnMouseClicked((click) -> {
                 setPrivateDefaultLocation(false);
                 putTableViewPlaceholder();
             });
 
+        Label bottomLabel = makeLabel("Läs manual");
+        bottomLabel.setOnMouseClicked((click) -> {
+            try {
+                viewManual();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
         VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);
-        vb.getChildren().addAll(topLabel, bottomLabel);
+        vb.getChildren().addAll(topLabel, middleLabel, bottomLabel);
         return vb;
     }
 
@@ -889,7 +923,7 @@ public class SimpleViewController implements Initializable {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Om Ekorr");
         alert.setHeaderText(null);
-        alert.setContentText("Ekorr v. 1.0\n© 2023 Camabo Media Production");
+        alert.setContentText("Ekorr v. 0.2\n© 2023 Camabo Media Production");
         alert.showAndWait();
     }
 
