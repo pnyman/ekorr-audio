@@ -455,6 +455,7 @@ public class SimpleViewController implements Initializable {
         report = null;
         tableView.setItems(null);
         putTableViewPlaceholder();
+        labelNrOfComments.setText("");
     }
 
     private void setDefaultLocation(boolean b) {
