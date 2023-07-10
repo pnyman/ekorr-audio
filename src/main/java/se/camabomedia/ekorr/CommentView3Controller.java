@@ -231,7 +231,7 @@ public class CommentView3Controller implements Initializable {
         type = comment.getType();
 
         String pageNr = comment.getPage();
-        if (pageNr == ENDASH) {
+            if (pageNr.strip().equals(ENDASH)) {
             textFieldPage.setText("");
         }
         else {
@@ -308,7 +308,7 @@ public class CommentView3Controller implements Initializable {
     }
 
     private boolean checkPageNr(String pageNr) {
-        if (pageNr.strip() == "" || pageNr.strip() == ENDASH) {
+        if (pageNr.strip().equals("") || pageNr.strip().equals(ENDASH)) {
             return true;
         }
         return ncc.getPages().contains(pageNr);
