@@ -462,6 +462,7 @@ public class SimpleViewController implements Initializable {
         report = null;
         tableView.setItems(null);
         putTableViewPlaceholder();
+        stage.setTitle("Ekorr");
         labelNrOfComments.setText("");
     }
 
