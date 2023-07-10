@@ -316,7 +316,7 @@ public class CommentView3Controller implements Initializable {
 
 
     void warningDialogPageNr(String pageNr) {
-        Alert alert = new Alert(AlertType.WARNING);
+        Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Felaktigt sidnummer");
         alert.setHeaderText("Detta sidnummer finns inte i talboken:");
         alert.setContentText(pageNr);
@@ -325,7 +325,7 @@ public class CommentView3Controller implements Initializable {
 
 
     void warningDialogType() {
-        Alert alert = new Alert(AlertType.WARNING);
+        Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Kommentartyp saknas");
         alert.setHeaderText("");
         alert.setContentText("Välj typ av kommentar.");
@@ -334,7 +334,7 @@ public class CommentView3Controller implements Initializable {
 
 
     void warningDialogSeek() {
-        Alert alert = new Alert(AlertType.WARNING);
+        Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Söktext saknas");
         alert.setHeaderText("");
         alert.setContentText("Infoga kontext i fältet Se");

@@ -787,7 +787,7 @@ public class SimpleViewController implements Initializable {
     }
 
     private void warning(String text) {
-        Alert alert = new Alert(AlertType.WARNING);
+        Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("");
         alert.setHeaderText(text);
         alert.setContentText("");
