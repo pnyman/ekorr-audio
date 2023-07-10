@@ -7,8 +7,10 @@ jpackage --type msi ^
          --add-modules javafx.controls,javafx.fxml,java.base,java.desktop,java.net.http,java.scripting,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.xml.dom ^
          --win-shortcut ^
          --win-menu ^
+         --win-dir-chooser ^
          --name Ekorr ^
-         --app-version 0.1 ^
-         --description "Skapa korrektur-rapporter för talböcker" ^
+         --app-version 1.0 ^
+         --icon src\main\resources\se\camabomedia\ekorr\icon.ico ^
+         --description "Skapa korrektur-rapporter i talboksproduktion" ^
          --vendor "Camabo Media" ^
          --copyright "Copyright 2023, All rights reserved"
