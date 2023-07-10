@@ -25,7 +25,7 @@ public class App extends Application {
         // MainViewController ctrl = fxmlLoader.getController();
         SimpleViewController ctrl = fxmlLoader.getController();
         stage.setScene(scene);
-        stage.getIcons().add(new Image(App.class.getResourceAsStream("icon3.png")));
+        stage.getIcons().add(new Image(App.class.getResourceAsStream("icon.png")));
         // stage.setMaximized(true);
         ctrl.initData(stage, settings);
 
