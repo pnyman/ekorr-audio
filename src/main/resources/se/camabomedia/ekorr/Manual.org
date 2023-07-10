@@ -18,16 +18,15 @@ När programmet öppnas för första gången får man göra några inställninga
    Denna inställning är obligatorisk.
 
 2. Välj mapp för talböcker. \\
-   Här anger du den mapp du brukar lägga talböcker i för korrektur. \\
-   Klicka på översta raden för att välja mapp. \\
-   Därefter kommer Filväljaren starta i den mappen när man skall öppna en talbok. \\
+   Här väljer man den mapp där man brukar lägga talböcker för korrektur. \\
+   Filväljaren kommer att starta i den mappen när man skall öppna en talbok. \\
    Denna inställning är frivillig.
 
-3. Kopiera rapporter till provat mapp. \\
-   Här anger du om du vill att rapporterna skall kopieras automatiskt
-   till en mapp du väljer. \\
-   Klicka på översta raden för att välja mapp. \\
-   Denna inställning är frivillig.
+3. Kopiera rapporter till privat mapp. \\
+   Rapporterna kopieras automatiskt till den mapp man väljer. \\
+   Denna inställning är frivillig. \\
+   Den är bara till för om man vill ha alla rapporter man skapar samlade på ett ställe, \\
+   och påverkar inte programmets funktionalitet i övrigt.
 
 
 Man kan ändra gjorda inställningar under menyn Inställningar.
@@ -49,6 +48,9 @@ Man kan också öppna senaste talbok genom att antingen:
 - gå till menyn Arkiv > Öppna senaste
 - trycka Ctrl+E
 
+
+Den öppna talbokens id-nummer och titel står i programmets titelfält, högst upp.
+
 * Skapa en kommentar
 
 En ny kommentar kan skapas genom att antingen:
@@ -63,18 +65,18 @@ och val att göra.
   Det sidnummer som kommentaren gäller.
   Finns inget sidnummer lämnas fältet blankt.
 - *Typ:*
-  Välj en typ genom att skriva en siffra 1--8,
+  Välj en typ genom att skriva en siffra 1--9,
   eller klicka på en typ,
   eller med hjälp av piltangenterna.
   Typ 1 är förvald.
-- *Sök:*
+- *Se:*
   Här skivs eller kopieras in en bit text från talboken.
   Den kan sedan användas av inläsaren vid rättning för att hitta
   rätt ställe.
 - *Fel:*
-  Om typen är Felläsning skriver man här den felaktiga läsningen.
+  Beskrivning av felet.
 - *Rätt:*
-  Om typen är Felläsning skriver man här den korrekta läsningen.
+  Hur det skall vara.
 
 
 Man kan navigera mellan de olika fälten med Tab-tangenten,
@@ -83,6 +85,29 @@ När man är klar klickar man på OK,
 eller trycker på Retur-tangenten.
 Vill man inte spara kommentaren klickar man på Avbryt,
 eller trycker på Escape-tangenten.
+
+** Kommentarstyperna
+1. Läsfel \\
+   Till exempel uttalsfel, fel ordföljd, fel ord.
+2. Talsyntes \\
+   När inläsning saknas och texten läses av EasyReader. \\
+   Särskilt vanligt i rubriker.
+3. Omtagning \\
+   Upprepning av ord, fraser eller kanske hela stycken.
+4. Lucka \\
+   Avsnitt som inte lästs in.
+5. Stakning \\
+6. Paus \\
+   Kortare eller längre period av tystnad.
+7. Extra ljud \\
+   Hummanden, hostningar, etc.
+8. Bakgrundsljud
+9. Övrigt \\
+   Kommentarer som inte passar in i övriga typer.
+
+
+Fyll i fälten Fel och Rätt efter omdöme.
+I allmänhet används fältet Rätt bara vid Läsfel.
 
 * Redigera en kommentar
 
