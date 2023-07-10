@@ -924,7 +924,7 @@ public class SimpleViewController implements Initializable {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.setTitle("Om Ekorr");
         alert.setHeaderText(null);
-        alert.setContentText("Ekorr v. 0.2\n© 2023 Camabo Media Production");
+        alert.setContentText("Ekorr v. 1.0\n© 2023 Camabo Media Production");
         alert.showAndWait();
     }
 
