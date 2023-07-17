@@ -11,18 +11,18 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<HBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorr.CommentView3Controller">
+<HBox fillHeight="false" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorr.CommentView3Controller">
    <children>
-      <GridPane focusTraversable="true" prefHeight="270.0" prefWidth="184.0">
+      <GridPane focusTraversable="true">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.39999389648438" minWidth="10.0" prefWidth="51.59998779296875" />
-          <ColumnConstraints fillWidth="false" maxWidth="156.79999389648438" minWidth="10.0" prefWidth="130.00001220703126" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.39999389648438" minWidth="10.0" prefWidth="40.0" />
+          <ColumnConstraints fillWidth="false" maxWidth="156.79999389648438" minWidth="10.0" prefWidth="142.4" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints maxHeight="114.8000244140625" minHeight="10.0" prefHeight="38.8" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="296.8000038146973" minHeight="10.0" prefHeight="212.39999999999998" vgrow="SOMETIMES" />
-            <RowConstraints maxHeight="296.8000038146973" minHeight="10.0" prefHeight="73.99996643066405" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="114.8000244140625" minHeight="29.599990081787112" prefHeight="35.999993896484376" vgrow="SOMETIMES" />
+          <RowConstraints fillHeight="false" maxHeight="339.2000099182129" minHeight="10.0" prefHeight="333.6000061035156" />
         </rowConstraints>
          <children>
             <Label text="Sida:" GridPane.valignment="TOP">
@@ -36,58 +36,56 @@
                   <Insets left="12.0" />
                </GridPane.margin>
             </Label>
-            <ListView fx:id="listViewType" prefWidth="130.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.vgrow="NEVER" />
+            <ListView fx:id="listViewType" centerShape="false" prefWidth="130.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP">
+               <GridPane.margin>
+                  <Insets />
+               </GridPane.margin>
+            </ListView>
          </children>
          <HBox.margin>
             <Insets bottom="12.0" top="12.0" />
          </HBox.margin>
       </GridPane>
-      <GridPane prefHeight="336.0" prefWidth="406.0" vgap="10.0">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="289.5999755859375" minWidth="10.0" prefWidth="45.9999755859375" />
-          <ColumnConstraints hgrow="ALWAYS" maxWidth="516.0" minWidth="352.8000244140625" prefWidth="352.8000244140625" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints fillHeight="false" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" vgrow="SOMETIMES" />
-        </rowConstraints>
+      <VBox>
          <children>
-            <Label text="Se:" GridPane.valignment="TOP">
-               <GridPane.margin>
-                  <Insets left="12.0" right="4.0" />
-               </GridPane.margin>
+            <Label text="Söktext från boken">
+               <VBox.margin>
+                  <Insets top="8.0" />
+               </VBox.margin>
             </Label>
-            <Label text="Fel:" GridPane.rowIndex="1" GridPane.valignment="TOP">
-               <GridPane.margin>
-                  <Insets left="12.0" right="4.0" />
-               </GridPane.margin>
-            </Label>
-            <Label text="Rätt:" GridPane.rowIndex="2" GridPane.valignment="TOP">
-               <GridPane.margin>
-                  <Insets left="12.0" right="4.0" />
-               </GridPane.margin>
-            </Label>
-            <TextArea fx:id="textAreaSeek" promptText="Kontext från boken" wrapText="true" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
-            <TextArea fx:id="textAreaWrong" wrapText="true" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
-            <TextArea fx:id="textAreaRight" wrapText="true" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-            <ButtonBar maxHeight="-Infinity" minHeight="-Infinity" prefHeight="40.0" prefWidth="358.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextArea fx:id="textAreaSeek" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+            </TextArea>
+            <Label text="Beskrivning av felet" />
+            <TextArea fx:id="textAreaWrong" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+            </TextArea>
+            <Label text="Rättelse" />
+            <TextArea fx:id="textAreaRight" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </TextArea>
+            <ButtonBar>
               <buttons>
-                <Button fx:id="btnCancel" cancelButton="true" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnCancel" text="Avbryt" />
+                <Button fx:id="btnCancel" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnCancel" text="Avbryt" />
                   <Button fx:id="btnOk" mnemonicParsing="false" onAction="#handleBtnOk" text="OK" />
               </buttons>
-               <GridPane.margin>
-                  <Insets bottom="12.0" />
-               </GridPane.margin>
+               <VBox.margin>
+                  <Insets bottom="12.0" top="12.0" />
+               </VBox.margin>
             </ButtonBar>
          </children>
          <HBox.margin>
-            <Insets right="4.0" top="12.0" />
+            <Insets left="8.0" right="18.0" />
          </HBox.margin>
-         <padding>
-            <Insets right="8.0" />
-         </padding>
-      </GridPane>
+      </VBox>
    </children>
+   <opaqueInsets>
+      <Insets bottom="12.0" />
+   </opaqueInsets>
 </HBox>
