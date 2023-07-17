@@ -17,6 +17,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Control;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -57,13 +58,14 @@ public class CommentView3Controller implements Initializable {
     private String[] commentTypes = {
         "1. Läsfel",
         "2. Talsyntes",
-        "3. Omtagning",
-        "4. Lucka",
+        "3. Inläsning saknas",
+        "4. Omtagning",
         "5. Stakning",
         "6. Paus",
         "7. Extra ljud",
         "8. Bakgrundsljud",
-        "9. Övrigt"
+        "9. Synkfel",
+        "0. Övrigt"
     };
 
     private Ncc ncc;
@@ -77,7 +79,9 @@ public class CommentView3Controller implements Initializable {
         listViewType.getItems().addAll(commentTypes);
 
         // This sets the initial height of the ListView:
-        // listViewType.setPrefHeight(commentTypes.length * 24 + 2);
+        listViewType.setPrefHeight(commentTypes.length * 24);
+        listViewType.setMaxHeight(Control.USE_PREF_SIZE);
+        listViewType.setMinHeight(Control.USE_PREF_SIZE);
 
         // Make Tab focus next element in text areas
         ArrayList<TextArea> areas = new ArrayList<>();
@@ -150,6 +154,9 @@ public class CommentView3Controller implements Initializable {
                     break;
                 case DIGIT9:
                     setSelectedType(8);
+                    break;
+                case DIGIT0:
+                    setSelectedType(9);
                     break;
                 case ENTER:
                     saveAndClose();
