@@ -52,6 +52,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 
 public class SimpleViewController implements Initializable {
@@ -890,7 +891,7 @@ public class SimpleViewController implements Initializable {
 
     @FXML
     void handleMenuItemQuit(ActionEvent event) {
-        stage.close();
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
     @FXML
@@ -970,7 +971,7 @@ public class SimpleViewController implements Initializable {
 
     @FXML
     void handleBtnQuit(ActionEvent event) {
-        stage.close();
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
 }

@@ -24,6 +24,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class CommentView3Controller implements Initializable {
 
@@ -318,7 +319,8 @@ public class CommentView3Controller implements Initializable {
                     @Override
                     public void run() {
                         Stage stage = (Stage) btnOk.getScene().getWindow();
-                        stage.close();
+                        // stage.close();
+                        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
                     }
                 });
             }

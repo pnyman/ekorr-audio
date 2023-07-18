@@ -4,6 +4,7 @@ package se.camabomedia.ekorr;
 import java.io.IOException;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -41,6 +42,11 @@ public class App extends Application {
         // stage.setHeight(750);
         stage.show();
         stage.setResizable(false);
+
+        stage.setOnCloseRequest(event -> {
+                Platform.exit();
+                System.exit(0);
+            });
 
         // ctrl.openProject(new File("C:/Users/qwfwq/programmering/ekorr/src/test/resources/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html"));
 
