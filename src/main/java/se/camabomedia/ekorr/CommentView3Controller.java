@@ -270,34 +270,56 @@ public class CommentView3Controller implements Initializable {
         String page = textFieldPage.getText().strip();
 
         if (!checkPageNr(page)) {
-            warningDialogPageNr(page);
+            showWarningDialog("Felaktigt sidnummer", "Detta sidnummer finns inte i talboken:", page);
             textFieldPage.setText("");
             Platform.runLater(() -> textFieldPage.requestFocus());
             return;
         }
 
         if (type == null) {
-            warningDialogType();
+            showWarningDialog("Kommentartyp saknas", null, "Välj typ av kommentar.");
             return;
         }
 
-        String seek = textAreaSeek.getText();
+        String seek = textAreaSeek.getText().strip();
         if (seek == null || seek.strip().equals("")) {
-            warningDialogSeek();
+            showWarningDialog("Söktext saknas", null, "Infoga text i fältet Söktext från boken.");
             return;
         }
 
-        String wrong = textAreaWrong.getText();
+        String wrong = textAreaWrong.getText().strip();
         if (wrong == null || wrong.strip().equals("")) {
             showWarningDialog("Felbeskrivning saknas", null, "Fyll i Beskrivning av felet.");
             return;
         }
 
-        String right = textAreaRight.getText();
-        if (!commentTypes[0].contains(type) && !(right == null || right.strip().equals(""))) {
-            warningDialogRight();
+        String right = textAreaRight.getText().strip();
+
+        if (type.equals("Läsfel") && (right == null || right.equals(""))) {
+            showWarningDialog("Rättelse saknas", null, "Fyll i fältet Rättelse.");
             return;
         }
+
+        if (!commentTypes[0].contains(type) && !(right == null || right.equals(""))) {
+            showWarningDialog("Rättelse ej tillämpligt", null, "Rättelse används bara vid kommentartyp 1. Läsfel.");
+            return;
+        }
+
+        if (seek.equals(wrong)) {
+            showWarningDialog("Samma text", null, "Fälten Söktext från boken och Beskrivning av felet innehåller samma text.");
+            return;
+        }
+
+        if (seek.equals(right)) {
+            showWarningDialog("Samma text", null, "Fälten Söktext från boken och Rättelse innehåller samma text.");
+            return;
+        }
+
+        if (wrong.equals(right)) {
+            showWarningDialog("Samma text", null, "Fälten Beskrivning av felet och Rättelse innehåller samma text.");
+            return;
+        }
+
 
         Thread taskThread = new Thread(new Runnable() {
             @Override
@@ -330,9 +352,6 @@ public class CommentView3Controller implements Initializable {
         });
 
         taskThread.start();
-
-        // Stage stage = (Stage) btnOk.getScene().getWindow();
-        // stage.close();
     }
 
     private boolean checkPageNr(String pageNr) {
@@ -340,15 +359,6 @@ public class CommentView3Controller implements Initializable {
             return true;
         }
         return ncc.getPages().contains(pageNr);
-    }
-
-
-    void warningDialogPageNr(String pageNr) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Felaktigt sidnummer");
-        alert.setHeaderText("Detta sidnummer finns inte i talboken:");
-        alert.setContentText(pageNr);
-        alert.showAndWait();
     }
 
 
@@ -360,31 +370,6 @@ public class CommentView3Controller implements Initializable {
         alert.showAndWait();
     }
 
-
-    void warningDialogType() {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Kommentartyp saknas");
-        alert.setHeaderText("");
-        alert.setContentText("Välj typ av kommentar.");
-        alert.showAndWait();
-    }
-
-
-    void warningDialogSeek() {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Söktext saknas");
-        alert.setHeaderText("");
-        alert.setContentText("Infoga text i fältet Söktext från boken.");
-        alert.showAndWait();
-    }
-
-    void warningDialogRight() {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Rättelse ej tillämpligt");
-        alert.setHeaderText("");
-        alert.setContentText("Rättelse används bara vid kommentartyp 1. Läsfel.");
-        alert.showAndWait();
-    }
 
     @FXML
     void handleBtnCancel(ActionEvent event) {
