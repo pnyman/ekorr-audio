@@ -288,6 +288,10 @@ public class CommentView3Controller implements Initializable {
         }
 
         String wrong = textAreaWrong.getText();
+        if (wrong == null || wrong.strip().equals("")) {
+            showWarningDialog("Felbeskrivning saknas", null, "Fyll i Beskrivning av felet.");
+            return;
+        }
 
         String right = textAreaRight.getText();
         if (!commentTypes[0].contains(type) && !(right == null || right.strip().equals(""))) {
@@ -344,6 +348,15 @@ public class CommentView3Controller implements Initializable {
         alert.setTitle("Felaktigt sidnummer");
         alert.setHeaderText("Detta sidnummer finns inte i talboken:");
         alert.setContentText(pageNr);
+        alert.showAndWait();
+    }
+
+
+    private void showWarningDialog(String title, String header, String content) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
         alert.showAndWait();
     }
 
