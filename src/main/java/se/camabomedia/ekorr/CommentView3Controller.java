@@ -76,43 +76,25 @@ public class CommentView3Controller implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+
+        // Set focus on page number field initially
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                textFieldPage.requestFocus();
+                if (editComment) {
+                    fillForm();
+                }
+            }
+        });
+
+        // Populate commment types
         listViewType.getItems().addAll(commentTypes);
 
         // This sets the initial height of the ListView:
         listViewType.setPrefHeight(commentTypes.length * 24);
         listViewType.setMaxHeight(Control.USE_PREF_SIZE);
         listViewType.setMinHeight(Control.USE_PREF_SIZE);
-
-        // Make Tab focus next element in text areas
-        ArrayList<TextArea> areas = new ArrayList<>();
-        areas.add(textAreaSeek);
-        areas.add(textAreaWrong);
-        areas.add(textAreaRight);
-
-        for (TextArea area : areas) {
-            area.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-                @Override
-                public void handle(KeyEvent event) {
-                    KeyCode code = event.getCode();
-                    if (code == KeyCode.TAB && !event.isShiftDown() && !event.isControlDown()) {
-                        event.consume();
-                        Node node = (Node) event.getSource();
-                        KeyEvent newEvent = new KeyEvent(event.getSource(),
-                                event.getTarget(), event.getEventType(),
-                                event.getCharacter(), event.getText(),
-                                event.getCode(), event.isShiftDown(),
-                                true, event.isAltDown(),
-                                event.isMetaDown());
-                        node.fireEvent(newEvent);
-                    }
-                    if (code == KeyCode.ENTER && !event.isShiftDown() && !event.isControlDown()) {
-                        event.consume();
-                        saveAndClose();
-                    }
-                }
-            });
-        }
-
 
         // Handle selection of comment type
         listViewType.getSelectionModel().selectedItemProperty()
@@ -170,17 +152,6 @@ public class CommentView3Controller implements Initializable {
             }
         });
 
-        // Set focus on page number field initially
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                textFieldPage.requestFocus();
-                if (editComment) {
-                    fillForm();
-                }
-            }
-        });
-
         // Set default type
         Platform.runLater(new Runnable() {
             @Override
@@ -188,6 +159,36 @@ public class CommentView3Controller implements Initializable {
                 listViewType.getSelectionModel().select(0);
             }
         });
+
+        // Make Tab focus next element in text areas
+        ArrayList<TextArea> areas = new ArrayList<>();
+        areas.add(textAreaSeek);
+        areas.add(textAreaWrong);
+        areas.add(textAreaRight);
+
+        for (TextArea area : areas) {
+            area.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+                @Override
+                public void handle(KeyEvent event) {
+                    KeyCode code = event.getCode();
+                    if (code == KeyCode.TAB && !event.isShiftDown() && !event.isControlDown()) {
+                        event.consume();
+                        Node node = (Node) event.getSource();
+                        KeyEvent newEvent = new KeyEvent(event.getSource(),
+                                event.getTarget(), event.getEventType(),
+                                event.getCharacter(), event.getText(),
+                                event.getCode(), event.isShiftDown(),
+                                true, event.isAltDown(),
+                                event.isMetaDown());
+                        node.fireEvent(newEvent);
+                    }
+                    if (code == KeyCode.ENTER && !event.isShiftDown() && !event.isControlDown()) {
+                        event.consume();
+                        saveAndClose();
+                    }
+                }
+            });
+        }
 
     }
 
@@ -237,6 +238,13 @@ public class CommentView3Controller implements Initializable {
     private void fillForm() {
         type = comment.getType();
 
+        for (int i = 0; i < commentTypes.length; i++) {
+            if (commentTypes[i].contains(type)) {
+                setSelectedType(i);
+                break;
+            }
+        }
+
         String pageNr = comment.getPage();
             if (pageNr.strip().equals(ENDASH)) {
             textFieldPage.setText("");
@@ -251,12 +259,14 @@ public class CommentView3Controller implements Initializable {
     }
 
     private void setSelectedType(int i) {
-        listViewType.getSelectionModel().select(i);
-        listViewType.getFocusModel().focus(i);
+        Platform.runLater(() -> {
+            listViewType.getSelectionModel().select(i);
+            listViewType.getFocusModel().focus(i);
+        });
     }
 
     private void saveAndClose() {
-        String page = textFieldPage.getText();
+        String page = textFieldPage.getText().strip();
 
         if (!checkPageNr(page)) {
             warningDialogPageNr(page);
@@ -271,11 +281,17 @@ public class CommentView3Controller implements Initializable {
         }
 
         String seek = textAreaSeek.getText();
-        String wrong = textAreaWrong.getText();
-        String right = textAreaRight.getText();
-
-        if (seek == null || seek.strip() == "") {
+        if (seek == null || seek.strip().equals("")) {
             warningDialogSeek();
+            return;
+        }
+
+        String wrong = textAreaWrong.getText();
+
+        String right = textAreaRight.getText();
+        System.out.println(right);
+        if (!commentTypes[0].contains(type) && !(right == null || right.strip().equals(""))) {
+            warningDialogRight();
             return;
         }
 
@@ -344,7 +360,15 @@ public class CommentView3Controller implements Initializable {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Söktext saknas");
         alert.setHeaderText("");
-        alert.setContentText("Infoga kontext i fältet Se");
+        alert.setContentText("Infoga text i fältet Söktext från boken");
+        alert.showAndWait();
+    }
+
+    void warningDialogRight() {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Rättelse ej tillämpligt");
+        alert.setHeaderText("");
+        alert.setContentText("Rättelse används bara vid kommentartyp 1. Läsfel");
         alert.showAndWait();
     }
 
