@@ -292,17 +292,24 @@ public class Report {
         String right = "";
 
         public Comment(String commentNr, String page, String type, String seek, String wrong, String right) {
-            if (commentNr != null)
-                this.commentNr = commentNr;
+            this.commentNr = commentNr;
             makePageNumber(page);
-            if (type != null)
-                this.type = sanitize(type);
-            if (seek != null)
-                this.seek = sanitize(seek);
-            if (wrong != null)
-                this.wrong = sanitize(wrong);
-            if (right != null)
-                this.right = sanitize(right);
+            this.type = sanitize(type);
+            this.seek = sanitize(seek);
+            this.wrong = sanitize(wrong);
+            this.right = sanitize(right);
+
+            // if (commentNr != null)
+            //     this.commentNr = commentNr;
+            // makePageNumber(page);
+            // if (type != null)
+            //     this.type = sanitize(type);
+            // if (seek != null)
+            //     this.seek = sanitize(seek);
+            // if (wrong != null)
+            //     this.wrong = sanitize(wrong);
+            // if (right != null)
+            //     this.right = sanitize(right);
         }
 
         private void makePageNumber(String page) {
