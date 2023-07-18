@@ -35,7 +35,8 @@ Man kan ändra gjorda inställningar under menyn Inställningar.
 
 Efter inställningarna i föregående rubrik är gjorda, möts man av en vy där man kan
 välja att öppna en talbok eller läsa manualen.
-Välj filen ncc.html i talbokens mapp.
+För att öppna en talbok,
+välj filen ncc.html i talbokens mapp.
 
 Man kan också öppna en talbok genom att antingen:
 - gå till menyn Arkiv > Öppna...
@@ -61,23 +62,27 @@ En ny kommentar kan skapas genom att antingen:
 Ett nytt fönster öppas med ett antal fält att fylla i,
 och val att göra.
 
-- *Sida:*
-  Det sidnummer som kommentaren gäller.
+- *Sida* \\
+  Det sidnummer som kommentaren gäller. \\
   Finns inget sidnummer lämnas fältet blankt.
-- *Typ:*
-  Välj en typ genom att skriva en siffra 1--9,
+- *Typ* \\
+  Välj en typ genom att skriva en siffra 0--9,
   eller klicka på en typ,
   eller med hjälp av piltangenterna.
   Typ 1 är förvald.
-- *Se:*
-  Här skivs eller kopieras in en bit text från talboken.
-  Den kan sedan användas av inläsaren vid rättning för att hitta
-  rätt ställe.
-- *Fel:*
-  Beskrivning av felet.
-- *Rätt:*
-  Hur det skall vara.
+- *Söktext från boken* \\
+  Här skrivs eller kopieras in en bit text från talboken. \\
+  Den kan sedan användas av inläsaren vid rättning för att hitta rätt ställe. \\
+  /Enbart text från boken ska stå här. Inga tillägg, inget utelämnat mitt i./ \\
+  Detta fält måste alltid fyllas i.
+- *Beskrivning av felet* \\
+  Detta fält måste alltid fyllas i.
+- *Rättelse* \\
+  Används bara med kommentartyp 1. Läsfel.
 
+
+Fälten Söktext från boken och Beskrivning av felet måste alltid fyllas i.
+Fältet Rättelse fylls bara i vid Läsfel.
 
 Man kan navigera mellan de olika fälten med Tab-tangenten,
 för att gå bakåt trycker man Skift-Tab.
@@ -89,25 +94,25 @@ eller trycker på Escape-tangenten.
 ** Kommentarstyperna
 1. Läsfel \\
    Till exempel uttalsfel, fel ordföljd, fel ord.
-2. Talsyntes \\
+2. Talsyntes hörs \\
    När inläsning saknas och texten läses av EasyReader. \\
    Särskilt vanligt i rubriker.
-3. Omtagning \\
-   Upprepning av ord, fraser eller kanske hela stycken.
-4. Lucka \\
+3. Inläsning saknas \\
    Avsnitt som inte lästs in.
+4. Omtagning \\
+   Upprepning av ord, fraser eller kanske hela stycken.
 5. Stakning \\
 6. Paus \\
    Kortare eller längre period av tystnad.
-7. Extra ljud \\
+7. Överflödigt ljud \\
    Hummanden, hostningar, etc.
 8. Bakgrundsljud
-9. Övrigt \\
+9. Synkfel \\
+   Markerat text och inläsning matchar inte.
+0. Övrigt \\
    Kommentarer som inte passar in i övriga typer.
 
 
-Fyll i fälten Fel och Rätt efter omdöme.
-I allmänhet används fältet Rätt bara vid Läsfel.
 
 * Redigera en kommentar
 
@@ -140,15 +145,15 @@ För att flytta en kommentar uppåt eller nedåt i listan kan man antingen:
 
 * Rapporten
 
-Rapporten återfinns i mappen =___Korrektur-rapport= i talboksmappen.
-För att öppna den mappen, klicka på knappen Rapportmapp.
-För att se rapporten i webbläsare, klicka på knappen Se rapport.
-
 Alla operationer -- skapa, redigera, ta bort eller ändra ordningen på kommentarer --
 sparas i rapporten automatiskt.
 Om man stänger en talbok med en påbörjad rapport och sedan öppnar den på nytt,
 kommer rapporten att läsas in i programmet,
 så att man kan fortsätta med korrekturet.
+
+Rapporten återfinns i mappen =___Korrektur-rapport= i talboksmappen.
+För att öppna den mappen, klicka på knappen Rapportmapp.
+För att se rapporten i webbläsare, klicka på knappen Se rapport.
 
 ** Privat mapp<<private-report-folder>>
 
