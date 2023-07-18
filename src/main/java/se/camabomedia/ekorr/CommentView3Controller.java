@@ -290,7 +290,6 @@ public class CommentView3Controller implements Initializable {
         String wrong = textAreaWrong.getText();
 
         String right = textAreaRight.getText();
-        System.out.println(right);
         if (!commentTypes[0].contains(type) && !(right == null || right.strip().equals(""))) {
             warningDialogRight();
             return;
@@ -362,7 +361,7 @@ public class CommentView3Controller implements Initializable {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Söktext saknas");
         alert.setHeaderText("");
-        alert.setContentText("Infoga text i fältet Söktext från boken");
+        alert.setContentText("Infoga text i fältet Söktext från boken.");
         alert.showAndWait();
     }
 
@@ -370,7 +369,7 @@ public class CommentView3Controller implements Initializable {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("Rättelse ej tillämpligt");
         alert.setHeaderText("");
-        alert.setContentText("Rättelse används bara vid kommentartyp 1. Läsfel");
+        alert.setContentText("Rättelse används bara vid kommentartyp 1. Läsfel.");
         alert.showAndWait();
     }
 
