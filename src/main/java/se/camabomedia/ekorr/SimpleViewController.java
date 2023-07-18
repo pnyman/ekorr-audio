@@ -28,6 +28,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
@@ -698,8 +699,9 @@ public class SimpleViewController implements Initializable {
         try {
             commentScene = new Scene(fxmlLoader.load());
             commentStage.setScene(commentScene);
-            commentStage.setTitle("Skapa kommentar");
+            commentStage.setTitle("Ekorr – Skapa kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
+            commentStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
             ctrl.initData(commentStage, report, ncc);
             commentStage.setResizable(false);
             commentStage.showAndWait();
@@ -727,8 +729,9 @@ public class SimpleViewController implements Initializable {
         try {
             commentScene = new Scene(fxmlLoader.load());
             commentStage.setScene(commentScene);
-            commentStage.setTitle("Redigera kommentar");
+            commentStage.setTitle("Ekorr – Redigera kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
+            commentStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
             ctrl.initData(commentStage, report, selected, ncc);
             commentStage.setResizable(false);
             commentStage.showAndWait();
