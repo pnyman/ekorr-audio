@@ -191,14 +191,14 @@ public class Report {
             e.printStackTrace();
         }
 
-        String nr = null;
-        String page = null;
-        String type = null;
-        String seek = null;
-        String wrong = null;
-        String right = null;
-
         for (Element comment : doc.getElementsByClass("comment")) {
+            String nr = "";
+            String page = "";
+            String type = "";
+            String seek = "";
+            String wrong = "";
+            String right = "";
+
             for (Element elt : comment.getElementsByClass("comment-nr")) {
                 nr = elt.text().replaceAll("\\.$", "");
             }
