@@ -262,6 +262,21 @@ public class Report {
         return Integer.toString(comments.size());
     }
 
+    @Override
+    public String toString() {
+        for (Comment comment : comments) {
+            System.out.println("[ "
+                               + "nr: " + comment.getNr() + " | "
+                               + "page: " + comment.getPage() + " | "
+                               + "type: " + comment.getType() + " | "
+                               + "seek: " + comment.getSeek() + " | "
+                               + "wrong: " + comment.getWrong() + " | "
+                               + "right: " + comment.getRight() + " "
+                               + "]");
+        }
+        return null;
+    }
+
 
     //------------------------------------------------------------------------------------------------------------
 
