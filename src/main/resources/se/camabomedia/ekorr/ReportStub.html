@@ -53,52 +53,7 @@
               margin: 10%;
           }
       }
-</style>
-<script>
-    function copyToClipboard(textToCopy) {
-      var input = document.createElement("input");
-      document.body.appendChild(input);
-      input.value = textToCopy;
-      input.select();
-      document.execCommand("copy");
-      input.remove();
-    }
-
-    function copyLastColumn(tr) {
-      var lastColumnText = tr.lastElementChild.innerText;
-
-      var isDoubleClick = false;
-      tr.addEventListener("mousedown", function (event) {
-        if (event.detail === 2) {
-          isDoubleClick = true;
-          event.preventDefault();
-
-          var cell = tr.lastElementChild;
-          var range = document.createRange();
-          range.selectNodeContents(cell);
-          var selection = window.getSelection();
-          selection.removeAllRanges();
-          selection.addRange(range);
-        }
-      });
-
-      tr.addEventListener("mouseup", function (event) {
-        if (isDoubleClick) {
-          isDoubleClick = false;
-          copyToClipboard(lastColumnText);
-          setTimeout(function() {
-            var selection = window.getSelection();
-            selection.removeAllRanges();
-          }, 1000);
-        } else {
-          var selection = window.getSelection();
-          if (selection.rangeCount > 0 && selection.toString().length > 0) {
-            event.preventDefault();
-          }
-        }
-      });
-    }
-</script>
+    </style>
   </head>
 
   <body id="content">

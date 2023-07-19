@@ -377,7 +377,7 @@ public class Report {
             html += "<tr><td class='comment-head'>Sida:</td><td class='comment-page'>" + page + "</td></tr>";
 
             if (!seek.equals("")) {
-                html += "<tr onclick=\"copyLastColumn(this)\">"
+                html += "<tr>"
                     + "<td class='comment-head'>Sök:</td><td class='comment-seek'>"
                     + seek + "</td></tr>";
             }
