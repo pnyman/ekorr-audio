@@ -1,7 +1,7 @@
 jpackage --type msi ^
          --input .\target ^
          --dest . ^
-         --main-jar ekorr-1.0-SNAPSHOT-shaded.jar ^
+         --main-jar ekorr-1.1-SNAPSHOT-shaded.jar ^
          --main-class se.camabomedia.ekorr.Main ^
          --module-path "C:\Program Files (x86)\Java\javafx-jmods-17.0.7" ^
          --add-modules javafx.controls,javafx.fxml,java.base,java.desktop,java.net.http,java.scripting,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.xml.dom ^
@@ -9,7 +9,7 @@ jpackage --type msi ^
          --win-menu ^
          --win-dir-chooser ^
          --name Ekorr ^
-         --app-version 1.0 ^
+         --app-version 1.1 ^
          --icon src\main\resources\se\camabomedia\ekorr\icon.ico ^
          --description "Skapa korrektur-rapporter i talboksproduktion" ^
          --vendor "Camabo Media" ^
