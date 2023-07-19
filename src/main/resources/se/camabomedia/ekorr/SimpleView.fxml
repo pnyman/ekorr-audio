@@ -85,8 +85,8 @@
     </MenuBar>
       <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="tableColumnNr" editable="false" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" sortable="false" text="Nr" />
-          <TableColumn fx:id="tableColumnPage" editable="false" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" resizable="false" sortable="false" text="Sida" />
+            <TableColumn fx:id="tableColumnNr" editable="false" maxWidth="50.0" minWidth="50.0" prefWidth="50.0" sortable="false" style="-fx-alignment: CENTER_RIGHT; -fx-padding: 0 12 0 0;" text="Nr" />
+          <TableColumn fx:id="tableColumnPage" editable="false" maxWidth="65.0" minWidth="65.0" prefWidth="65.0" resizable="false" sortable="false" style="-fx-alignment: CENTER_RIGHT; -fx-padding: 0 12 0 0;" text="Sida" />
             <TableColumn fx:id="tableColumnType" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" sortable="false" text="Typ" />
             <TableColumn fx:id="tableColumnComment" editable="false" maxWidth="1.7976931348623157E308" minWidth="-Infinity" prefWidth="560.0" resizable="false" sortable="false" text="Söktext från boken                                                                                                               " />
         </columns>
