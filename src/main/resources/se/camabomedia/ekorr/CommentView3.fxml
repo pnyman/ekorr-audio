@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <HBox fillHeight="false" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorr.CommentView3Controller">
    <children>
@@ -25,16 +26,22 @@
           <RowConstraints fillHeight="false" maxHeight="339.2000099182129" minHeight="10.0" prefHeight="333.6000061035156" />
         </rowConstraints>
          <children>
-            <Label text="Sida:" GridPane.valignment="TOP">
+            <Label text="Sida" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="12.0" />
                </GridPane.margin>
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
             </Label>
             <TextField fx:id="textFieldPage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.valignment="TOP" />
-            <Label text="Typ:" GridPane.rowIndex="1" GridPane.valignment="TOP">
+            <Label text="Typ" GridPane.rowIndex="1" GridPane.valignment="TOP">
                <GridPane.margin>
                   <Insets left="12.0" />
                </GridPane.margin>
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
             </Label>
             <ListView fx:id="listViewType" centerShape="false" prefWidth="130.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP">
                <GridPane.margin>
@@ -52,19 +59,28 @@
                <VBox.margin>
                   <Insets top="8.0" />
                </VBox.margin>
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
             </Label>
             <TextArea fx:id="textAreaSeek" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
                <VBox.margin>
                   <Insets bottom="12.0" />
                </VBox.margin>
             </TextArea>
-            <Label text="Beskrivning av felet" />
+            <Label text="Beskrivning av felet">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
             <TextArea fx:id="textAreaWrong" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
                <VBox.margin>
                   <Insets bottom="12.0" />
                </VBox.margin>
             </TextArea>
-            <Label text="Rättelse" />
+            <Label text="Rättelse">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></Label>
             <TextArea fx:id="textAreaRight" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
                <VBox.margin>
                   <Insets />
