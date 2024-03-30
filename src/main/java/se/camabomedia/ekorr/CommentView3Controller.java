@@ -16,17 +16,29 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 
 public class CommentView3Controller implements Initializable {
+
+    @FXML
+    private Button btnDeleteSound;
+
+    @FXML
+    private Button btnPlaySound;
+
+    @FXML
+    private Button btnRecordSound;
 
     @FXML // fx:id="btnCancel"
     private Button btnCancel; // Value injected by FXMLLoader
@@ -191,6 +203,32 @@ public class CommentView3Controller implements Initializable {
             });
         }
 
+        setButtons();
+    }
+
+
+    private void setButtons() {
+        setButton(btnRecordSound, "images/record.png", "Spela in ljud");
+        setButton(btnPlaySound, "images/play.png", "Spela upp ljud");
+        setButton(btnDeleteSound, "images/delete.png", "Radera ljud");
+    }
+
+    private void setButton(Button button, String imagePath, String tooltipText) {
+        double BUTTON_HEIGHT = 40.0;
+        ImageView imageView = new ImageView(this.getClass().getResource(imagePath).toExternalForm());
+        imageView.setFitHeight(BUTTON_HEIGHT);
+        imageView.setPreserveRatio(true);
+        button.setGraphic(imageView);
+        button.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;");
+        setTooltip(button, tooltipText);
+    }
+
+    private static void setTooltip(Control control, String text) {
+        if (text == null)
+            return;
+        Tooltip tooltip = new Tooltip(text);
+        tooltip.setShowDelay(Duration.millis(1));
+        control.setTooltip(tooltip);
     }
 
     /**
@@ -370,6 +408,22 @@ public class CommentView3Controller implements Initializable {
         alert.showAndWait();
     }
 
+
+    @FXML
+    void handleBtnDeleteSound(ActionEvent event) {
+
+    }
+
+
+    @FXML
+    void handleBtnPlaySound(ActionEvent event) {
+
+    }
+
+    @FXML
+    void handleBtnRecordSound(ActionEvent event) {
+
+    }
 
     @FXML
     void handleBtnCancel(ActionEvent event) {

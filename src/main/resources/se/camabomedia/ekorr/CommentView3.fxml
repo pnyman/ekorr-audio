@@ -14,94 +14,120 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<HBox fillHeight="false" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorr.CommentView3Controller">
+
+<VBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorr.CommentView3Controller">
    <children>
-      <GridPane focusTraversable="true">
-        <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.39999389648438" minWidth="10.0" prefWidth="40.0" />
-          <ColumnConstraints fillWidth="false" maxWidth="156.79999389648438" minWidth="10.0" prefWidth="142.4" />
-        </columnConstraints>
-        <rowConstraints>
-          <RowConstraints maxHeight="114.8000244140625" minHeight="29.599990081787112" prefHeight="35.999993896484376" vgrow="SOMETIMES" />
-          <RowConstraints fillHeight="false" maxHeight="339.2000099182129" minHeight="10.0" prefHeight="333.6000061035156" />
-        </rowConstraints>
+      <HBox fillHeight="false">
          <children>
-            <Label text="Sida" GridPane.valignment="TOP">
-               <GridPane.margin>
-                  <Insets left="12.0" />
-               </GridPane.margin>
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
-            <TextField fx:id="textFieldPage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.valignment="TOP" />
-            <Label text="Typ" GridPane.rowIndex="1" GridPane.valignment="TOP">
-               <GridPane.margin>
-                  <Insets left="12.0" />
-               </GridPane.margin>
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
-            <ListView fx:id="listViewType" centerShape="false" prefWidth="130.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP">
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
-            </ListView>
+            <GridPane focusTraversable="true">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="94.39999389648438" minWidth="10.0" prefWidth="40.0" />
+                <ColumnConstraints fillWidth="false" maxWidth="156.79999389648438" minWidth="10.0" prefWidth="142.4" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints maxHeight="114.8000244140625" minHeight="29.599990081787112" prefHeight="35.999993896484376" vgrow="SOMETIMES" />
+                <RowConstraints fillHeight="false" maxHeight="339.2000099182129" minHeight="10.0" prefHeight="333.6000061035156" />
+              </rowConstraints>
+               <children>
+                  <Label text="Sida" GridPane.valignment="TOP">
+                     <GridPane.margin>
+                        <Insets left="12.0" />
+                     </GridPane.margin>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="textFieldPage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.valignment="TOP" />
+                  <Label text="Typ" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                     <GridPane.margin>
+                        <Insets left="12.0" />
+                     </GridPane.margin>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <ListView fx:id="listViewType" centerShape="false" prefWidth="130.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                  </ListView>
+               </children>
+               <HBox.margin>
+                  <Insets top="12.0" />
+               </HBox.margin>
+            </GridPane>
+            <VBox>
+               <children>
+                  <Label text="Söktext från boken">
+                     <VBox.margin>
+                        <Insets top="8.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="textAreaSeek" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </TextArea>
+                  <Label text="Beskrivning av felet">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="textAreaWrong" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
+                  </TextArea>
+                  <Label text="Rättelse">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="textAreaRight" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </TextArea>
+               </children>
+               <HBox.margin>
+                  <Insets left="8.0" right="18.0" />
+               </HBox.margin>
+            </VBox>
          </children>
-         <HBox.margin>
-            <Insets bottom="12.0" top="12.0" />
-         </HBox.margin>
-      </GridPane>
-      <VBox>
+         <opaqueInsets>
+            <Insets bottom="12.0" />
+         </opaqueInsets>
+      </HBox>
+      <HBox alignment="CENTER_LEFT">
          <children>
-            <Label text="Söktext från boken">
-               <VBox.margin>
-                  <Insets top="8.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Label>
-            <TextArea fx:id="textAreaSeek" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
-               <VBox.margin>
-                  <Insets bottom="12.0" />
-               </VBox.margin>
-            </TextArea>
-            <Label text="Beskrivning av felet">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-            <TextArea fx:id="textAreaWrong" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
-               <VBox.margin>
-                  <Insets bottom="12.0" />
-               </VBox.margin>
-            </TextArea>
-            <Label text="Rättelse">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font></Label>
-            <TextArea fx:id="textAreaRight" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </TextArea>
-            <ButtonBar>
-              <buttons>
-                <Button fx:id="btnCancel" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnCancel" text="Avbryt" />
-                  <Button fx:id="btnOk" mnemonicParsing="false" onAction="#handleBtnOk" text="OK" />
-              </buttons>
-               <VBox.margin>
-                  <Insets bottom="12.0" top="12.0" />
-               </VBox.margin>
-            </ButtonBar>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <ButtonBar>
+                     <buttons>
+                        <Button fx:id="btnRecordSound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnRecordSound" text="Record" />
+                        <Button fx:id="btnPlaySound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnPlaySound" text="Play" />
+                        <Button fx:id="btnDeleteSound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnDeleteSound" text="Delete" />
+                     </buttons>
+                  </ButtonBar>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="278.0">
+               <children>
+                  <ButtonBar>
+                    <buttons>
+                      <Button fx:id="btnCancel" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnCancel" text="Avbryt" />
+                        <Button fx:id="btnOk" mnemonicParsing="false" onAction="#handleBtnOk" text="OK" />
+                    </buttons>
+                  </ButtonBar>
+               </children>
+            </HBox>
          </children>
-         <HBox.margin>
-            <Insets left="8.0" right="18.0" />
-         </HBox.margin>
-      </VBox>
+         <VBox.margin>
+            <Insets bottom="12.0" left="20.0" right="18.0" />
+         </VBox.margin>
+      </HBox>
    </children>
-   <opaqueInsets>
-      <Insets bottom="12.0" />
-   </opaqueInsets>
-</HBox>
+</VBox>
