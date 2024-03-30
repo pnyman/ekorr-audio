@@ -58,83 +58,32 @@ import javafx.stage.WindowEvent;
 
 public class SimpleViewController implements Initializable {
 
-    @FXML
-    private TableView<Report.Comment> tableView;
-
-    @FXML // fx:id="tableColumnNr"
-    private TableColumn<Report.Comment, String> tableColumnNr; // Value injected by FXMLLoader
-
-    @FXML
-    private TableColumn<Report.Comment, String> tableColumnPage;
-
-    @FXML // fx:id="tableColumnType"
-    private TableColumn<Report.Comment, String> tableColumnType; // Value injected by FXMLLoader
-
-    @FXML
-    private TableColumn<Report.Comment, String> tableColumnComment;
-
-    @FXML // fx:id="menuItemOpen"
-    private MenuItem menuItemOpen; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemOpenLast"
-    private MenuItem menuItemOpenLast; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemClose"
-    private MenuItem menuItemClose; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemQuit"
-    private MenuItem menuItemQuit; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemCreateComment"
-    private MenuItem menuItemCreateComment; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemEditComment"
-    private MenuItem menuItemEditComment; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemRemoveComment"
-    private MenuItem menuItemRemoveComment; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemName"
-    private MenuItem menuItemName; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemTalkingBooks"
-    private MenuItem menuItemTalkingBooks; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemReports"
-    private MenuItem menuItemReports; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemManual"
-    private MenuItem menuItemManual; // Value injected by FXMLLoader
-
-    @FXML // fx:id="menuItemAbout"
-    private MenuItem menuItemAbout; // Value injected by FXMLLoader
-
-    @FXML // fx:id="labelNrOfComments"
-    private Label labelNrOfComments;
-
-    @FXML // fx:id="x3"
-    private Font x3; // Value injected by FXMLLoader
-
-    @FXML // fx:id="x4"
-    private Color x4; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btnViewReport"
-    private Button btnViewReport; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btnOpenFolder"
-    private Button btnOpenReportDirectory; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btnCreate"
-    private Button btnCreate; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btnEdit"
-    private Button btnEdit; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btnRemove"
-    private Button btnRemove; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btnQuit"
-    private Button btnQuit; // Value injected by FXMLLoader
+    @FXML private TableView<Report.Comment> tableView;
+    @FXML private TableColumn<Report.Comment, String> tableColumnNr; 
+    @FXML private TableColumn<Report.Comment, String> tableColumnPage;
+    @FXML private TableColumn<Report.Comment, String> tableColumnType; 
+    @FXML private TableColumn<Report.Comment, String> tableColumnComment;
+    @FXML private MenuItem menuItemOpen; 
+    @FXML private MenuItem menuItemOpenLast; 
+    @FXML private MenuItem menuItemClose; 
+    @FXML private MenuItem menuItemQuit; 
+    @FXML private MenuItem menuItemCreateComment; 
+    @FXML private MenuItem menuItemEditComment; 
+    @FXML private MenuItem menuItemRemoveComment; 
+    @FXML private MenuItem menuItemName; 
+    @FXML private MenuItem menuItemTalkingBooks; 
+    @FXML private MenuItem menuItemReports; 
+    @FXML private MenuItem menuItemManual; 
+    @FXML private MenuItem menuItemAbout; 
+    @FXML private Label labelNrOfComments;
+    // @FXML private Font x3; 
+    // @FXML private Color x4; 
+    @FXML private Button btnViewReport; 
+    @FXML private Button btnOpenReportDirectory; 
+    @FXML private Button btnCreate; 
+    @FXML private Button btnEdit; 
+    @FXML private Button btnRemove; 
+    @FXML private Button btnQuit; 
 
     private Stage stage;
     private Ncc ncc;

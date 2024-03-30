@@ -31,35 +31,16 @@ import javafx.util.Duration;
 
 public class CommentView3Controller implements Initializable {
 
-    @FXML
-    private Button btnDeleteSound;
-
-    @FXML
-    private Button btnPlaySound;
-
-    @FXML
-    private Button btnRecordSound;
-
-    @FXML // fx:id="btnCancel"
-    private Button btnCancel; // Value injected by FXMLLoader
-
-    @FXML // fx:id="btnOk"
-    private Button btnOk; // Value injected by FXMLLoader
-
-    @FXML // fx:id="listViewType"
-    private ListView<String> listViewType; // Value injected by FXMLLoader
-
-    @FXML // fx:id="textAreaSeek"
-    private TextArea textAreaSeek; // Value injected by FXMLLoader
-
-    @FXML // fx:id="textAreaRight"
-    private TextArea textAreaRight; // Value injected by FXMLLoader
-
-    @FXML // fx:id="textAreaWrong"
-    private TextArea textAreaWrong; // Value injected by FXMLLoader
-
-    @FXML // fx:id="textFieldPage"
-    private TextField textFieldPage; // Value injected by FXMLLoader
+    @FXML private Button btnDeleteSound;
+    @FXML private Button btnPlaySound;
+    @FXML private Button btnRecordSound;
+    @FXML private Button btnCancel;
+    @FXML private Button btnOk;
+    @FXML private ListView<String> listViewType;
+    @FXML private TextArea textAreaSeek;
+    @FXML private TextArea textAreaRight; 
+    @FXML private TextArea textAreaWrong; 
+    @FXML private TextField textFieldPage; 
 
     private Stage stage;
     private Report report;
