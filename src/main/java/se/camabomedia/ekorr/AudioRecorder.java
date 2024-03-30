@@ -15,7 +15,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-public class AudioRecorder {
+public class AudioRecorderPlayer {
     private TargetDataLine recordingLine;
     private SourceDataLine playingLine;
     private volatile boolean recording = false;

@@ -82,7 +82,7 @@ public class CommentView3Controller implements Initializable {
     };
 
     private Ncc ncc;
-    private AudioRecorder audioRecorder = new AudioRecorder();
+    private AudioRecorderPlayer audioRecorderPlayer = new AudioRecorderPlayer();
 
     /**
      * Initializes the controller class.
@@ -214,21 +214,21 @@ public class CommentView3Controller implements Initializable {
 
         btnRecordSound.setOnMousePressed(event -> {
             setButton(btnRecordSound, "images/record_active.png", "Spela in ljud");
-            audioRecorder.startRecording();
+            audioRecorderPlayer.startRecording();
         });
 
         btnRecordSound.setOnMouseReleased(event -> {
-            audioRecorder.stopRecording();
+            audioRecorderPlayer.stopRecording();
             setButton(btnRecordSound, "images/record_inactive.png", "Spela in ljud");
         });
 
         btnPlaySound.setOnMousePressed(event -> {
             setButton(btnPlaySound, "images/play_active.png", "Spela in ljud");
-            audioRecorder.playRecording();
+            audioRecorderPlayer.playRecording();
         });
 
         btnPlaySound.setOnMouseReleased(event -> {
-            audioRecorder.stopPlaying();
+            audioRecorderPlayer.stopPlaying();
             setButton(btnPlaySound, "images/play_inactive.png", "Spela in ljud");
         });
     }
