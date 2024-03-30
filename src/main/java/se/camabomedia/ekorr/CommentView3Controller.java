@@ -208,8 +208,8 @@ public class CommentView3Controller implements Initializable {
 
 
     private void setButtons() {
-        setButton(btnRecordSound, "images/record.png", "Spela in ljud");
-        setButton(btnPlaySound, "images/play.png", "Spela upp ljud");
+        setButton(btnRecordSound, "images/record_inactive.png", "Spela in ljud");
+        setButton(btnPlaySound, "images/play_inactive.png", "Spela upp ljud");
         setButton(btnDeleteSound, "images/delete.png", "Radera ljud");
     }
 

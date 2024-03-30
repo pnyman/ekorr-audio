@@ -107,9 +107,9 @@
                <children>
                   <ButtonBar>
                      <buttons>
-                        <Button fx:id="btnRecordSound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnRecordSound" text="Record" />
-                        <Button fx:id="btnPlaySound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnPlaySound" text="Play" />
-                        <Button fx:id="btnDeleteSound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnDeleteSound" text="Delete" />
+                        <Button fx:id="btnRecordSound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnRecordSound" />
+                        <Button fx:id="btnPlaySound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnPlaySound" />
+                        <Button fx:id="btnDeleteSound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnDeleteSound" />
                      </buttons>
                   </ButtonBar>
                </children>
