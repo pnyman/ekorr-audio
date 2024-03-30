@@ -105,7 +105,7 @@
          <children>
             <HBox alignment="CENTER_LEFT">
                <children>
-                  <ButtonBar>
+                  <ButtonBar buttonMinWidth="10.0">
                      <buttons>
                         <Button fx:id="btnRecordSound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnRecordSound" />
                         <Button fx:id="btnPlaySound" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnPlaySound" />
@@ -114,7 +114,7 @@
                   </ButtonBar>
                </children>
             </HBox>
-            <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="278.0">
+            <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="378.0">
                <children>
                   <ButtonBar>
                     <buttons>
