@@ -15,6 +15,7 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 original-plugins.xml
+*.msi
 
 # Eclipse m2e generated files
 # Eclipse Core
