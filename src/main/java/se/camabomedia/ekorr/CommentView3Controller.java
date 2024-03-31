@@ -205,7 +205,7 @@ public class CommentView3Controller implements Initializable {
 
         btnPlaySound.setOnMousePressed(event -> {
             setButton(btnPlaySound, "images/playing_active.png", "Spela in ljud");
-            audioRecorderPlayer.playRecording();
+            audioRecorderPlayer.playFromBase64();
         });
 
         btnPlaySound.setOnMouseReleased(event -> {

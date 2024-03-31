@@ -1,7 +1,10 @@
 package se.camabomedia.ekorr;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Base64;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
@@ -22,6 +25,7 @@ public class AudioRecorderPlayer {
     private volatile boolean playing = false;
     private String soundFileName;
     private File soundFile;
+    String base64EncodedString = null;
 
     AudioRecorderPlayer(File reportDirectory) {
         soundFileName = "recorded_audio.wav";
@@ -61,7 +65,7 @@ public class AudioRecorderPlayer {
 
                 // Define audio format
                 AudioFormat format = new AudioFormat(
-                        22050, // sampleRate
+                        11025, // sampleRate
                         16,    // sampleSizeInBits
                         1,     // channels
                         true,  // signed
@@ -87,14 +91,6 @@ public class AudioRecorderPlayer {
 
         recordingThread.start();
         recording = true;
-    }
-
-    public void stopRecording() {
-        if (recording) {
-            recordingLine.stop();
-            recordingLine.close();
-            recording = false;
-        }
     }
 
     public void playRecording() {
@@ -150,6 +146,77 @@ public class AudioRecorderPlayer {
         playing = true;
     }
 
+    public void playFromBase64() {
+
+        if (base64EncodedString == null) {
+            return;
+        }
+
+        if (playing) {
+            return;
+        }
+
+        System.out.println("Playing from base 64");
+
+        Thread playThread = new Thread(() -> {
+            try {
+                // Decode base64 string to byte array
+                byte[] audioData = Base64.getDecoder().decode(base64EncodedString);
+
+                // Create audio input stream from byte array
+                AudioInputStream ais = AudioSystem.getAudioInputStream(new ByteArrayInputStream(audioData));
+
+                // Get audio format
+                AudioFormat format = ais.getFormat();
+
+                // Open data line for playback
+                DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
+                playingLine = (SourceDataLine) AudioSystem.getLine(info);
+                playingLine.open(format);
+                playingLine.start();
+
+                // Write audio data to data line for playback
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = ais.read(buffer)) != -1) {
+                    playingLine.write(buffer, 0, bytesRead);
+                }
+
+                // Close data line
+                playingLine.drain();
+                playingLine.close();
+                ais.close();
+            }
+            catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+                e.printStackTrace();
+            }
+
+        });
+
+        playThread.start();
+        playing = true;
+    }
+
+    public void encodeWavAsBase64() {
+        try {
+            byte[] fileContent = Files.readAllBytes(soundFile.toPath());
+            base64EncodedString = Base64.getEncoder().encodeToString(fileContent);
+            System.out.println(base64EncodedString);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stopRecording() {
+        if (recording) {
+            recordingLine.stop();
+            recordingLine.close();
+            recording = false;
+            encodeWavAsBase64();
+        }
+    }
+
     public void stopPlaying() {
         if (playing) {
             playingLine.stop();
@@ -164,6 +231,7 @@ public class AudioRecorderPlayer {
         if (soundFile.exists()) {
             soundFile.delete();
         }
+        base64EncodedString = null;
     }
 
     public String getSoundFileName() {
@@ -173,6 +241,10 @@ public class AudioRecorderPlayer {
         else {
             return null;
         }
+    }
+
+    public String getWavData() {
+        return base64EncodedString;
     }
 
 }
