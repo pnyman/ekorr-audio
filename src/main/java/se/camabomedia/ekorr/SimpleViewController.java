@@ -311,8 +311,7 @@ public class SimpleViewController implements Initializable {
                  && settings.getDefaultLocation() == null) {
             tableView.setPlaceholder(placeHolder2());
         }
-        else if (settings.getWantsPrivateDefaultLocation()
-                 && settings.getPrivateDefaultLocation() == null) {
+        else if (settings.getPrivateDefaultLocation() == null) {
             tableView.setPlaceholder(placeHolder3());
         }
         else if (report == null) {
@@ -360,8 +359,7 @@ public class SimpleViewController implements Initializable {
             e.printStackTrace();
         }
 
-        if (settings.getWantsPrivateDefaultLocation()
-            && settings.getPrivateDefaultLocation() != null) {
+        if (settings.getPrivateDefaultLocation() != null) {
             reportCopy = new ReportCopy(report, new File(settings.getPrivateDefaultLocation()));
         }
 
@@ -389,8 +387,7 @@ public class SimpleViewController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Kopiera rapport");
         fileChooser.getExtensionFilters().addAll(new ExtensionFilter("Html-fil", "*.html"));
-        if (settings.getWantsPrivateDefaultLocation()
-            && settings.getPrivateDefaultLocation() != null) {
+        if (settings.getPrivateDefaultLocation() != null) {
             fileChooser.setInitialDirectory(new File(settings.getPrivateDefaultLocation()));
         }
         fileChooser.setInitialFileName(report.getReportFileName());
@@ -428,17 +425,11 @@ public class SimpleViewController implements Initializable {
         settings.addWantsDefaultLocation(b);
     }
 
-    private void setPrivateDefaultLocation(boolean b) {
-        if (!b) {
-            settings.addWantsPrivateDefaultLocation(b);
-            return;
-        }
-
+    private void setPrivateDefaultLocation() {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         directoryChooser.setTitle("Välj mapp för rapporter");
         File selectedDirectory = directoryChooser.showDialog(stage);
         settings.addPrivateDefaultLocation(selectedDirectory.getPath());
-        settings.addWantsPrivateDefaultLocation(b);
     }
 
     private void makeWindowTitle() {
@@ -536,17 +527,17 @@ public class SimpleViewController implements Initializable {
     }
 
     private VBox placeHolder3() {
-        Label topLabel = makeLabel("Kopiera rapporter till en privat mapp");
+        Label topLabel = makeLabel("Välj mapp för rapporter");
         topLabel.setOnMouseClicked((click) -> {
-                setPrivateDefaultLocation(true);
+                setPrivateDefaultLocation();
                 putTableViewPlaceholder();
             });
 
-        Label middleLabel = makeLabel("Nej tack");
-        middleLabel.setOnMouseClicked((click) -> {
-                setPrivateDefaultLocation(false);
-                putTableViewPlaceholder();
-            });
+        // Label middleLabel = makeLabel("Nej tack");
+        // middleLabel.setOnMouseClicked((click) -> {
+        //         setPrivateDefaultLocation(false);
+        //         putTableViewPlaceholder();
+        //     });
 
         Label bottomLabel = makeLabel("Läs manual");
         bottomLabel.setOnMouseClicked((click) -> {
@@ -561,7 +552,7 @@ public class SimpleViewController implements Initializable {
 
         VBox vb = new VBox();
         vb.setAlignment(Pos.CENTER);
-        vb.getChildren().addAll(topLabel, middleLabel, bottomLabel);
+        vb.getChildren().addAll(topLabel, bottomLabel);
         return vb;
     }
 
@@ -891,7 +882,7 @@ public class SimpleViewController implements Initializable {
 
     @FXML
     void handleMenuItemReports(ActionEvent event) {
-        tableView.setPlaceholder(placeHolder3());
+        setPrivateDefaultLocation();
     }
 
     @FXML

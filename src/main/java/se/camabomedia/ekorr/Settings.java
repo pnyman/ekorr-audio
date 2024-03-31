@@ -101,20 +101,20 @@ public class Settings {
         return (String) settings.get("privateDefaultLocation");
     }
 
-    @SuppressWarnings("unchecked")
-    public void addWantsPrivateDefaultLocation(Boolean b) {
-        settings.put("wantsPrivateDefaultLocation", b);
-        writeJSON();
-    }
+    // @SuppressWarnings("unchecked")
+    // public void addWantsPrivateDefaultLocation(Boolean b) {
+    //     settings.put("wantsPrivateDefaultLocation", b);
+    //     writeJSON();
+    // }
 
-    public boolean getWantsPrivateDefaultLocation() {
-        if (!settingsFile.exists()
-            || settings.get("wantsPrivateDefaultLocation") == null) {
-            return true;
-        }
+    // public boolean getWantsPrivateDefaultLocation() {
+    //     if (!settingsFile.exists()
+    //         || settings.get("wantsPrivateDefaultLocation") == null) {
+    //         return true;
+    //     }
 
-        return (Boolean) settings.get("wantsPrivateDefaultLocation");
-    }
+    //     return (Boolean) settings.get("wantsPrivateDefaultLocation");
+    // }
 
 
     @SuppressWarnings("unchecked")
