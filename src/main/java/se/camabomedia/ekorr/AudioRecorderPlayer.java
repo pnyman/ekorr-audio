@@ -20,6 +20,13 @@ public class AudioRecorderPlayer {
     private SourceDataLine playingLine;
     private volatile boolean recording = false;
     private volatile boolean playing = false;
+    private String soundFileName;
+    private File soundFile;
+
+    AudioRecorderPlayer(File reportDirectory) {
+        soundFileName = "recorded_audio.wav";
+        soundFile = new File(reportDirectory, soundFileName);
+    }
 
     boolean isMicrophoneAvailable() {
         // Get the available mixer devices
@@ -44,41 +51,42 @@ public class AudioRecorderPlayer {
             return;
         }
 
-        if (!recording) {
-            Thread recordingThread = new Thread(() -> {
-                try {
-                    // Define audio format
-                    AudioFormat format = new AudioFormat(
-                            22050, // sampleRate
-                            16,    // sampleSizeInBits
-                            1,     // channels
-                            true,  // signed
-                            false  // bigEndian
-                    );
-
-                    // Get target data line for recording
-                    DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
-                    recordingLine = (TargetDataLine) AudioSystem.getLine(info);
-                    recordingLine.open(format);
-                    recordingLine.start();
-
-                    // Create audio input stream
-                    AudioInputStream ais = new AudioInputStream(recordingLine);
-
-                    // Specify output file
-                    File outputFile = new File("recorded_audio.wav");
-
-                    // Start recording
-                    AudioSystem.write(ais, AudioFileFormat.Type.WAVE, outputFile);
-                }
-                catch (LineUnavailableException | IOException ex) {
-                    ex.printStackTrace();
-                }
-            });
-
-            recordingThread.start();
-            recording = true;
+        if (recording) {
+            return;
         }
+
+        Thread recordingThread = new Thread(() -> {
+            try {
+                stopPlaying();
+
+                // Define audio format
+                AudioFormat format = new AudioFormat(
+                        22050, // sampleRate
+                        16,    // sampleSizeInBits
+                        1,     // channels
+                        true,  // signed
+                        false  // bigEndian
+                );
+
+                // Get target data line for recording
+                DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+                recordingLine = (TargetDataLine) AudioSystem.getLine(info);
+                recordingLine.open(format);
+                recordingLine.start();
+
+                // Create audio input stream
+                AudioInputStream ais = new AudioInputStream(recordingLine);
+
+                // Start recording
+                AudioSystem.write(ais, AudioFileFormat.Type.WAVE, soundFile);
+            }
+            catch (LineUnavailableException | IOException ex) {
+                ex.printStackTrace();
+            }
+        });
+
+        recordingThread.start();
+        recording = true;
     }
 
     public void stopRecording() {
@@ -90,10 +98,21 @@ public class AudioRecorderPlayer {
     }
 
     public void playRecording() {
+
+        if (!soundFile.exists()) {
+            return;
+        }
+
+        if (playing) {
+            return;
+        }
+
         Thread playThread = new Thread(() -> {
             try {
+                stopRecording();
+
                 // Get audio input stream from the recorded file
-                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(new File("recorded_audio.wav"));
+                AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
 
                 // Get audio format
                 AudioFormat format = audioInputStream.getFormat();
@@ -136,6 +155,23 @@ public class AudioRecorderPlayer {
             playingLine.stop();
             playingLine.close();
             playing = false;
+        }
+    }
+
+    public void deleteSoundFile() {
+        stopRecording();
+        stopPlaying();
+        if (soundFile.exists()) {
+            soundFile.delete();
+        }
+    }
+
+    public String getSoundFileName() {
+        if (soundFile.exists()) {
+            return soundFileName;
+        }
+        else {
+            return null;
         }
     }
 

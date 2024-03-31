@@ -38,9 +38,9 @@ public class CommentView3Controller implements Initializable {
     @FXML private Button btnOk;
     @FXML private ListView<String> listViewType;
     @FXML private TextArea textAreaSeek;
-    @FXML private TextArea textAreaRight; 
-    @FXML private TextArea textAreaWrong; 
-    @FXML private TextField textFieldPage; 
+    @FXML private TextArea textAreaRight;
+    @FXML private TextArea textAreaWrong;
+    @FXML private TextField textFieldPage;
 
     private Stage stage;
     private Report report;
@@ -63,7 +63,7 @@ public class CommentView3Controller implements Initializable {
     };
 
     private Ncc ncc;
-    private AudioRecorderPlayer audioRecorderPlayer = new AudioRecorderPlayer();
+    private AudioRecorderPlayer audioRecorderPlayer;
 
     /**
      * Initializes the controller class.
@@ -189,28 +189,28 @@ public class CommentView3Controller implements Initializable {
 
 
     private void setButtons() {
-        setButton(btnRecordSound, "images/record_inactive.png", "Spela in ljud");
-        setButton(btnPlaySound, "images/play_inactive.png", "Spela upp ljud");
+        setButton(btnRecordSound, "images/recording_inactive.png", "Spela in ljud");
+        setButton(btnPlaySound, "images/playing_inactive.png", "Spela upp ljud");
         setButton(btnDeleteSound, "images/delete.png", "Radera ljud");
 
         btnRecordSound.setOnMousePressed(event -> {
-            setButton(btnRecordSound, "images/record_active.png", "Spela in ljud");
+            setButton(btnRecordSound, "images/recording_active.png", "Spela in ljud");
             audioRecorderPlayer.startRecording();
         });
 
         btnRecordSound.setOnMouseReleased(event -> {
             audioRecorderPlayer.stopRecording();
-            setButton(btnRecordSound, "images/record_inactive.png", "Spela in ljud");
+            setButton(btnRecordSound, "images/recording_inactive.png", "Spela in ljud");
         });
 
         btnPlaySound.setOnMousePressed(event -> {
-            setButton(btnPlaySound, "images/play_active.png", "Spela in ljud");
+            setButton(btnPlaySound, "images/playing_active.png", "Spela in ljud");
             audioRecorderPlayer.playRecording();
         });
 
         btnPlaySound.setOnMouseReleased(event -> {
             audioRecorderPlayer.stopPlaying();
-            setButton(btnPlaySound, "images/play_inactive.png", "Spela in ljud");
+            setButton(btnPlaySound, "images/playing_inactive.png", "Spela in ljud");
         });
     }
 
@@ -220,7 +220,7 @@ public class CommentView3Controller implements Initializable {
         imageView.setFitHeight(BUTTON_HEIGHT);
         imageView.setPreserveRatio(true);
         button.setGraphic(imageView);
-        button.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;");
+        // button.setStyle("-fx-background-color: transparent; -fx-border-color: transparent; -fx-padding: 0;");
         setTooltip(button, tooltipText);
     }
 
@@ -239,6 +239,7 @@ public class CommentView3Controller implements Initializable {
         this.stage = stage;
         this.report = report;
         this.ncc = ncc;
+        this.audioRecorderPlayer = new AudioRecorderPlayer(report.getReportDirectory());
         bindKeys();
     }
 
@@ -412,9 +413,8 @@ public class CommentView3Controller implements Initializable {
 
     @FXML
     void handleBtnDeleteSound(ActionEvent event) {
-
+        audioRecorderPlayer.deleteSoundFile();
     }
-
 
     @FXML
     void handleBtnPlaySound(ActionEvent event) {
