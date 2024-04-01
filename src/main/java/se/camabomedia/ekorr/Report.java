@@ -35,9 +35,6 @@ public class Report {
     private ArrayList<String> creators;
     private String proofreader;
     private String checksum;
-    private String base64EncodedAudio;
-
-    // private final String ENDASH = "–";
 
     /**
      * Constructor
