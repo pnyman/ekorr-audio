@@ -72,12 +72,13 @@ public class Report {
         // # % & {} \ <> * ? / $ ! ' " : @+ ` | =
         String sanitizedTitle = title
             .replaceAll(" ", "_")
-            .replaceAll("\\W", "")
+            .replaceAll("[^a-zA-ZåäöÅÄÖ0-9_]", "")
             .replaceAll("__", "_");
+
         temp = String.join("_", identifier, sanitizedTitle);
         temp = StringUtils.substring(temp, 0, 50); // max filename length is 255
         temp = temp.replace("_$", "");
-        reportFileName = temp + ".html";
+        reportFileName = temp + "_KORR.html";
     }
 
 
