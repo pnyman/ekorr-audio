@@ -41,7 +41,7 @@ public class App extends Application {
         // stage.setWidth(1200);
         // stage.setHeight(750);
         stage.show();
-        stage.setResizable(false);
+        stage.setResizable(true);
 
         stage.setOnCloseRequest(event -> {
                 Platform.exit();

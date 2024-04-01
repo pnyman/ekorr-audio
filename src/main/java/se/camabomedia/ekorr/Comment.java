@@ -50,6 +50,15 @@ class Comment {
         return type;
     }
 
+    public String hasAudio() {
+        if (base64EncodedAudio != null) {
+            return "✓";
+        }
+        else {
+            return "";
+        }
+    }
+
     public String getSeek() {
         return seek;
     }

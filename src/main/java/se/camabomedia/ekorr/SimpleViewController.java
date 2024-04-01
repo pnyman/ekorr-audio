@@ -28,7 +28,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.image.Image;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Label;
@@ -37,6 +36,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
@@ -47,7 +47,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -62,6 +61,7 @@ public class SimpleViewController implements Initializable {
     @FXML private TableColumn<Comment, String> tableColumnNr;
     @FXML private TableColumn<Comment, String> tableColumnPage;
     @FXML private TableColumn<Comment, String> tableColumnType;
+    @FXML private TableColumn<Comment, String> tableColumnAudio;
     @FXML private TableColumn<Comment, String> tableColumnComment;
     @FXML private MenuItem menuItemOpen;
     @FXML private MenuItem menuItemOpenLast;
@@ -104,12 +104,31 @@ public class SimpleViewController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        // Set minimum and maximum widths for columns
+        tableColumnNr.setMinWidth(50);
+        tableColumnNr.setMaxWidth(50);
+
+        tableColumnPage.setMinWidth(65);
+        tableColumnPage.setMaxWidth(65);
+
+        tableColumnType.setMinWidth(100);
+        tableColumnType.setMaxWidth(100);
+
+        tableColumnAudio.setMinWidth(35);
+        tableColumnAudio.setMaxWidth(35);
+
+        tableColumnComment.setMinWidth(140);
+
+        // Set column resize policy
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         tableView.setStyle("-fx-focus-color: transparent; -fx-faint-focus-color: transparent;");
 
         // Set the cell value factories for each column
         tableColumnNr.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getNr()));
         tableColumnPage.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getPage()));
         tableColumnType.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getType()));
+        tableColumnAudio.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().hasAudio()));
         tableColumnComment.setCellValueFactory(cellData -> new ReadOnlyStringWrapper(cellData.getValue().getSeek()));
 
         // Register a listener on the selection model property
