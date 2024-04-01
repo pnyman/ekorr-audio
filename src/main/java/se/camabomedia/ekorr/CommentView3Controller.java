@@ -19,6 +19,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.ImageView;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -41,6 +42,7 @@ public class CommentView3Controller implements Initializable {
     @FXML private TextArea textAreaRight;
     @FXML private TextArea textAreaWrong;
     @FXML private TextField textFieldPage;
+    @FXML private Label labelAudio;
 
     private Stage stage;
     private Report report;
@@ -185,6 +187,7 @@ public class CommentView3Controller implements Initializable {
         }
 
         setButtons();
+        labelAudio.setText("");
     }
 
 
@@ -199,18 +202,19 @@ public class CommentView3Controller implements Initializable {
         });
 
         btnRecordSound.setOnMouseReleased(event -> {
-            audioRecorderPlayer.stopRecording();
             setButton(btnRecordSound, "images/recording_inactive.png", "Spela in ljud");
+            audioRecorderPlayer.stopRecording();
+            setHasAudio();
         });
 
         btnPlaySound.setOnMousePressed(event -> {
-            setButton(btnPlaySound, "images/playing_active.png", "Spela in ljud");
+            setButton(btnPlaySound, "images/playing_active.png", "Spela upp ljud");
             audioRecorderPlayer.playFromBase64();
         });
 
         btnPlaySound.setOnMouseReleased(event -> {
+            setButton(btnPlaySound, "images/playing_inactive.png", "Spela upp ljud");
             audioRecorderPlayer.stopPlaying();
-            setButton(btnPlaySound, "images/playing_inactive.png", "Spela in ljud");
         });
     }
 
@@ -224,12 +228,23 @@ public class CommentView3Controller implements Initializable {
         setTooltip(button, tooltipText);
     }
 
-    private static void setTooltip(Control control, String text) {
+    private void setTooltip(Control control, String text) {
         if (text == null)
             return;
         Tooltip tooltip = new Tooltip(text);
         tooltip.setShowDelay(Duration.millis(1));
         control.setTooltip(tooltip);
+    }
+
+    private void setHasAudio() {
+        if (audioRecorderPlayer.getWavData() != null) {
+            labelAudio.setText("Har ljud");
+            labelAudio.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-border-radius: 20 20 20 20; -fx-background-radius: 20 20 20 20;");
+        }
+        else {
+            labelAudio.setText("");
+            labelAudio.setStyle("-fx-background-color: none; -fx-text-fill: white; -fx-border-radius: 20 20 20 20; -fx-background-radius: 20 20 20 20;");
+        }
     }
 
     /**
@@ -253,6 +268,7 @@ public class CommentView3Controller implements Initializable {
         this.ncc = ncc;
         this.audioRecorderPlayer = new AudioRecorderPlayer(report.getReportDirectory());
         audioRecorderPlayer.setWavData(comment.getAudioData());
+        setHasAudio();
         editComment = true;
         bindKeys();
     }
@@ -413,7 +429,6 @@ public class CommentView3Controller implements Initializable {
         return ncc.getPages().contains(pageNr);
     }
 
-
     private void showWarningDialog(String title, String header, String content) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle(title);
@@ -422,10 +437,10 @@ public class CommentView3Controller implements Initializable {
         alert.showAndWait();
     }
 
-
     @FXML
     void handleBtnDeleteSound(ActionEvent event) {
         audioRecorderPlayer.deleteAudio();
+        setHasAudio();
     }
 
     @FXML

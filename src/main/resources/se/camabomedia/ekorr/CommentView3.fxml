@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <VBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorr.CommentView3Controller">
    <children>
       <HBox fillHeight="false">
@@ -103,7 +102,7 @@
       </HBox>
       <HBox alignment="CENTER_LEFT">
          <children>
-            <HBox alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT" prefHeight="26.0" prefWidth="248.0">
                <children>
                   <ButtonBar buttonMinWidth="10.0">
                      <buttons>
@@ -114,9 +113,10 @@
                   </ButtonBar>
                </children>
             </HBox>
-            <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="378.0">
+            <Label fx:id="labelAudio" alignment="CENTER" contentDisplay="CENTER" prefHeight="17.0" prefWidth="63.0" text="Ljud" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="26.0" prefWidth="234.0">
                <children>
-                  <ButtonBar>
+                  <ButtonBar prefHeight="26.0" prefWidth="124.0">
                     <buttons>
                       <Button fx:id="btnCancel" focusTraversable="false" mnemonicParsing="false" onAction="#handleBtnCancel" text="Avbryt" />
                         <Button fx:id="btnOk" mnemonicParsing="false" onAction="#handleBtnOk" text="OK" />
