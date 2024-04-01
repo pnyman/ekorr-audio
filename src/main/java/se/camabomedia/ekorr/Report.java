@@ -226,7 +226,9 @@ public class Report {
                 right = elt.text();
             }
             for (Element elt : comment.getElementsByClass("comment-audio")) {
-                audio = elt.text();
+                audio = elt.child(0).child(0).attr("src");
+                // src = data:audio/wav;base64,UklGRkJpAABXQVZFZm10IB...
+                audio = audio.replace("data:audio/wav;base64,", "");
             }
             addComment(nr, page, type, seek, wrong, right, audio);
         }

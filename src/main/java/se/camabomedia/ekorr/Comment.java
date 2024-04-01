@@ -93,9 +93,11 @@ class Comment {
         }
 
         if (base64EncodedAudio != null) {
-            html += "<tr><td class='comment-head'>Audio:</td><td class='comment-audio'>"
-                + "<audio controls><source src='data:audio/wav;base64," + base64EncodedAudio + "' type='audio/wav'>"
-                + "Din browser stöder inte audio."
+            html += "<tr><td class='comment-head'>Ljud:</td>"
+                + "<td class='comment-audio'>"
+                + "<audio controls>"
+                + "<source src='data:audio/wav;base64," + base64EncodedAudio + "' type='audio/wav'>"
+                + "Din browser stöder inte uppspelning av ljud."
                 + "</audio>"
                 + "</td></tr>";
         }
