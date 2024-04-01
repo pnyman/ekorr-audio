@@ -197,8 +197,10 @@ public class CommentView3Controller implements Initializable {
         setButton(btnDeleteSound, "images/delete.png", "Radera ljud");
 
         btnRecordSound.setOnMousePressed(event -> {
-            setButton(btnRecordSound, "images/recording_active.png", "Spela in ljud");
-            audioRecorderPlayer.startRecording();
+            if (type.equals("Läsfel")) {
+                setButton(btnRecordSound, "images/recording_active.png", "Spela in ljud");
+                audioRecorderPlayer.startRecording();
+            }
         });
 
         btnRecordSound.setOnMouseReleased(event -> {
