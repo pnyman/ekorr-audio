@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Base64;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -23,13 +24,17 @@ public class AudioRecorderPlayer {
     private SourceDataLine playingLine;
     private volatile boolean recording = false;
     private volatile boolean playing = false;
-    private String soundFileName;
     private File soundFile;
     String base64EncodedAudio = null;
 
     AudioRecorderPlayer(File reportDirectory) {
-        soundFileName = "recorded_audio.wav";
-        soundFile = new File(reportDirectory, soundFileName);
+        try {
+            Path tempFilePath = Files.createTempFile("ekorr_audio", ".wav");
+            soundFile = new File(tempFilePath.toString());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     boolean isMicrophoneAvailable() {
@@ -225,19 +230,7 @@ public class AudioRecorderPlayer {
     public void deleteAudio() {
         stopRecording();
         stopPlaying();
-        // if (soundFile.exists()) {
-        //     soundFile.delete();
-        // }
         base64EncodedAudio = null;
-    }
-
-    public String getSoundFileName() {
-        if (soundFile.exists()) {
-            return soundFileName;
-        }
-        else {
-            return null;
-        }
     }
 
     public String getWavData() {
