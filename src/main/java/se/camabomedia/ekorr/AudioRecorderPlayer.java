@@ -19,13 +19,21 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.TargetDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
+
 public class AudioRecorderPlayer {
     private TargetDataLine recordingLine;
     private SourceDataLine playingLine;
     private volatile boolean recording = false;
     private volatile boolean playing = false;
     private File soundFile;
-    String base64EncodedAudio = null;
+    private String base64EncodedAudio = null;
+
+    public class NoMicrophoneException extends Exception {
+        public NoMicrophoneException() {
+            super("Hittar ingen aktiv mikrofon.");
+        }
+    }
+
 
     AudioRecorderPlayer(File reportDirectory) {
         try {
@@ -54,10 +62,9 @@ public class AudioRecorderPlayer {
         return false;
     }
 
-    public void startRecording() {
+    public void startRecording() throws NoMicrophoneException {
         if (!isMicrophoneAvailable()) {
-            System.out.println("No microphone available on this system.");
-            return;
+            throw new NoMicrophoneException();
         }
 
         if (recording) {

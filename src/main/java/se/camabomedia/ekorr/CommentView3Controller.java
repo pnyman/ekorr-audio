@@ -197,9 +197,17 @@ public class CommentView3Controller implements Initializable {
         setButton(btnDeleteSound, "images/delete.png", "Radera ljud");
 
         btnRecordSound.setOnMousePressed(event -> {
-            if (type.equals("Läsfel")) {
+            if (!type.equals("Läsfel")) {
+                showWarningDialog("Kan inte spela in", null, "Inspelning kan bara göras vid Läsfel.");
+                return;
+            }
+
+            try {
                 setButton(btnRecordSound, "images/recording_active.png", "Spela in ljud");
                 audioRecorderPlayer.startRecording();
+            }
+            catch (AudioRecorderPlayer.NoMicrophoneException e) {
+                showWarningDialog("Kan inte spela in", null, e.getMessage());
             }
         });
 
@@ -210,6 +218,10 @@ public class CommentView3Controller implements Initializable {
         });
 
         btnPlaySound.setOnMousePressed(event -> {
+            if (audioRecorderPlayer.getWavData() == null) {
+                return;
+            }
+
             setButton(btnPlaySound, "images/playing_active.png", "Spela upp ljud");
             audioRecorderPlayer.playFromBase64();
         });
