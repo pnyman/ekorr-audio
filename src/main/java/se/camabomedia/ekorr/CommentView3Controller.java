@@ -307,60 +307,73 @@ public class CommentView3Controller implements Initializable {
         });
     }
 
-    private void saveAndClose() {
+    private boolean isCommentValid() {
         String page = textFieldPage.getText().strip();
 
         if (!checkPageNr(page)) {
             showWarningDialog("Felaktigt sidnummer", "Detta sidnummer finns inte i talboken:", page);
             textFieldPage.setText("");
             Platform.runLater(() -> textFieldPage.requestFocus());
-            return;
+            return false;
         }
 
         if (type == null) {
             showWarningDialog("Kommentartyp saknas", null, "Välj typ av kommentar.");
-            return;
+            return false;
         }
 
         String seek = textAreaSeek.getText().strip();
         if (seek == null || seek.strip().equals("")) {
             showWarningDialog("Söktext saknas", null, "Infoga text i fältet Söktext från boken.");
-            return;
+            return false;
         }
 
         String wrong = textAreaWrong.getText().strip();
         if (wrong == null || wrong.strip().equals("")) {
             showWarningDialog("Felbeskrivning saknas", null, "Fyll i Beskrivning av felet.");
-            return;
+            return false;
         }
 
         String right = textAreaRight.getText().strip();
 
         if (type.equals("Läsfel") && (right == null || right.equals(""))) {
             showWarningDialog("Rättelse saknas", null, "Fyll i fältet Rättelse.");
-            return;
+            return false;
         }
 
         if (!commentTypes[0].contains(type) && !(right == null || right.equals(""))) {
             showWarningDialog("Rättelse ej tillämpligt", null, "Rättelse används bara vid kommentartyp 1. Läsfel.");
-            return;
+            return false;
         }
 
         if (seek.equals(wrong)) {
             showWarningDialog("Samma text", null, "Fälten Söktext från boken och Beskrivning av felet innehåller samma text.");
-            return;
+            return false;
         }
 
         if (seek.equals(right)) {
             showWarningDialog("Samma text", null, "Fälten Söktext från boken och Rättelse innehåller samma text.");
-            return;
+            return false;
         }
 
         if (wrong.equals(right)) {
             showWarningDialog("Samma text", null, "Fälten Beskrivning av felet och Rättelse innehåller samma text.");
+            return false;
+        }
+
+        return true;
+    }
+
+
+    private void saveAndClose() {
+        if (!isCommentValid()) {
             return;
         }
 
+        String page = textFieldPage.getText().strip();
+        String seek = textAreaSeek.getText().strip();
+        String wrong = textAreaWrong.getText().strip();
+        String right = textAreaRight.getText().strip();
 
         Thread taskThread = new Thread(new Runnable() {
             @Override
