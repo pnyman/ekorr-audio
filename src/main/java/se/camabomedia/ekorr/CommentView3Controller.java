@@ -44,7 +44,7 @@ public class CommentView3Controller implements Initializable {
 
     private Stage stage;
     private Report report;
-    private Report.Comment comment;
+    private Comment comment;
     private String type = null;
     boolean editComment = false;
     private final String ENDASH = "–";
@@ -247,7 +247,7 @@ public class CommentView3Controller implements Initializable {
     /**
      * Edits a comment
      */
-    public void initData(Stage stage, Report report, Report.Comment comment, Ncc ncc) {
+    public void initData(Stage stage, Report report, Comment comment, Ncc ncc) {
         this.stage = stage;
         this.report = report;
         this.comment = comment;
@@ -365,7 +365,7 @@ public class CommentView3Controller implements Initializable {
             @Override
             public void run() {
                 if (editComment) {
-                    Report.Comment newComment = report.new Comment(null, page, type, seek, wrong, right);
+                    Comment newComment = new Comment(null, page, type, seek, wrong, right);
                     report.replaceComment(comment, newComment);
                 }
                 else {

@@ -25,7 +25,7 @@ public class AudioRecorderPlayer {
     private volatile boolean playing = false;
     private String soundFileName;
     private File soundFile;
-    String base64EncodedString = null;
+    String base64EncodedAudio = null;
 
     AudioRecorderPlayer(File reportDirectory) {
         soundFileName = "recorded_audio.wav";
@@ -148,7 +148,7 @@ public class AudioRecorderPlayer {
 
     public void playFromBase64() {
 
-        if (base64EncodedString == null) {
+        if (base64EncodedAudio == null) {
             return;
         }
 
@@ -161,7 +161,7 @@ public class AudioRecorderPlayer {
         Thread playThread = new Thread(() -> {
             try {
                 // Decode base64 string to byte array
-                byte[] audioData = Base64.getDecoder().decode(base64EncodedString);
+                byte[] audioData = Base64.getDecoder().decode(base64EncodedAudio);
 
                 // Create audio input stream from byte array
                 AudioInputStream ais = AudioSystem.getAudioInputStream(new ByteArrayInputStream(audioData));
@@ -200,8 +200,8 @@ public class AudioRecorderPlayer {
     public void encodeWavAsBase64() {
         try {
             byte[] fileContent = Files.readAllBytes(soundFile.toPath());
-            base64EncodedString = Base64.getEncoder().encodeToString(fileContent);
-            System.out.println(base64EncodedString);
+            base64EncodedAudio = Base64.getEncoder().encodeToString(fileContent);
+            System.out.println(base64EncodedAudio);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -231,7 +231,7 @@ public class AudioRecorderPlayer {
         if (soundFile.exists()) {
             soundFile.delete();
         }
-        base64EncodedString = null;
+        base64EncodedAudio = null;
     }
 
     public String getSoundFileName() {
@@ -244,7 +244,7 @@ public class AudioRecorderPlayer {
     }
 
     public String getWavData() {
-        return base64EncodedString;
+        return base64EncodedAudio;
     }
 
 }

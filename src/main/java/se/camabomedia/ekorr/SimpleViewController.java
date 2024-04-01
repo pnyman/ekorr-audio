@@ -58,11 +58,11 @@ import javafx.stage.WindowEvent;
 
 public class SimpleViewController implements Initializable {
 
-    @FXML private TableView<Report.Comment> tableView;
-    @FXML private TableColumn<Report.Comment, String> tableColumnNr;
-    @FXML private TableColumn<Report.Comment, String> tableColumnPage;
-    @FXML private TableColumn<Report.Comment, String> tableColumnType;
-    @FXML private TableColumn<Report.Comment, String> tableColumnComment;
+    @FXML private TableView<Comment> tableView;
+    @FXML private TableColumn<Comment, String> tableColumnNr;
+    @FXML private TableColumn<Comment, String> tableColumnPage;
+    @FXML private TableColumn<Comment, String> tableColumnType;
+    @FXML private TableColumn<Comment, String> tableColumnComment;
     @FXML private MenuItem menuItemOpen;
     @FXML private MenuItem menuItemOpenLast;
     @FXML private MenuItem menuItemClose;
@@ -86,7 +86,7 @@ public class SimpleViewController implements Initializable {
     private Stage stage;
     private Ncc ncc;
     public Report report;
-    private Report.Comment selected;
+    private Comment selected;
     private ReportCopy reportCopy;
 
     private static final DataFormat SERIALIZED_MIME_TYPE = new DataFormat("application/x-java-serialized-object");
@@ -179,7 +179,7 @@ public class SimpleViewController implements Initializable {
             });
 
         tableView.setRowFactory(tv -> {
-            TableRow<Report.Comment> row = new TableRow<>();
+            TableRow<Comment> row = new TableRow<>();
 
             // Edit comment with double click
             row.setOnMouseClicked(event -> {
@@ -215,7 +215,7 @@ public class SimpleViewController implements Initializable {
                 Dragboard db = event.getDragboard();
                 if (db.hasContent(SERIALIZED_MIME_TYPE)) {
                     int draggedIndex = (Integer) db.getContent(SERIALIZED_MIME_TYPE);
-                    Report.Comment draggedComment = tableView.getItems().remove(draggedIndex);
+                    Comment draggedComment = tableView.getItems().remove(draggedIndex);
                     int dropIndex ;
 
                     if (row.isEmpty()) {
@@ -609,8 +609,8 @@ public class SimpleViewController implements Initializable {
     @FXML
     public void setColumns() {
         // Add data here
-        ObservableList<Report.Comment> data = FXCollections.observableArrayList();
-        for (Report.Comment comment : report.getComments()) {
+        ObservableList<Comment> data = FXCollections.observableArrayList();
+        for (Comment comment : report.getComments()) {
             data.add(comment);
         }
         try {
@@ -714,8 +714,8 @@ public class SimpleViewController implements Initializable {
     }
 
     private void rearrangeOrderOfComments() {
-        ObservableList<Report.Comment> obComments = tableView.getItems();
-        ArrayList<Report.Comment> comments = new ArrayList<Report.Comment>(obComments);
+        ObservableList<Comment> obComments = tableView.getItems();
+        ArrayList<Comment> comments = new ArrayList<Comment>(obComments);
 
         try {
             report.setComments(comments);
@@ -740,8 +740,8 @@ public class SimpleViewController implements Initializable {
     private void moveSelectedRowUp() {
         int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
         if (selectedIndex > 0) {
-            ObservableList<Report.Comment> items = tableView.getItems();
-            Report.Comment selectedItem = items.remove(selectedIndex);
+            ObservableList<Comment> items = tableView.getItems();
+            Comment selectedItem = items.remove(selectedIndex);
             items.add(selectedIndex - 1, selectedItem);
             tableView.getSelectionModel().clearAndSelect(selectedIndex - 1);
             rearrangeOrderOfComments();
@@ -750,9 +750,9 @@ public class SimpleViewController implements Initializable {
 
     private void moveSelectedRowDown() {
         int selectedIndex = tableView.getSelectionModel().getSelectedIndex();
-        ObservableList<Report.Comment> items = tableView.getItems();
+        ObservableList<Comment> items = tableView.getItems();
         if (selectedIndex < items.size() - 1) {
-            Report.Comment selectedItem = items.remove(selectedIndex);
+            Comment selectedItem = items.remove(selectedIndex);
             items.add(selectedIndex + 1, selectedItem);
             tableView.getSelectionModel().clearAndSelect(selectedIndex + 1);
             rearrangeOrderOfComments();
