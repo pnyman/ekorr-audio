@@ -243,7 +243,6 @@ public class CommentView3Controller implements Initializable {
         bindKeys();
     }
 
-
     /**
      * Edits a comment
      */
@@ -252,6 +251,8 @@ public class CommentView3Controller implements Initializable {
         this.report = report;
         this.comment = comment;
         this.ncc = ncc;
+        this.audioRecorderPlayer = new AudioRecorderPlayer(report.getReportDirectory());
+        audioRecorderPlayer.setWavData(comment.getAudioData());
         editComment = true;
         bindKeys();
     }
@@ -364,19 +365,17 @@ public class CommentView3Controller implements Initializable {
         Thread taskThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                if (editComment) {
-                    Comment newComment = new Comment(null, page, type, seek, wrong, right);
-                    report.replaceComment(comment, newComment);
-                }
-                else {
-                    report.addComment(null, page, type, seek, wrong, right);
-                }
                 try {
+                    if (editComment) {
+                        Comment newComment = new Comment(null, page, type, seek, wrong, right, audioRecorderPlayer.getWavData());
+                        report.replaceComment(comment, newComment);
+                    }
+                    else {
+                        report.addComment(null, page, type, seek, wrong, right, audioRecorderPlayer.getWavData());
+                    }
                     report.createAndWriteReport();
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
                 }
-                catch (IOException e) {
+                catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -413,7 +412,7 @@ public class CommentView3Controller implements Initializable {
 
     @FXML
     void handleBtnDeleteSound(ActionEvent event) {
-        audioRecorderPlayer.deleteSoundFile();
+        audioRecorderPlayer.deleteAudio();
     }
 
     @FXML

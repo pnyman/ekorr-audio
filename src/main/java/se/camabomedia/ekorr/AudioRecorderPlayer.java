@@ -156,8 +156,6 @@ public class AudioRecorderPlayer {
             return;
         }
 
-        System.out.println("Playing from base 64");
-
         Thread playThread = new Thread(() -> {
             try {
                 // Decode base64 string to byte array
@@ -201,7 +199,6 @@ public class AudioRecorderPlayer {
         try {
             byte[] fileContent = Files.readAllBytes(soundFile.toPath());
             base64EncodedAudio = Base64.getEncoder().encodeToString(fileContent);
-            System.out.println(base64EncodedAudio);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -225,12 +222,12 @@ public class AudioRecorderPlayer {
         }
     }
 
-    public void deleteSoundFile() {
+    public void deleteAudio() {
         stopRecording();
         stopPlaying();
-        if (soundFile.exists()) {
-            soundFile.delete();
-        }
+        // if (soundFile.exists()) {
+        //     soundFile.delete();
+        // }
         base64EncodedAudio = null;
     }
 
@@ -245,6 +242,10 @@ public class AudioRecorderPlayer {
 
     public String getWavData() {
         return base64EncodedAudio;
+    }
+
+    public void setWavData(String base64EncodedAudio) {
+        this.base64EncodedAudio = base64EncodedAudio;
     }
 
 }

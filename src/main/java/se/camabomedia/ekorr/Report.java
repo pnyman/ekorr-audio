@@ -57,10 +57,12 @@ public class Report {
         readReport();
         directory.mkdirs();
         checksum = getChecksum();
+
+
         try {
             createAndWriteReport();
-        } catch (URISyntaxException | IOException e) {
-            // TODO Auto-generated catch block
+        }
+        catch (URISyntaxException | IOException e) {
             e.printStackTrace();
         }
     }
@@ -79,10 +81,16 @@ public class Report {
     }
 
 
+    // public void addComment(String nr, String page, String type, String seek,
+    //                       String wrong, String right) {
+    //     comments.add(new Comment(nr, page, type, seek, wrong, right));
+    // }
+
     public void addComment(String nr, String page, String type, String seek,
-                          String wrong, String right) {
-        comments.add(new Comment(nr, page, type, seek, wrong, right));
+                           String wrong, String right, String base64EncodedAudio) {
+        comments.add(new Comment(nr, page, type, seek, wrong, right, base64EncodedAudio));
     }
+
 
     public void createAndWriteReport() throws URISyntaxException, IOException {
         InputStream inputStream = getClass().getResourceAsStream("/se/camabomedia/ekorr/ReportStub.html");
@@ -197,6 +205,7 @@ public class Report {
             String seek = "";
             String wrong = "";
             String right = "";
+            String audio = null;
 
             for (Element elt : comment.getElementsByClass("comment-nr")) {
                 nr = elt.text().replaceAll("\\.$", "");
@@ -216,7 +225,10 @@ public class Report {
             for (Element elt : comment.getElementsByClass("comment-right")) {
                 right = elt.text();
             }
-            addComment(nr, page, type, seek, wrong, right);
+            for (Element elt : comment.getElementsByClass("comment-audio")) {
+                audio = elt.text();
+            }
+            addComment(nr, page, type, seek, wrong, right, audio);
         }
     }
 

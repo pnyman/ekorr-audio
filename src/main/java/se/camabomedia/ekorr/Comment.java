@@ -12,29 +12,18 @@ class Comment {
     String seek = "";
     String wrong = "";
     String right = "";
-    private String base64EncodedAudio;
-
+    String base64EncodedAudio = null;
     private final String ENDASH = "–";
 
-    public Comment(String commentNr, String page, String type, String seek, String wrong, String right) {
+    public Comment(String commentNr, String page, String type, String seek,
+                   String wrong, String right, String base64EncodedAudio) {
         this.commentNr = commentNr;
         makePageNumber(page);
         this.type = sanitize(type);
         this.seek = sanitize(seek);
         this.wrong = sanitize(wrong);
         this.right = sanitize(right);
-
-        // if (commentNr != null)
-        //     this.commentNr = commentNr;
-        // makePageNumber(page);
-        // if (type != null)
-        //     this.type = sanitize(type);
-        // if (seek != null)
-        //     this.seek = sanitize(seek);
-        // if (wrong != null)
-        //     this.wrong = sanitize(wrong);
-        // if (right != null)
-        //     this.right = sanitize(right);
+        this.base64EncodedAudio = base64EncodedAudio;
     }
 
     private void makePageNumber(String page) {
@@ -81,6 +70,10 @@ class Comment {
         return commentNr;
     }
 
+    public String getAudioData() {
+        return base64EncodedAudio;
+    }
+
 
     @Override
     public String toString() {
@@ -97,6 +90,14 @@ class Comment {
 
         if (!right.equals("")) {
             html += "<tr><td class='comment-head'>Rätt:</td><td class='comment-right'>" + right + "</td></tr>";
+        }
+
+        if (base64EncodedAudio != null) {
+            html += "<tr><td class='comment-head'>Audio:</td><td class='comment-audio'>"
+                + "<audio controls><source src='data:audio/wav;base64," + base64EncodedAudio + "' type='audio/wav'>"
+                + "Din browser stöder inte audio."
+                + "</audio>"
+                + "</td></tr>";
         }
 
         html += "<tr><td class='comment-head'>Sida:</td><td class='comment-page'>" + page + "</td></tr>";

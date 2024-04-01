@@ -24,9 +24,9 @@ public class ReportTest {
             Ncc ncc = new Ncc(file);
             Report r = new Report(ncc);
 
-            r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
-            r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
-            r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg");
+            r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg", null);
+            r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg", null);
+            r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg", nll);
 
             r.createAndWriteReport();
         }

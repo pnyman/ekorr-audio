@@ -338,34 +338,33 @@ public class SimpleViewController implements Initializable {
     }
 
     public void openProject(File selectedFile) {
-        if (!selectedFile.exists()) {
-            warning("Filen\n" + selectedFile.toString() + "\n" + "existerar inte.");
-            return;
-        }
-
-        ncc = new Ncc(selectedFile);
-        report = new Report(ncc);
-
-        String proofreader = settings.getProofreader();
-        if (proofreader != null) {
-            report.setProofreader(proofreader);
-        }
-
-        // We need to do this is we want proofreader to be shown immediately.
         try {
+            if (!selectedFile.exists()) {
+                warning("Filen\n" + selectedFile.toString() + "\n" + "existerar inte.");
+                return;
+            }
+
+            ncc = new Ncc(selectedFile);
+            report = new Report(ncc);
+
+            String proofreader = settings.getProofreader();
+            if (proofreader != null) {
+                report.setProofreader(proofreader);
+            }
+
             report.createAndWriteReport();
-        } catch (URISyntaxException | IOException e) {
-            // TODO Auto-generated catch block
+
+            if (settings.getPrivateDefaultLocation() != null) {
+                reportCopy = new ReportCopy(report, new File(settings.getPrivateDefaultLocation()));
+            }
+
+            makeWindowTitle();
+            putTableViewPlaceholder();
+            setColumns();
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
-
-        if (settings.getPrivateDefaultLocation() != null) {
-            reportCopy = new ReportCopy(report, new File(settings.getPrivateDefaultLocation()));
-        }
-
-        makeWindowTitle();
-        putTableViewPlaceholder();
-        setColumns();
     }
 
 
