@@ -102,7 +102,7 @@ class Comment {
         }
 
         if (base64EncodedAudio != null) {
-            html += "<tr><td class='comment-head'>Ljud:</td>"
+            html += "<tr class='comment-audio-row'><td class='comment-head'>Ljud:</td>"
                 + "<td class='comment-audio'>"
                 + "<audio controls>"
                 + "<source src='data:audio/wav;base64," + base64EncodedAudio + "' type='audio/wav'>"
