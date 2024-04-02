@@ -23,11 +23,7 @@ När programmet öppnas för första gången får man göra några inställninga
    Denna inställning är frivillig.
 
 3. Kopiera rapporter till privat mapp. \\
-   Rapporterna kopieras automatiskt till den mapp man väljer. \\
-   Denna inställning är frivillig. \\
-   Den är bara till för om man vill ha alla rapporter man skapar samlade på ett ställe, \\
-   och påverkar inte programmets funktionalitet i övrigt.
-
+   Rapporterna kopieras automatiskt till den mapp man väljer.
 
 Man kan ändra gjorda inställningar under menyn Inställningar.
 
@@ -112,6 +108,22 @@ eller trycker på Escape-tangenten.
 0. Övrigt \\
    Kommentarer som inte passar in i övriga typer.
 
+
+** Spela in ljud
+För kommentarer av typen Läsfel kan man spela in ljud med rätt uttal.
+
+För att spela in ljud, klicka med musknappen på och håll ner knappen för inspelning (cirkel).
+Den markeras röd så länge inspelning pågår.
+Inspelningen avbryts när musknappen släpps upp.
+Vill man göra om inspelningen är det bara att spela in på nytt.
+
+För att spela upp ljud, klicka med musknappen på och håll ner knappen för uppspelning (triangel).
+Den markeras grön så länge uppspelning pågår.
+Uppspelningen avbryts när musknappen släpps upp.
+
+För att radera ljud från kommentaren klicka på knappen med papperskorgen.
+
+En grön markering visar om det finns ljud för kommentaren.
 
 
 * Redigera en kommentar
