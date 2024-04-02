@@ -26,7 +26,7 @@ public class ReportTest {
 
             r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg", null);
             r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg", null);
-            r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg", nll);
+            r.addComment(null, "12", "Felläsning", "den första gång jag såg dig", "sög", "såg", null);
 
             r.createAndWriteReport();
         }
