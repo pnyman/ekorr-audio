@@ -363,15 +363,27 @@ public class SimpleViewController implements Initializable {
                 return;
             }
 
-            ncc = new Ncc(selectedFile);
-            report = new Report(ncc);
+            try {
+                ncc = new Ncc(selectedFile);
+                report = new Report(ncc);
+            }
+            catch (URISyntaxException | IOException e) {
+                warning(e.getMessage() + "\n");
+                return;
+            }
 
             String proofreader = settings.getProofreader();
             if (proofreader != null) {
                 report.setProofreader(proofreader);
             }
 
-            report.createAndWriteReport();
+            try {
+                report.createAndWriteReport();
+            }
+            catch (URISyntaxException | IOException e) {
+                warning(e.getMessage() + "\n");
+                return;
+            }
 
             if (settings.getPrivateDefaultLocation() != null) {
                 reportCopy = new ReportCopy(report, new File(settings.getPrivateDefaultLocation()));
@@ -392,11 +404,16 @@ public class SimpleViewController implements Initializable {
         if (report == null || reportCopy == null) {
             return;
         }
-        reportCopy.copy();
+        try {
+            reportCopy.copy();
+        }
+        catch (IOException e) {
+            warning(e.getMessage() + "\n");
+        }
     }
 
 
-    // Method with file chooser, if we decide that ot should be done manually
+    // Method with file chooser, if we decide that it should be done manually
     private void XXXcopyReport() {
         if (report == null) {
             return;
@@ -713,10 +730,9 @@ public class SimpleViewController implements Initializable {
                     report.removeComment(selected);
                     report.createAndWriteReport();
                     copyReport();
-                } catch (URISyntaxException e) {
-                    e.printStackTrace();
                 }
-                catch (IOException e) {
+                catch (URISyntaxException | IOException e) {
+                    warning(e.getMessage() + "\n");
                     e.printStackTrace();
                 }
                 Platform.runLater(new Runnable() {
@@ -739,10 +755,9 @@ public class SimpleViewController implements Initializable {
             report.setComments(comments);
             report.createAndWriteReport();
             copyReport();
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         }
-        catch (IOException e) {
+        catch (URISyntaxException | IOException e) {
+            warning(e.getMessage() + "\n");
             e.printStackTrace();
         }
     }

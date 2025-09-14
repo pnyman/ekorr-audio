@@ -39,7 +39,7 @@ public class Report {
     /**
      * Constructor
      */
-    public Report(Ncc ncc) {
+    public Report(Ncc ncc) throws URISyntaxException, IOException {
         this.ncc = ncc;
         this.identifier = ncc.getIdentifier();
         this.title = ncc.getTitle();
@@ -52,17 +52,26 @@ public class Report {
 
         makeReportFileName();
         readReport();
-        directory.mkdirs();
-        checksum = getChecksum();
 
+        try {
+            Files.createDirectories(directory.toPath());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException("Kunde inte skapa mapp:\n" + directory, e);
+        }
+
+        checksum = getChecksum();
 
         try {
             createAndWriteReport();
         }
-        catch (URISyntaxException | IOException e) {
+        catch (IOException e) {
             e.printStackTrace();
+            throw new IOException("Kunde inte skapa rapport", e);
         }
     }
+
 
     private void makeReportFileName() {
         String temp;

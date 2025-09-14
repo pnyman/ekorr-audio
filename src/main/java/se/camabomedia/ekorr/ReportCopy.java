@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOExceptionList;
 import org.jsoup.Jsoup;
 
 public class ReportCopy {
@@ -85,11 +86,14 @@ public class ReportCopy {
         }
     }
 
-    public void copy() {
+    public void copy() throws IOException {
         try {
             FileUtils.copyFile(source, destination);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             System.out.println("Could not copy " + source + " to " + destination);
+            e.printStackTrace();
+            throw new IOException("Kunde inte kopiera rapport", e);
         }
     }
 }

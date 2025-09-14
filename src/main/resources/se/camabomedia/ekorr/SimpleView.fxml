@@ -78,7 +78,7 @@
         <Menu mnemonicParsing="false" text="Hjälp">
           <items>
             <MenuItem fx:id="menuItemManual" mnemonicParsing="false" onAction="#handleMenuItemManual" text="Läs manual" />
-                  <MenuItem fx:id="menuItemAbout" mnemonicParsing="false" onAction="#handleMenuItemAbout" text="Om Ekorr..." />
+            <MenuItem fx:id="menuItemAbout" mnemonicParsing="false" onAction="#handleMenuItemAbout" text="Om Ekorr..." />
           </items>
         </Menu>
       </menus>
