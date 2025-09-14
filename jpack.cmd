@@ -9,8 +9,7 @@ jpackage --type msi ^
          --win-menu ^
          --win-dir-chooser ^
          --name Ekorr ^
-         --app-version 2.0 ^
+         --app-version 2.1 ^
          --icon src\main\resources\se\camabomedia\ekorr\icon.ico ^
          --description "Skapa korrektur-rapporter i talboksproduktion" ^
-         --vendor "Camabo Media" ^
-         --copyright "Copyright 2024, All rights reserved"
+         --copyright "Copyright 2025, All rights reserved"
