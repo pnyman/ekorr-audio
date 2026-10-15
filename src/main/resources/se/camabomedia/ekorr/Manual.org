@@ -1,7 +1,7 @@
 #+STARTUP: overview indent
 #+OPTIONS: num:t toc:t ':t
 #+LANGUAGE: sv
-#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/setup/html-theme-readtheorg.setup
 
 #+TITLE: Ekorr
 
