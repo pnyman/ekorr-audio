@@ -2,7 +2,7 @@ jpackage --type msi ^
          --input .\target ^
          --dest . ^
          --main-jar ekorr-2.0-SNAPSHOT-shaded.jar ^
-         --main-class se.camabomedia.ekorr.Main ^
+         --main-class se.camabomedia.ekorraudio.Main ^
          --module-path "C:\Program Files (x86)\Java\javafx-jmods-17.0.7" ^
          --add-modules javafx.controls,javafx.fxml,java.base,java.desktop,java.net.http,java.scripting,jdk.jfr,jdk.jsobject,jdk.unsupported,jdk.xml.dom ^
          --win-shortcut ^
