@@ -15,14 +15,11 @@ import org.junit.Test;
  * SmilTest
  */
 public class SmilTest {
+    String file = "c:/Users/qwfwq/camabo-workspace/leverans/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
 
     @Test
     public void test_Constructor() {
-        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
-        URL url = getClass().getClassLoader().getResource(f);
-
         try {
-            String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
             Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
             Smil smil = new Smil(ncc, content);
@@ -38,9 +35,6 @@ public class SmilTest {
             assertTrue(Objects.equals(par1, par3));
             assertTrue(Objects.equals(par1, par4));
         }
-        catch (URISyntaxException e1) {
-            e1.printStackTrace();
-        }
         catch (Exception e) {
             fail(e.getMessage());
         }
@@ -48,10 +42,8 @@ public class SmilTest {
 
     @Test
     public void test_Case() {
-        String f = "C:/Users/qwfwq/filfixaren/workspace/leverans/CA54896_Industrial_PUBLISHER_fixgen/CA_Daisy_202_audioFullText/ncc.html";
-
         try {
-            Ncc ncc = new Ncc(f);
+            Ncc ncc = new Ncc(file);
             Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
             System.out.println(">>>>>>>>>>>>>>>>");
             System.out.println(content.contentFile);
@@ -66,15 +58,12 @@ public class SmilTest {
 
     @Test
     public void test_breadCrumbs() {
-        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
-        URL url = getClass().getClassLoader().getResource(f);
         String id = "dol_1_7_id_fixgen_1901";
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("MARS");
         expected.add("Kvibille 1982");
 
         try {
-            String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
             Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
             Smil smil = new Smil(ncc, content);
@@ -88,9 +77,6 @@ public class SmilTest {
 
     @Test
     public void test_PreviousAndNextPar() {
-        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
-        URL url = getClass().getClassLoader().getResource(f);
-        String file;
         Ncc ncc;
         Smil smil;
         SmilPar thisPar;
@@ -99,7 +85,6 @@ public class SmilTest {
         Content content;
 
         try {
-            file = Paths.get(url.toURI()).toString();
             ncc = new Ncc(file);
             content = new Content(ncc.getDirectory(), ncc.getContentFile());
             smil = new Smil(ncc, content);
@@ -136,11 +121,7 @@ public class SmilTest {
 
     @Test
     public void test_Timestamps() {
-        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
-        URL url = getClass().getClassLoader().getResource(f);
-
         try {
-            String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
             Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
             Smil smil = new Smil(ncc, content);
@@ -155,9 +136,6 @@ public class SmilTest {
             assertTrue(smil.startTimeFromContentId(contentId) == 239616);
             assertTrue(smil.startTimeFromContentId(smil.contentIdFromTime(mp3, time)) == 239616);
         }
-        catch (URISyntaxException e1) {
-            e1.printStackTrace();
-        }
         catch (Exception e) {
             fail(e.getMessage());
         }
@@ -165,13 +143,10 @@ public class SmilTest {
 
     @Test
     public void test_getContentIdFromTime() {
-        String f = "CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html";
-        URL url = getClass().getClassLoader().getResource(f);
         // starting point
         String startId = "dol_1_15_id_fixgen_9770";
 
         try {
-            String file = Paths.get(url.toURI()).toString();
             Ncc ncc = new Ncc(file);
             Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
             Smil smil = new Smil(ncc, content);
@@ -187,9 +162,6 @@ public class SmilTest {
 
             // 9057
             System.out.println(smil.contentIdFromTime(mp3FileName, 9057));
-        }
-        catch (URISyntaxException e1) {
-            e1.printStackTrace();
         }
         catch (Exception e) {
             fail(e.getMessage());
