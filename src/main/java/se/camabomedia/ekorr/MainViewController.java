@@ -1,5 +1,7 @@
 package se.camabomedia.ekorr;
 
+import se.camabomedia.ekorr.audio.playback.MpvPlayer;
+
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -70,6 +72,7 @@ public class MainViewController implements Initializable {
     private Ncc ncc;
     private Content content;
     private Smil smil;
+    MpvPlayer mpv = new MpvPlayer();
 
     /**
      * Initializes the controller class.

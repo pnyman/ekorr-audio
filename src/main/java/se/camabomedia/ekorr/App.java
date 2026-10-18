@@ -19,16 +19,16 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        stage.setTitle("Ekorr");
-        // FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("MainView.fxml"));
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SimpleView.fxml"));
+        stage.setTitle("Ekorr+");
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("MainView.fxml"));
+        // FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SimpleView.fxml"));
         scene = new Scene(fxmlLoader.load());
-        // MainViewController ctrl = fxmlLoader.getController();
-        SimpleViewController ctrl = fxmlLoader.getController();
+        MainViewController ctrl = fxmlLoader.getController();
+        // SimpleViewController ctrl = fxmlLoader.getController();
         stage.setScene(scene);
         stage.getIcons().add(new Image(App.class.getResourceAsStream("icon.png")));
         // stage.setMaximized(true);
-        ctrl.initData(stage, settings);
+        ctrl.initData(stage);
 
 
         // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
