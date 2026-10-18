@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-<HBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorraudio.CommentView3Controller">
+<HBox xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="se.camabomedia.ekorraudio.ui.CommentView3Controller">
    <children>
       <GridPane focusTraversable="true" prefHeight="270.0" prefWidth="184.0">
         <columnConstraints>

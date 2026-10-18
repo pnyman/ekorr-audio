@@ -17,7 +17,7 @@ public class Settings {
 
     JSONObject settings = new JSONObject();
     String localAppData = System.getenv("LOCALAPPDATA");
-    String appDirectory = "CamaboMediaEkorr";
+    String appDirectory = "CamaboMediaEkorrAudio";
     File settingsDirectory = new File(localAppData, appDirectory);
     File settingsFile = new File(settingsDirectory, "settings.json");
 

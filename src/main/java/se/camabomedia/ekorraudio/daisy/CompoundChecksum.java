@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.daisy;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +21,7 @@ public class CompoundChecksum {
             File[] files = directory.listFiles((dir, name) -> name.endsWith(fileExtension));
             if (files != null) {
                 for (File file : files) {
+                    java.util.Arrays.sort(files); // stabil ordning
                     FileInputStream fis = new FileInputStream(file);
                     byte[] buffer = new byte[8192];
                     int bytesRead;

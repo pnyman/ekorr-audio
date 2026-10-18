@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.report;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -35,7 +35,7 @@ public class AudioRecorderPlayer {
     }
 
 
-    AudioRecorderPlayer(File reportDirectory) {
+    public AudioRecorderPlayer(File reportDirectory) {
         try {
             Path tempFilePath = Files.createTempFile("ekorr_audio", ".wav");
             soundFile = new File(tempFilePath.toString());

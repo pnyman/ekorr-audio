@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio.playback;
+package se.camabomedia.ekorraudio.daisy;
 
 import static org.junit.Assert.fail;
 
@@ -10,10 +10,6 @@ import org.junit.Test;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import se.camabomedia.ekorraudio.Content;
-import se.camabomedia.ekorraudio.Ncc;
-import se.camabomedia.ekorraudio.Smil;
-
 
 /**
  * MpvPlayerTest

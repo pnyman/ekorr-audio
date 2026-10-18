@@ -1,11 +1,11 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.report;
 
 // <audio controls>
 //   <source src="data:audio/wav;base64,(base64 encoded audio data)" type="audio/wav">
 //   Your browser does not support the audio element.
 // </audio>
 
-class Comment {
+public class Comment {
     String commentNr = "";
     String page = "";
     String type = "";

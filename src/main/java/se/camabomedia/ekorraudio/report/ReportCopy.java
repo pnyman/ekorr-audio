@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.report;
 
 import java.io.File;
 import java.io.IOException;

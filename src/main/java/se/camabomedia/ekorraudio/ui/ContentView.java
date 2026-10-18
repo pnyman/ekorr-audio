@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.ui;
 
 import java.io.File;
 

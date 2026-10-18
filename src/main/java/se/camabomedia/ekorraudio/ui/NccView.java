@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.ui;
 
 import java.io.File;
 
@@ -68,7 +68,7 @@ public class NccView {
     }
 
     private void applyCSS() {
-        webEngine.setUserStyleSheetLocation(getClass().getResource("ncc.css").toString());
+        webEngine.setUserStyleSheetLocation(getClass().getResource("/se/camabomedia/ekorraudio/ncc.css").toString());
     }
 
     static void scrollWebViewToElement(String elementId) {

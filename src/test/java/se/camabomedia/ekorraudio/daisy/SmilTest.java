@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.daisy;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;

@@ -1,4 +1,7 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.report;
+
+import se.camabomedia.ekorraudio.daisy.CompoundChecksum;
+import se.camabomedia.ekorraudio.daisy.Ncc;
 
 import java.io.File;
 import java.io.FileOutputStream;

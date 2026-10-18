@@ -1,4 +1,6 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.ui;
+
+import se.camabomedia.ekorraudio.Settings;
 
 // import java.awt.Image;
 import java.io.IOException;
@@ -20,13 +22,13 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
 
         stage.setTitle("Ekorr+");
-        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("MainView.fxml"));
-        // FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("SimpleView.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/se/camabomedia/ekorraudio/MainView.fxml"));
+        // FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/se/camabomedia/ekorraudio/SimpleView.fxml"));
         scene = new Scene(fxmlLoader.load());
         MainViewController ctrl = fxmlLoader.getController();
         // SimpleViewController ctrl = fxmlLoader.getController();
         stage.setScene(scene);
-        stage.getIcons().add(new Image(App.class.getResourceAsStream("icon.png")));
+        stage.getIcons().add(new Image(App.class.getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
         // stage.setMaximized(true);
         ctrl.initData(stage);
 

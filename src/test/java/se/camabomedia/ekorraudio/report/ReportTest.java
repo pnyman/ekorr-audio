@@ -1,4 +1,6 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.report;
+
+import se.camabomedia.ekorraudio.daisy.Ncc;
 
 import static org.junit.Assert.fail;
 

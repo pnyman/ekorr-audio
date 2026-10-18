@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio.playback;
+package se.camabomedia.ekorraudio.daisy;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

@@ -1,4 +1,10 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.ui;
+
+import se.camabomedia.ekorraudio.Settings;
+import se.camabomedia.ekorraudio.daisy.Ncc;
+import se.camabomedia.ekorraudio.report.Comment;
+import se.camabomedia.ekorraudio.report.Report;
+import se.camabomedia.ekorraudio.report.ReportCopy;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -666,7 +672,7 @@ public class SimpleViewController implements Initializable {
         final Stage commentStage = new Stage();
         commentStage.initModality(Modality.APPLICATION_MODAL);
         commentStage.initOwner(stage);
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CommentView3.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/se/camabomedia/ekorraudio/CommentView3.fxml"));
         Scene commentScene;
 
         try {
@@ -674,7 +680,7 @@ public class SimpleViewController implements Initializable {
             commentStage.setScene(commentScene);
             commentStage.setTitle("Ekorr – Skapa kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
-            commentStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
+            commentStage.getIcons().add(new Image(getClass().getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
             ctrl.initData(commentStage, report, ncc);
             commentStage.setResizable(false);
             commentStage.showAndWait();
@@ -696,7 +702,7 @@ public class SimpleViewController implements Initializable {
         final Stage commentStage = new Stage();
         commentStage.initModality(Modality.APPLICATION_MODAL);
         commentStage.initOwner(stage);
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("CommentView3.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/se/camabomedia/ekorraudio/CommentView3.fxml"));
         Scene commentScene;
 
         try {
@@ -704,7 +710,7 @@ public class SimpleViewController implements Initializable {
             commentStage.setScene(commentScene);
             commentStage.setTitle("Ekorr – Redigera kommentar");
             CommentView3Controller ctrl = fxmlLoader.getController();
-            commentStage.getIcons().add(new Image(getClass().getResourceAsStream("icon.png")));
+            commentStage.getIcons().add(new Image(getClass().getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
             ctrl.initData(commentStage, report, selected, ncc);
             commentStage.setResizable(false);
             commentStage.showAndWait();

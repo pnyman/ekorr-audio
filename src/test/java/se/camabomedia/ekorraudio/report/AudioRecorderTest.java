@@ -1,4 +1,4 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.report;
 
 import static org.junit.Assert.fail;
 
@@ -27,7 +27,7 @@ import javax.sound.sampled.TargetDataLine;
  * AudioRecorderTest
  */
 public class AudioRecorderTest {
-    
+
     @Test
     public void test_Mixer() {
 
@@ -51,7 +51,7 @@ public class AudioRecorderTest {
         catch (Exception e) {
             fail(e.getMessage());
         }
-        
+
     }
 
 
@@ -83,7 +83,7 @@ public class AudioRecorderTest {
                 System.out.println("No microphone available on this system.");
                 return;
             }
-            
+
             // Define audio format
             AudioFormat format = new AudioFormat(
                     22050, // sampleRate
@@ -117,5 +117,5 @@ public class AudioRecorderTest {
             ex.printStackTrace();
         }
     }
-    
+
 }

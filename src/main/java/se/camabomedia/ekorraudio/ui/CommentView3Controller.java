@@ -1,4 +1,9 @@
-package se.camabomedia.ekorraudio;
+package se.camabomedia.ekorraudio.ui;
+
+import se.camabomedia.ekorraudio.report.AudioRecorderPlayer;
+import se.camabomedia.ekorraudio.report.Comment;
+import se.camabomedia.ekorraudio.report.Report;
+import se.camabomedia.ekorraudio.daisy.Ncc;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
