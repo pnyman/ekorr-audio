@@ -34,8 +34,12 @@ public class SmilAudio {
         clipEnd = timestampToInt(audio.attr("clip-end"));
     }
 
+    /**
+     * "npt=12.345s" -> 12345. Double och avrundning, eftersom Float ger
+     * fel på någon millisekund för en del tidpunkter.
+     */
     private int timestampToInt(String t) {
-        return (int) (Float.parseFloat(t.replace("npt=", "").replace("s", "")) * 1000);
+        return (int) Math.round(Double.parseDouble(t.replace("npt=", "").replace("s", "")) * 1000);
     }
 
     @Override

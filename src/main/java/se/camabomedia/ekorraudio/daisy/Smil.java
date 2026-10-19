@@ -45,6 +45,9 @@ public class Smil {
     private SmilPar previousSmilPar = null;
     private SmilPar firstSmilPar = null;
 
+    /** Alla par i bokordning (samma ordning som den länkade listan). */
+    private final ArrayList<SmilPar> smilPars = new ArrayList<>();
+
     public Smil(Ncc ncc, Content content) {
         this.ncc = ncc;
         this.content = content;
@@ -77,6 +80,7 @@ public class Smil {
 
                 populateMp3StartTimesTable(thisSmilPar);
                 populateMp3ContentIdTable(thisSmilPar);
+                smilPars.add(thisSmilPar);
                 previousSmilPar = thisSmilPar;
             }
         }
@@ -142,13 +146,22 @@ public class Smil {
         return smilPar;
     }
 
+    // private ArrayList<SmilAudio> getAudio(Element parElement) {
+    //     ArrayList<SmilAudio> smilAudio = new ArrayList<>();
+    //     Element seq = parElement.select("seq").first();
+    //     if (seq != null) {
+    //         for (Element audio : seq.getElementsByTag("audio")) {
+    //             smilAudio.add(new SmilAudio(audio));
+    //         }
+    //     }
+    //     return smilAudio;
+    // }
+
+    // Testet för det här finns i SmilAudioWithoutSeqTest.java
     private ArrayList<SmilAudio> getAudio(Element parElement) {
         ArrayList<SmilAudio> smilAudio = new ArrayList<>();
-        Element seq = parElement.select("seq").first();
-        if (seq != null) {
-            for (Element audio : seq.getElementsByTag("audio")) {
-                smilAudio.add(new SmilAudio(audio));
-            }
+        for (Element audio : parElement.getElementsByTag("audio")) {
+            smilAudio.add(new SmilAudio(audio));
         }
         return smilAudio;
     }
@@ -175,7 +188,9 @@ public class Smil {
      * @return the time when that clip ends in the corresponding mp3file
      */
     public int endTimeFromContentId(String contentId) {
-        return contentIDTable.get(contentId).getSmilAudio().get(0).getClipEnd();
+        // Ett par kan bestå av flera klipp – slutet är det sista klippets slut
+        ArrayList<SmilAudio> audio = contentIDTable.get(contentId).getSmilAudio();
+        return audio.get(audio.size() - 1).getClipEnd();
     }
 
     /**
@@ -193,7 +208,8 @@ public class Smil {
         if (index >= 0) {
             return startTimes.get(index);
         }
-        return startTimes.get(-index - 2);
+        // Före första klippet ger -index - 2 == -1, så börja på första
+        return startTimes.get(Math.max(0, -index - 2));
     }
 
     /**
@@ -252,6 +268,11 @@ public class Smil {
 
     public SmilPar getFirstSmilPar() {
         return firstSmilPar;
+    }
+
+    /** Alla par i bokordning. */
+    public ArrayList<SmilPar> getSmilPars() {
+        return smilPars;
     }
 
 }
