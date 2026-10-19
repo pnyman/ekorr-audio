@@ -83,6 +83,12 @@
             <MenuItem mnemonicParsing="false" text="Unselect All" />
           </items>
         </Menu>
+        <Menu mnemonicParsing="false" text="Inställningar">
+          <items>
+            <MenuItem fx:id="menuItemName" mnemonicParsing="false" onAction="#handleMenuItemName" text="Namn..." />
+            <MenuItem fx:id="menuItemLocations" mnemonicParsing="false" onAction="#handleMenuItemLocations" text="Mappar..." />
+          </items>
+        </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
             <MenuItem mnemonicParsing="false" text="About Ekorr" />

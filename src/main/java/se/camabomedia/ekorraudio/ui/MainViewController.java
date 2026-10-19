@@ -1,10 +1,10 @@
 package se.camabomedia.ekorraudio.ui;
 
+import se.camabomedia.ekorraudio.Settings;
 import se.camabomedia.ekorraudio.daisy.Content;
 import se.camabomedia.ekorraudio.daisy.MpvPlayer;
 import se.camabomedia.ekorraudio.daisy.Ncc;
 import se.camabomedia.ekorraudio.daisy.Smil;
-import se.camabomedia.ekorraudio.daisy.SmilPar;
 import se.camabomedia.ekorraudio.daisy.Timeline;
 
 import java.io.File;
@@ -15,18 +15,28 @@ import java.nio.file.Path;
 import java.util.ResourceBundle;
 
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Priority;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -54,6 +64,7 @@ public class MainViewController implements Initializable {
     private Timeline timeline;
     private Path edlFile;
     private final MpvPlayer mpv = new MpvPlayer();
+    private Settings settings;
 
     /** Index (i tidslinjen) för det par som är markerat/spelas, eller -1. */
     private int currentIndex = -1;
@@ -81,8 +92,9 @@ public class MainViewController implements Initializable {
         updateButtons();
     }
 
-    void initData(Stage stage) {
+    void initData(Stage stage, Settings settings) {
         this.stage = stage;
+        this.settings = settings;
 
         contentView = new ContentView();
         contentPane.getChildren().add(contentView.getContentView());
@@ -126,6 +138,10 @@ public class MainViewController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Öppna talbok");
         fileChooser.getExtensionFilters().add(new ExtensionFilter("NCC-fil", "ncc.html"));
+        String books = settings.getDefaultLocation();
+        if (books != null && new File(books).isDirectory()) {
+            fileChooser.setInitialDirectory(new File(books));
+        }
         File selectedFile = fileChooser.showOpenDialog(stage);
         if (selectedFile != null) {
             openProject(selectedFile);
@@ -373,6 +389,134 @@ public class MainViewController implements Initializable {
         alert.showAndWait();
     }
 
+    // ------------------------------------------------------------ settings
+
+    // private void setDefaultLocation() {
+    //     DirectoryChooser directoryChooser = new DirectoryChooser();
+    //     directoryChooser.setTitle("Välj mapp för talböcker");
+    //     File selectedDirectory = directoryChooser.showDialog(stage);
+    //     settings.addDefaultLocation(selectedDirectory.getPath());
+    //     settings.addWantsDefaultLocation(true);
+    // }
+
+    // private void setPrivateDefaultLocation() {
+    //     DirectoryChooser directoryChooser = new DirectoryChooser();
+    //     directoryChooser.setTitle("Välj mapp för rapporter");
+    //     File selectedDirectory = directoryChooser.showDialog(stage);
+    //     settings.addPrivateDefaultLocation(selectedDirectory.getPath());
+    // }
+
+    private void setLocations() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(stage);
+        dialog.setTitle("Ange mappar");
+        dialog.setHeaderText("Var ligger talböckerna, och var ska kopior av rapporterna sparas?");
+
+        TextField bookField = new TextField(nullToEmpty(settings.getDefaultLocation()));
+        TextField reportField = new TextField(nullToEmpty(settings.getPrivateDefaultLocation()));
+        for (TextField f : new TextField[] { bookField, reportField }) {
+            f.setEditable(false);
+            f.setPrefColumnCount(40);
+        }
+
+        Button bookButton = new Button("Välj …");
+        bookButton.setOnAction(e -> chooseDirectory("Välj mapp för talböcker", bookField));
+        Button reportButton = new Button("Välj …");
+        reportButton.setOnAction(e -> chooseDirectory("Välj mapp för rapporter", reportField));
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10, 10, 0, 10));
+        grid.addRow(0, new Label("Talböcker:"), bookField, bookButton);
+        grid.addRow(1, new Label("Rapporter:"), reportField, reportButton);
+        GridPane.setHgrow(bookField, Priority.ALWAYS);
+        GridPane.setHgrow(reportField, Priority.ALWAYS);
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("Avbryt", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButton, cancelButton);
+
+        dialog.showAndWait()
+            .filter(response -> response == okButton)
+            .ifPresent(response -> {
+                    if (!bookField.getText().isBlank()) {
+                        settings.addDefaultLocation(bookField.getText());
+                        settings.addWantsDefaultLocation(true);
+                    }
+                    if (!reportField.getText().isBlank()) {
+                        settings.addPrivateDefaultLocation(reportField.getText());
+                    }
+                });
+    }
+
+    /** Öppnar en mappväljare som börjar i fältets nuvarande mapp och skriver in valet. */
+    private void chooseDirectory(String title, TextField field) {
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle(title);
+        File current = new File(field.getText());
+        if (current.isDirectory()) {
+            chooser.setInitialDirectory(current);
+        }
+        // Använd dialogens eget fönster som ägare, så att väljaren hamnar ovanpå den
+        File selected = chooser.showDialog(field.getScene().getWindow());
+        if (selected != null) {          // null = användaren avbröt
+            field.setText(selected.getPath());
+        }
+    }
+
+    private static String nullToEmpty(String s) {
+        return s == null ? "" : s;
+    }
+
+
+
+    private void setProofReaderName() {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(stage);
+        dialog.setTitle("Korrekturläsare");
+        dialog.setHeaderText("Ange ditt namn");
+
+        TextField firstNameField = new TextField();
+        TextField secondNameField = new TextField();
+
+        // Fyll i det namn som redan finns sparat (förnamn = första ordet)
+        String current = settings.getProofreader();
+        if (current != null && !current.isBlank()) {
+            String[] parts = current.strip().split("\\s+", 2);
+            firstNameField.setText(parts[0]);
+            if (parts.length > 1) {
+                secondNameField.setText(parts[1]);
+            }
+        }
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(10, 10, 0, 10));
+        grid.addRow(0, new Label("Förnamn:"), firstNameField);
+        grid.addRow(1, new Label("Efternamn:"), secondNameField);
+        dialog.getDialogPane().setContent(grid);
+
+        ButtonType okButton = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButton = new ButtonType("Avbryt", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(okButton, cancelButton);
+
+        // OK går bara att klicka när båda fälten är ifyllda
+        Node ok = dialog.getDialogPane().lookupButton(okButton);
+        ok.disableProperty().bind(Bindings.createBooleanBinding(
+          () -> firstNameField.getText().isBlank() || secondNameField.getText().isBlank(),
+          firstNameField.textProperty(), secondNameField.textProperty()));
+        Platform.runLater(firstNameField::requestFocus);
+
+        dialog.showAndWait()
+            .filter(response -> response == okButton)
+            .ifPresent(response -> settings.addProofreader(firstNameField.getText().strip()
+                                                           + " " +
+                                                           secondNameField.getText().strip()));
+    }
+
     // ------------------------------------------------------------ FXML
 
     @FXML
@@ -406,4 +550,15 @@ public class MainViewController implements Initializable {
     void handleBtnPause(ActionEvent event) {
         mpv.pause();
     }
+
+    @FXML
+    void handleMenuItemName(ActionEvent event) {
+        setProofReaderName();
+    }
+
+    @FXML
+    void handleMenuItemLocations(ActionEvent event) {
+        setLocations();
+    }
+
 }

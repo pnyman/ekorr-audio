@@ -30,7 +30,7 @@ public class App extends Application {
         stage.setScene(scene);
         stage.getIcons().add(new Image(App.class.getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
         // stage.setMaximized(true);
-        ctrl.initData(stage);
+        ctrl.initData(stage, settings);
 
 
         // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
