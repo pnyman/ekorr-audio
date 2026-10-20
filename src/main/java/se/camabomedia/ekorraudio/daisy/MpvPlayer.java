@@ -61,6 +61,8 @@ public class MpvPlayer implements AutoCloseable {
 
     private volatile long position;
     private volatile boolean paused = true;
+    /** Uppspelningshastighet, 1.0 = normal. Behålls när ett nytt media öppnas. */
+    private volatile double speed = 1.0;
     /** Ökas vid varje sökning, så att en avläsning som påbörjades före sökningen kastas. */
     private final AtomicLong seekGeneration = new AtomicLong();
 
@@ -102,6 +104,9 @@ public class MpvPlayer implements AutoCloseable {
         cmd.add("--keep-open=yes");          // stanna (pausad) vid slutet i stället för att avsluta
         cmd.add("--pause");
         cmd.add("--hr-seek=yes");            // exakta sökningar
+        cmd.add("--speed=" + String.format(java.util.Locale.ROOT, "%.2f", speed));
+        // Tonhöjden behålls vid ändrad hastighet (mpv:s standard, men uttryckligt)
+        cmd.add("--audio-pitch-correction=yes");
         cmd.add("--input-ipc-server=" + pipeName);
         cmd.add("--start=" + Timeline.seconds(Math.max(0, startMs)));
         cmd.add("--");
@@ -203,6 +208,19 @@ public class MpvPlayer implements AutoCloseable {
                 l.pausedChanged(p);
             }
         }
+    }
+
+    /** Sätter hastigheten (1.0 = normal, 1.5 = 150 %). Gäller även nästa open(). */
+    public void setSpeed(double newSpeed) {
+        speed = newSpeed;
+        if (isOpen()) {
+            command("[\"set_property\",\"speed\","
+                    + String.format(java.util.Locale.ROOT, "%.2f", newSpeed) + "]");
+        }
+    }
+
+    public double getSpeed() {
+        return speed;
     }
 
     /** Söker till absolut position (ms). Pausläget behålls. */

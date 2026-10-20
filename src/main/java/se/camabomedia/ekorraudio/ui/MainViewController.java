@@ -25,7 +25,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -52,7 +51,6 @@ public class MainViewController implements Initializable {
     @FXML private Button btnPause;
     @FXML private Button btnPlay;
     @FXML private MenuItem menuItemOpen;
-    @FXML private ChoiceBox<Timeline.Level> choiceLevel;
     @FXML private Label labelStatus;
 
     private Stage stage;
@@ -72,11 +70,21 @@ public class MainViewController implements Initializable {
     private long seekTarget = -1;
     private long seekStarted = 0;
 
+    /** Hopp med vänster-/högerpil, ms. */
+    private static final long SKIP_MS = 5000;
+
+    private static final int MIN_SPEED = 100;
+    private static final int MAX_SPEED = 400;
+    private static final int SPEED_STEP = 10;
+    private static final int DEFAULT_FAST_SPEED = 150;
+
+    /** Aktuell hastighet i procent. */
+    private int speed = 100;
+    /** Den högre hastighet som "-" växlar till (senast inställda över 100 %). */
+    private int fastSpeed = DEFAULT_FAST_SPEED;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        choiceLevel.getItems().setAll(Timeline.Level.values());
-        choiceLevel.setValue(Timeline.Level.PHRASE);
-
         // mpv rapporterar från en bakgrundstråd – flytta till JavaFX-tråden
         mpv.setListener(new MpvPlayer.Listener() {
             @Override
@@ -96,6 +104,11 @@ public class MainViewController implements Initializable {
         this.stage = stage;
         this.settings = settings;
 
+        int saved = settings.getFastSpeed();
+        if (saved > MIN_SPEED && saved <= MAX_SPEED) {
+            fastSpeed = saved;
+        }
+
         contentView = new ContentView();
         contentPane.getChildren().add(contentView.getContentView());
         anchorToAllSides(contentView.webView);
@@ -112,9 +125,31 @@ public class MainViewController implements Initializable {
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPressed);
         // WebView scrollar på tecknet " " (KEY_TYPED), inte på själva
         // tangenttrycket – stoppa det också, liksom släppet av våra tangenter
+        // Hastighetstangenterna läses som tecken (",", ".", "-"), så att de
+        // fungerar oberoende av tangentbordslayout – även minus på numeriska
+        // tangentbordet
         stage.getScene().addEventFilter(KeyEvent.KEY_TYPED, e -> {
-            if (timeline != null && " ".equals(e.getCharacter())) {
+            if (timeline == null) {
+                return;
+            }
+            switch (e.getCharacter()) {
+            case " ":
                 e.consume();
+                break;
+            case ",":
+                changeSpeed(-SPEED_STEP);
+                e.consume();
+                break;
+            case ".":
+                changeSpeed(+SPEED_STEP);
+                e.consume();
+                break;
+            case "-":
+                toggleFastSpeed();
+                e.consume();
+                break;
+            default:
+                break;
             }
         });
         stage.getScene().addEventFilter(KeyEvent.KEY_RELEASED, e -> {
@@ -219,14 +254,36 @@ public class MainViewController implements Initializable {
         currentIndex = index;
         contentView.highlight(timeline.get(index).getContentID());
         if (seek) {
-            // Tills mpv rapporterar en position vid målet är rapporterna
-            // inaktuella (ett hopp till en annan ljudfil kan ta en stund)
-            long target = timeline.startOf(index);
-            seekTarget = target;
-            seekStarted = System.nanoTime();
-            mpv.seek(target);
+            seekTo(timeline.startOf(index));
         }
         updateStatus(timeline.startOf(index));
+    }
+
+    /** Hoppar deltaMs framåt (positivt) eller bakåt (negativt) i ljudet. */
+    private void skip(long deltaMs) {
+        if (timeline == null) {
+            return;
+        }
+        // Under ett pågående hopp är mpv:s position inaktuell – utgå från målet,
+        // så att flera snabba tryck läggs ihop
+        long from = seekTarget >= 0 ? seekTarget : mpv.getPosition();
+        long target = Math.max(0, Math.min(from + deltaMs, timeline.duration() - 1));
+
+        int index = timeline.indexAt(target);
+        if (index != currentIndex) {
+            currentIndex = index;
+            contentView.highlight(timeline.get(index).getContentID());
+        }
+        seekTo(target);
+        updateStatus(target);
+    }
+
+    private void seekTo(long target) {
+        // Tills mpv rapporterar en position vid målet är rapporterna
+        // inaktuella (ett hopp till en annan ljudfil kan ta en stund)
+        seekTarget = target;
+        seekStarted = System.nanoTime();
+        mpv.seek(target);
     }
 
     private void step(boolean forward, Timeline.Level level) {
@@ -294,31 +351,46 @@ public class MainViewController implements Initializable {
     // ------------------------------------------------------------ tangenter
 
     /**
-     *   Mellanslag        spela/pausa
-     *   Vänster/Höger     föregående/nästa på vald nivå
-     *   Ctrl+Vänster/Höger föregående/nästa rubrik
-     *   PgUp/PgDn         föregående/nästa sida
+     *   Mellanslag      spela/pausa
+     *   Vänster/Höger   5 sekunder bakåt/framåt
+     *   Upp/Ned         föregående/nästa fras
+     *   Skift+V/H       föregående/nästa sida
+     *   Skift+Upp/Ned   föregående/nästa rubrik
+     *   , och .         sänk/höj hastigheten 10 % (100–400 %)
+     *   -               växla mellan 100 % och inställd högre hastighet
+     * (hastighetstangenterna hanteras som tecken, se initData)
      */
     private void onKeyPressed(KeyEvent event) {
         if (timeline == null) {
             return;
         }
+        boolean shift = event.isShiftDown();
         boolean handled = true;
         switch (event.getCode()) {
         case SPACE:
             togglePlay();
             break;
         case LEFT:
-            step(false, event.isControlDown() ? Timeline.Level.HEADING : choiceLevel.getValue());
+            if (shift) {
+                step(false, Timeline.Level.PAGE);
+            }
+            else {
+                skip(-SKIP_MS);
+            }
             break;
         case RIGHT:
-            step(true, event.isControlDown() ? Timeline.Level.HEADING : choiceLevel.getValue());
+            if (shift) {
+                step(true, Timeline.Level.PAGE);
+            }
+            else {
+                skip(SKIP_MS);
+            }
             break;
-        case PAGE_UP:
-            step(false, Timeline.Level.PAGE);
+        case UP:
+            step(false, shift ? Timeline.Level.HEADING : Timeline.Level.PHRASE);
             break;
-        case PAGE_DOWN:
-            step(true, Timeline.Level.PAGE);
+        case DOWN:
+            step(true, shift ? Timeline.Level.HEADING : Timeline.Level.PHRASE);
             break;
         default:
             handled = false;
@@ -333,11 +405,40 @@ public class MainViewController implements Initializable {
         case SPACE:
         case LEFT:
         case RIGHT:
-        case PAGE_UP:
-        case PAGE_DOWN:
+        case UP:
+        case DOWN:
             return true;
         default:
             return false;
+        }
+    }
+
+    // ------------------------------------------------------------ hastighet
+
+    /** , och . : ändra hastigheten i steg om 10 %, inom 100–400 %. */
+    private void changeSpeed(int delta) {
+        int s = Math.max(MIN_SPEED, Math.min(MAX_SPEED, speed + delta));
+        setSpeed(s);
+        if (s > MIN_SPEED) {
+            rememberFastSpeed(s);
+        }
+    }
+
+    /** - : växla mellan 100 % och den senast inställda högre hastigheten. */
+    private void toggleFastSpeed() {
+        setSpeed(speed == MIN_SPEED ? fastSpeed : MIN_SPEED);
+    }
+
+    private void setSpeed(int percent) {
+        speed = percent;
+        mpv.setSpeed(percent / 100.0);
+        updateStatus(mpv.getPosition());
+    }
+
+    private void rememberFastSpeed(int percent) {
+        if (percent != fastSpeed) {
+            fastSpeed = percent;
+            settings.addFastSpeed(percent);
         }
     }
 
@@ -377,7 +478,8 @@ public class MainViewController implements Initializable {
         }
         String page = timeline.get(currentIndex).getPage();
         labelStatus.setText((page != null ? "Sida " + page + "   " : "")
-                            + Timeline.format(ms) + " / " + Timeline.format(timeline.duration()));
+                            + Timeline.format(ms) + " / " + Timeline.format(timeline.duration())
+                            + "   " + speed + " %");
     }
 
     private void showError(String header, String message) {
@@ -531,12 +633,12 @@ public class MainViewController implements Initializable {
 
     @FXML
     void handleBtnBack(ActionEvent event) {
-        step(false, choiceLevel.getValue());
+        step(false, Timeline.Level.PHRASE);
     }
 
     @FXML
     void handleButtonForward(ActionEvent event) {
-        step(true, choiceLevel.getValue());
+        step(true, Timeline.Level.PHRASE);
     }
 
     @FXML

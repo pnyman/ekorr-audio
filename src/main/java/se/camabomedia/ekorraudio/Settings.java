@@ -116,6 +116,19 @@ public class Settings {
     //     return (Boolean) settings.get("wantsPrivateDefaultLocation");
     // }
 
+    /** Den högre hastighet (procent) som "-" växlar till. */
+    @SuppressWarnings("unchecked")
+    public void addFastSpeed(int percent) {
+        settings.put("fastSpeed", percent);
+        writeJSON();
+    }
+
+    /** Sparad högre hastighet i procent, eller 0 om ingen finns. */
+    public int getFastSpeed() {
+        Object value = settings.get("fastSpeed");
+        // json-simple läser tal som Long
+        return value instanceof Number ? ((Number) value).intValue() : 0;
+    }
 
     @SuppressWarnings("unchecked")
     public void addLastProject(String ncc, String title, String author, String ID) {
