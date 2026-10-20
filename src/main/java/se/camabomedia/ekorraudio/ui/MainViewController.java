@@ -6,13 +6,25 @@ import se.camabomedia.ekorraudio.daisy.MpvPlayer;
 import se.camabomedia.ekorraudio.daisy.Ncc;
 import se.camabomedia.ekorraudio.daisy.Smil;
 import se.camabomedia.ekorraudio.daisy.Timeline;
+import se.camabomedia.ekorraudio.report.Comment;
+import se.camabomedia.ekorraudio.report.Report;
+import se.camabomedia.ekorraudio.report.ReportCopy;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
+import javafx.stage.WindowEvent;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -63,6 +75,9 @@ public class MainViewController implements Initializable {
     private Path edlFile;
     private final MpvPlayer mpv = new MpvPlayer();
     private Settings settings;
+
+    private CommentTable commentTable;
+    private Report report;
 
     /** Index (i tidslinjen) för det par som är markerat/spelas, eller -1. */
     private int currentIndex = -1;
@@ -119,6 +134,28 @@ public class MainViewController implements Initializable {
 
         contentView.setOnSyncPointClicked(this::onContentClicked);
         nccView.setOnItemClicked(this::onNccClicked);
+
+        // Högerkolumnen: kommentarstabellen. Kolumnerna i FXML har fast bredd
+        // (min = max = 250) – lås upp dem så att avdelarna går att dra.
+        AnchorPane commentPane = (AnchorPane) splitPane.getItems().get(2);
+        commentPane.getChildren().clear();   // etiketten "Comments" från FXML
+        commentTable = new CommentTable();
+        commentPane.getChildren().add(commentTable.getNode());
+        anchorToAllSides(commentTable.getNode());
+        commentTable.setOnEdit(this::editComment);
+        commentTable.setOnDelete(this::deleteComment);
+        commentTable.setOnReordered(this::reorderComments);
+
+        for (AnchorPane side : new AnchorPane[] { nccPane, commentPane }) {
+            side.setMinWidth(120);
+            side.setMaxWidth(Double.MAX_VALUE);
+        }
+        contentPane.setMinWidth(200);
+
+        restoreLayout();
+        // Spara layouten när fönstret stängs. addEventHandler körs före App:s
+        // setOnCloseRequest, som avslutar med System.exit.
+        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e -> saveLayout());
 
         // Filter (inte handler) så att tangenterna fungerar även när en WebView
         // eller knapp har fokus
@@ -193,6 +230,7 @@ public class MainViewController implements Initializable {
         timeline = new Timeline(ncc, smil);
         seekTarget = -1;
         reportMissingSyncPoints(content);
+        loadReport();
 
         contentView.openContent(ncc.getContentFilePath());
         nccView.openNcc(nccFile);
@@ -364,9 +402,17 @@ public class MainViewController implements Initializable {
         if (timeline == null) {
             return;
         }
+        if (event.isAltDown()) {
+            return;   // Alt+pil flyttar kommentarer i tabellen
+        }
         boolean shift = event.isShiftDown();
         boolean handled = true;
         switch (event.getCode()) {
+        case ENTER:
+            // Öppna formuläret efter att tangenthändelsen är klar, så att
+            // Enter inte också hamnar i det nya fönstret
+            Platform.runLater(this::createComment);
+            break;
         case SPACE:
             togglePlay();
             break;
@@ -401,7 +447,11 @@ public class MainViewController implements Initializable {
     }
 
     private static boolean isPlayerKey(KeyEvent e) {
+        if (e.isAltDown()) {
+            return false;
+        }
         switch (e.getCode()) {
+        case ENTER:
         case SPACE:
         case LEFT:
         case RIGHT:
@@ -489,6 +539,178 @@ public class MainViewController implements Initializable {
         alert.setHeaderText(header);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    // ------------------------------------------------------------ kommentarer
+
+    /** Läser bokens rapport, om den finns. Skriver ingenting till disk. */
+    private void loadReport() {
+        report = null;
+        commentTable.clear();
+        try {
+            report = new Report(ncc);
+            commentTable.setComments(report.getComments(), null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            showError("Kunde inte läsa rapporten", e.getMessage());
+        }
+    }
+
+    /** Enter: ny kommentar med sidan som spelas/är markerad. Stoppar uppspelningen. */
+    private void createComment() {
+        if (report == null) {
+            return;
+        }
+        mpv.pause();
+        String page = currentIndex >= 0 ? timeline.get(currentIndex).getPage() : null;
+        if (openCommentDialog(null, page)) {
+            List<Comment> comments = report.getComments();
+            afterChange(comments.isEmpty() ? null : comments.get(comments.size() - 1));
+        }
+    }
+
+    /** Dubbelklick: redigera kommentaren. */
+    private void editComment(Comment comment) {
+        if (report == null) {
+            return;
+        }
+        mpv.pause();
+        if (openCommentDialog(comment, null)) {
+            // Redigeringen ersätter objektet i listan – markera det nya på samma plats
+            int index = Math.min(report.getComments().size() - 1,
+                                 Math.max(0, commentIndexBefore));
+            afterChange(report.getComments().isEmpty() ? null : report.getComments().get(index));
+        }
+    }
+
+    private int commentIndexBefore = -1;
+
+    /**
+     * Visar kommentarsformuläret (CommentView3). comment == null betyder ny.
+     * @return true om kommentaren sparades
+     */
+    private boolean openCommentDialog(Comment comment, String page) {
+        if (settings.getProofreader() == null) {
+            setProofReaderName();
+        }
+        report.setProofreader(settings.getProofreader());
+        commentIndexBefore = comment == null ? -1 : report.getComments().indexOf(comment);
+
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/se/camabomedia/ekorraudio/CommentView3.fxml"));
+            Stage commentStage = new Stage();
+            commentStage.initModality(Modality.APPLICATION_MODAL);
+            commentStage.initOwner(stage);
+            commentStage.setScene(new Scene(loader.load()));
+            commentStage.setTitle(comment == null ? "Ekorr – Skapa kommentar" : "Ekorr – Redigera kommentar");
+            commentStage.getIcons().add(
+                new Image(getClass().getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
+            commentStage.setResizable(false);
+
+            CommentView3Controller ctrl = loader.getController();
+            if (comment == null) {
+                ctrl.initData(commentStage, report, ncc, page);
+            }
+            else {
+                ctrl.initData(commentStage, report, comment, ncc);
+            }
+            commentStage.showAndWait();
+            return ctrl.isSaved();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            showError("Kunde inte öppna kommentarsformuläret", e.getMessage());
+            return false;
+        }
+    }
+
+    /** Delete: ta bort markerad kommentar. */
+    private void deleteComment(Comment comment) {
+        int index = report.getComments().indexOf(comment);
+        report.removeComment(comment);
+        if (writeReport()) {
+            List<Comment> comments = report.getComments();
+            afterChange(comments.isEmpty() ? null : comments.get(Math.min(index, comments.size() - 1)));
+        }
+        else {
+            report.getComments().add(Math.max(0, index), comment);   // ångra
+            commentTable.setComments(report.getComments(), comment);
+        }
+    }
+
+    /** Alt+pil: ny ordning från tabellen. */
+    private void reorderComments(List<Comment> newOrder) {
+        Comment selected = commentTable.getSelected();
+        report.setComments(new java.util.ArrayList<>(newOrder));
+        if (writeReport()) {
+            afterChange(selected);
+        }
+    }
+
+    /** Efter sparad ändring: kopiera rapporten och visa tabellen (med nya nummer). */
+    private void afterChange(Comment select) {
+        copyReport();
+        commentTable.setComments(report.getComments(), select);
+    }
+
+    private boolean writeReport() {
+        try {
+            report.setProofreader(settings.getProofreader());
+            report.createAndWriteReport();   // numrerar också om kommentarerna
+            return true;
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            showError("Kunde inte spara rapporten", e.getMessage());
+            return false;
+        }
+    }
+
+    /** Kopierar rapporten till rapportmappen i inställningarna, om en sådan är vald. */
+    private void copyReport() {
+        String dir = settings.getPrivateDefaultLocation();
+        if (dir == null || !new File(dir).isDirectory() || !report.exists()) {
+            return;
+        }
+        try {
+            new ReportCopy(report, new File(dir)).copy();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            showError("Kunde inte kopiera rapporten till " + dir, e.getMessage());
+        }
+    }
+
+    // ------------------------------------------------------------ layout
+
+    /** Fönstrets läge och storlek samt avdelarnas positioner från settings.json. */
+    private void restoreLayout() {
+        double[] b = settings.getWindowBounds();
+        if (b != null && b.length == 4 && b[2] > 200 && b[3] > 150
+            && !Screen.getScreensForRectangle(new Rectangle2D(b[0], b[1], b[2], b[3])).isEmpty()) {
+            stage.setX(b[0]);
+            stage.setY(b[1]);
+            stage.setWidth(b[2]);
+            stage.setHeight(b[3]);
+        }
+        stage.setMaximized(settings.getWindowMaximized());
+
+        double[] d = settings.getDividerPositions();
+        if (d != null && d.length == splitPane.getDividers().size()) {
+            // Efter att fönstret visats, annars skriver första layouten över dem
+            Platform.runLater(() -> splitPane.setDividerPositions(d));
+        }
+    }
+
+    private void saveLayout() {
+        double[] dividers = splitPane.getDividerPositions();
+        double[] bounds = null;
+        if (!stage.isMaximized() && !stage.isIconified()) {
+            bounds = new double[] { stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight() };
+        }
+        settings.addLayout(dividers, bounds, stage.isMaximized());
     }
 
     // ------------------------------------------------------------ settings

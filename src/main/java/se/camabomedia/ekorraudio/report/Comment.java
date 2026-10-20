@@ -5,6 +5,12 @@ package se.camabomedia.ekorraudio.report;
 //   Your browser does not support the audio element.
 // </audio>
 
+import org.jsoup.nodes.Entities;
+
+/**
+ * En kommentar i korrekturrapporten. Fälten innehåller ren text – HTML-escaping
+ * görs först i {@link #toString()}, när rapporten skrivs.
+ */
 public class Comment {
     String commentNr = "";
     String page = "";
@@ -19,27 +25,29 @@ public class Comment {
                    String wrong, String right, String base64EncodedAudio) {
         this.commentNr = commentNr;
         makePageNumber(page);
-        this.type = sanitize(type);
-        this.seek = sanitize(seek);
-        this.wrong = sanitize(wrong);
-        this.right = sanitize(right);
+        this.type = clean(type);
+        this.seek = clean(seek);
+        this.wrong = clean(wrong);
+        this.right = clean(right);
         this.base64EncodedAudio = base64EncodedAudio;
     }
 
     private void makePageNumber(String page) {
-        if (page == null || page.strip() == "") {
+        if (page == null || page.isBlank()) {
             this.page = ENDASH;
         }
         else {
-            this.page = sanitize(page);
+            this.page = page.strip();
         }
     }
 
-    private String sanitize(String s) {
-        return s
-            .replaceAll("&", "&amp")
-            .replaceAll("<", "&lt;")
-            .trim();
+    private static String clean(String s) {
+        return s == null ? "" : s.strip();
+    }
+
+    /** Escapar &, <, > och citattecken för HTML. */
+    private static String html(String s) {
+        return Entities.escape(s);
     }
 
     public String getPage() {
@@ -88,17 +96,17 @@ public class Comment {
     public String toString() {
         String html = "<div class='comment'><table class='comment-table'><tbody>";
 
-        html += "<tr><th class='comment-nr'>" + commentNr + ".</th><th class='comment-type'>" + type + "</th></tr>";
+        html += "<tr><th class='comment-nr'>" + commentNr + ".</th><th class='comment-type'>" + html(type) + "</th></tr>";
         // html += "<tr><td class='comment-head'>Typ:</td><td class='comment-type'>" + type + "</td></tr>";
 
         html += "<tr><td></td><td><table class='inner-table'><tbody>";
 
         if (!wrong.equals("")) {
-            html += "<tr><td class='comment-head'>Fel:</td><td class='comment-wrong'>" + wrong + "</td></tr>";
+            html += "<tr><td class='comment-head'>Fel:</td><td class='comment-wrong'>" + html(wrong) + "</td></tr>";
         }
 
         if (!right.equals("")) {
-            html += "<tr><td class='comment-head'>Rätt:</td><td class='comment-right'>" + right + "</td></tr>";
+            html += "<tr><td class='comment-head'>Rätt:</td><td class='comment-right'>" + html(right) + "</td></tr>";
         }
 
         if (base64EncodedAudio != null) {
@@ -111,12 +119,12 @@ public class Comment {
                 + "</td></tr>";
         }
 
-        html += "<tr><td class='comment-head'>Sida:</td><td class='comment-page'>" + page + "</td></tr>";
+        html += "<tr><td class='comment-head'>Sida:</td><td class='comment-page'>" + html(page) + "</td></tr>";
 
         if (!seek.equals("")) {
             html += "<tr>"
                 + "<td class='comment-head'>Sök:</td><td class='comment-seek'>"
-                + seek + "</td></tr>";
+                + html(seek) + "</td></tr>";
         }
 
         // Close elements....

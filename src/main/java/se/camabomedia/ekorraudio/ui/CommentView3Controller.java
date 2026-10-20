@@ -54,6 +54,8 @@ public class CommentView3Controller implements Initializable {
     private Comment comment;
     private String type = null;
     boolean editComment = false;
+    private volatile boolean saved = false;
+    private volatile boolean saving = false;
     private final String ENDASH = "–";
 
     private String[] commentTypes = {
@@ -143,9 +145,12 @@ public class CommentView3Controller implements Initializable {
                     break;
                 case ENTER:
                     saveAndClose();
+                    // Konsumera, annars sparar scenens Enter-hanterare (bindKeys) en gång till
+                    event.consume();
                     break;
                 case ESCAPE:
                     stage.close();
+                    event.consume();
                     break;
                 default:
                     break;
@@ -239,7 +244,9 @@ public class CommentView3Controller implements Initializable {
 
     private void setButton(Button button, String imagePath, String tooltipText) {
         double BUTTON_HEIGHT = 40.0;
-        ImageView imageView = new ImageView(this.getClass().getResource(imagePath).toExternalForm());
+        // Absolut sökväg: klassen ligger i paketet ui, bilderna i ekorraudio/images
+        ImageView imageView = new ImageView(
+            getClass().getResource("/se/camabomedia/ekorraudio/" + imagePath).toExternalForm());
         imageView.setFitHeight(BUTTON_HEIGHT);
         imageView.setPreserveRatio(true);
         button.setGraphic(imageView);
@@ -270,11 +277,26 @@ public class CommentView3Controller implements Initializable {
      * Creates a new comment
      */
     public void initData(Stage stage, Report report, Ncc ncc) {
+        initData(stage, report, ncc, null);
+    }
+
+    /**
+     * Ny kommentar med sidnumret förifyllt (sidan som spelas/är markerad).
+     */
+    public void initData(Stage stage, Report report, Ncc ncc, String page) {
         this.stage = stage;
         this.report = report;
         this.ncc = ncc;
         this.audioRecorderPlayer = new AudioRecorderPlayer(report.getReportDirectory());
+        if (page != null && !page.isBlank()) {
+            textFieldPage.setText(page.strip());
+        }
         bindKeys();
+    }
+
+    /** Om kommentaren sparades (och inte avbröts). Läses när fönstret stängts. */
+    public boolean isSaved() {
+        return saved;
     }
 
     /**
@@ -405,40 +427,45 @@ public class CommentView3Controller implements Initializable {
             return;
         }
 
+        if (saving) {
+            return;   // dubbeltryck på Enter/OK
+        }
+        saving = true;
+
         String page = textFieldPage.getText().strip();
         String seek = textAreaSeek.getText().strip();
         String wrong = textAreaWrong.getText().strip();
         String right = textAreaRight.getText().strip();
 
-        Thread taskThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (editComment) {
-                        Comment newComment = new Comment(null, page, type, seek, wrong, right, audioRecorderPlayer.getWavData());
-                        report.replaceComment(comment, newComment);
-                    }
-                    else {
-                        report.addComment(null, page, type, seek, wrong, right, audioRecorderPlayer.getWavData());
-                    }
-                    report.createAndWriteReport();
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        Stage stage = (Stage) btnOk.getScene().getWindow();
-                        // stage.close();
-                        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-                    }
-                });
+        // Att skriva rapporten tar bara några millisekunder – gör det direkt,
+        // så att ett fel kan visas och fönstret hållas öppet
+        Comment newComment = new Comment(null, page, type, seek, wrong, right, audioRecorderPlayer.getWavData());
+        try {
+            if (editComment) {
+                report.replaceComment(comment, newComment);
             }
-        });
+            else {
+                report.getComments().add(newComment);
+            }
+            report.createAndWriteReport();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            // Ta tillbaka ändringen, så att listan stämmer med filen
+            if (editComment) {
+                report.replaceComment(newComment, comment);
+            }
+            else {
+                report.getComments().remove(newComment);
+            }
+            saving = false;
+            showWarningDialog("Kunde inte spara", "Kommentaren kunde inte sparas i rapporten.", e.getMessage());
+            return;
+        }
 
-        taskThread.start();
+        saved = true;
+        Stage stage = (Stage) btnOk.getScene().getWindow();
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
 
     private boolean checkPageNr(String pageNr) {

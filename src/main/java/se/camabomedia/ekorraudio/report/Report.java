@@ -40,7 +40,9 @@ public class Report {
     private String checksum;
 
     /**
-     * Constructor
+     * Läser en befintlig rapport, om det finns en. Ingenting skrivs till
+     * disk – mappen och rapportfilen skapas först av
+     * {@link #createAndWriteReport()}, när en kommentar sparas.
      */
     public Report(Ncc ncc) throws URISyntaxException, IOException {
         this.ncc = ncc;
@@ -55,38 +57,22 @@ public class Report {
 
         makeReportFileName();
         readReport();
-
-        try {
-            Files.createDirectories(directory.toPath());
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            throw new IOException("Kunde inte skapa mapp:\n" + directory, e);
-        }
-
-        checksum = getChecksum();
-
-        try {
-            createAndWriteReport();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            throw new IOException("Kunde inte skapa rapport", e);
-        }
     }
 
 
     private void makeReportFileName() {
         String temp;
         // # % & {} \ <> * ? / $ ! ' " : @+ ` | =
-        String sanitizedTitle = title
+        // OBS: namnet måste bli exakt som i tidigare versioner (även ekorr),
+        // annars hittas befintliga rapporter inte. Ändra inte reglerna.
+        String sanitizedTitle = (title == null ? "" : title)
             .replaceAll(" ", "_")
             .replaceAll("[^a-zA-ZåäöÅÄÖ0-9_]", "")
             .replaceAll("__", "_");
 
-        temp = String.join("_", identifier, sanitizedTitle);
+        temp = String.join("_", identifier == null ? "" : identifier, sanitizedTitle);
         temp = StringUtils.substring(temp, 0, 50); // max filename length is 255
-        temp = temp.replace("_$", "");
+        temp = temp.replace("_$", "");   // gör inget (inte regex), men behålls för kompatibilitet
         reportFileName = temp + "_KORR.html";
     }
 
@@ -102,22 +88,26 @@ public class Report {
     }
 
 
+    /** Skapar rapportmappen vid behov och skriver rapporten med alla kommentarer. */
     public void createAndWriteReport() throws URISyntaxException, IOException {
-        InputStream inputStream = getClass().getResourceAsStream("/se/camabomedia/ekorraudio/ReportStub.html");
-        File tempFile = File.createTempFile("reportstub", ".html");
-
-        // Write the InputStream contents to the temporary file
-        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
-            byte[] buffer = new byte[1024];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                fos.write(buffer, 0, bytesRead);
-            }
+        try {
+            Files.createDirectories(directory.toPath());
         }
-        inputStream.close();
+        catch (IOException e) {
+            throw new IOException("Kunde inte skapa mapp:\n" + directory, e);
+        }
 
-        // Read and parse the report stub
-        doc = Jsoup.parse(tempFile);
+        if (checksum == null) {
+            checksum = getChecksum();
+        }
+
+        // Läs mallen direkt från resursen
+        try (InputStream inputStream = getClass().getResourceAsStream("/se/camabomedia/ekorraudio/ReportStub.html")) {
+            if (inputStream == null) {
+                throw new IOException("Hittar inte rapportmallen ReportStub.html");
+            }
+            doc = Jsoup.parse(inputStream, "UTF-8", "");
+        }
         addMetadata();
 
         int nr = 0;
@@ -129,9 +119,11 @@ public class Report {
         // Print the report
         File file = new File(directory, reportFileName);
         FileUtils.writeStringToFile(file, doc.outerHtml(), StandardCharsets.UTF_8);
+    }
 
-        // Delete the tempfile
-        tempFile.delete();
+    /** Om det finns en sparad rapportfil för boken. */
+    public boolean exists() {
+        return getReportFile().isFile();
     }
 
 
@@ -202,10 +194,10 @@ public class Report {
         File file = new File(directory, reportFileName);
 
         try {
-            doc = Jsoup.parse(file);
+            doc = Jsoup.parse(file, "UTF-8");
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            return;
         }
 
         for (Element comment : doc.getElementsByClass("comment")) {
@@ -287,17 +279,7 @@ public class Report {
 
     @Override
     public String toString() {
-        for (Comment comment : comments) {
-            System.out.println("[ "
-                               + "nr: " + comment.getNr() + " | "
-                               + "page: " + comment.getPage() + " | "
-                               + "type: " + comment.getType() + " | "
-                               + "seek: " + comment.getSeek() + " | "
-                               + "wrong: " + comment.getWrong() + " | "
-                               + "right: " + comment.getRight() + " "
-                               + "]");
-        }
-        return null;
+        return "Report [" + reportFileName + ", " + comments.size() + " kommentarer]";
     }
 
 }

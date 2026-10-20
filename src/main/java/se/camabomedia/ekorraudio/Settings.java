@@ -116,6 +116,68 @@ public class Settings {
     //     return (Boolean) settings.get("wantsPrivateDefaultLocation");
     // }
 
+
+    /**
+     * Sparar huvudfönstrets layout i ett svep (en skrivning).
+     * @param dividers  avdelarnas positioner (0–1)
+     * @param bounds    x, y, bredd, höjd – eller null för att behålla tidigare
+     *                  (t.ex. när fönstret är maximerat)
+     * @param maximized om fönstret är maximerat
+     */
+    @SuppressWarnings("unchecked")
+    public void addLayout(double[] dividers, double[] bounds, boolean maximized) {
+        if (dividers != null) {
+            settings.put("dividerPositions", join(dividers));
+        }
+        if (bounds != null) {
+            settings.put("windowBounds", join(bounds));
+        }
+        settings.put("windowMaximized", maximized);
+        writeJSON();
+    }
+
+    /** x, y, bredd, höjd – eller null. */
+    public double[] getWindowBounds() {
+        return split((String) settings.get("windowBounds"));
+    }
+
+    public boolean getWindowMaximized() {
+        return Boolean.TRUE.equals(settings.get("windowMaximized"));
+    }
+
+    /** Avdelarnas positioner (0–1) – eller null. */
+    public double[] getDividerPositions() {
+        return split((String) settings.get("dividerPositions"));
+    }
+
+    private static String join(double[] values) {
+        StringBuilder sb = new StringBuilder();
+        for (double v : values) {
+            if (sb.length() > 0) {
+                sb.append(',');
+            }
+            sb.append(String.format(java.util.Locale.ROOT, "%.4f", v));
+        }
+        return sb.toString();
+    }
+
+    private static double[] split(String s) {
+        if (s == null || s.isBlank()) {
+            return null;
+        }
+        try {
+            String[] parts = s.split(",");
+            double[] values = new double[parts.length];
+            for (int i = 0; i < parts.length; i++) {
+                values[i] = Double.parseDouble(parts[i].strip());
+            }
+            return values;
+        }
+        catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
     /** Den högre hastighet (procent) som "-" växlar till. */
     @SuppressWarnings("unchecked")
     public void addFastSpeed(int percent) {
