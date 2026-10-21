@@ -152,6 +152,9 @@ public class MainViewController implements Initializable {
         }
         contentPane.setMinWidth(200);
 
+        contentView.setFontFamily(settings.getFontFamily());
+        contentView.setFontScale(clampScale(settings.getFontScale()));
+
         restoreLayout();
         // Spara layouten när fönstret stängs. addEventHandler körs före App:s
         // setOnCloseRequest, som avslutar med System.exit.
@@ -166,8 +169,8 @@ public class MainViewController implements Initializable {
         // fungerar oberoende av tangentbordslayout – även minus på numeriska
         // tangentbordet
         stage.getScene().addEventFilter(KeyEvent.KEY_TYPED, e -> {
-            if (timeline == null) {
-                return;
+            if (timeline == null || e.isShortcutDown()) {
+                return;   // Ctrl+- är textstorlek, inte hastighet
             }
             switch (e.getCharacter()) {
             case " ":
@@ -399,6 +402,11 @@ public class MainViewController implements Initializable {
      * (hastighetstangenterna hanteras som tecken, se initData)
      */
     private void onKeyPressed(KeyEvent event) {
+        // Textstorlek fungerar även utan öppnad bok
+        if (event.isShortcutDown() && handleZoomKey(event)) {
+            event.consume();
+            return;
+        }
         if (timeline == null) {
             return;
         }
@@ -461,6 +469,86 @@ public class MainViewController implements Initializable {
         default:
             return false;
         }
+    }
+
+    // ------------------------------------------------------------ text
+
+    private static final double MIN_SCALE = 0.5;
+    private static final double MAX_SCALE = 3.0;
+    private static final double SCALE_STEP = 0.1;
+
+    /**
+     * Ctrl++ / Ctrl+- / Ctrl+0. Tangentkoderna skiljer sig mellan layouter
+     * (på svenskt tangentbord kan +-tangenten rapporteras som PLUS eller
+     * EQUALS), så även tangentens text kontrolleras.
+     */
+    private boolean handleZoomKey(KeyEvent e) {
+        String text = e.getText() == null ? "" : e.getText();
+        switch (e.getCode()) {
+        case PLUS:
+        case ADD:
+        case EQUALS:
+            changeFontScale(+SCALE_STEP);
+            return true;
+        case MINUS:
+        case SUBTRACT:
+            changeFontScale(-SCALE_STEP);
+            return true;
+        case DIGIT0:
+        case NUMPAD0:
+            setFontScale(1.0);
+            return true;
+        default:
+            if (text.equals("+")) {
+                changeFontScale(+SCALE_STEP);
+                return true;
+            }
+            if (text.equals("-")) {
+                changeFontScale(-SCALE_STEP);
+                return true;
+            }
+            return false;
+        }
+    }
+
+    private void changeFontScale(double delta) {
+        setFontScale(contentView.getFontScale() + delta);
+    }
+
+    private void setFontScale(double scale) {
+        // Avrunda till hela tiondelar, så att upprepade steg inte driver iväg
+        double s = clampScale(Math.round(scale * 10) / 10.0);
+        contentView.setFontScale(s);
+        settings.addFontScale(s);
+    }
+
+    private static double clampScale(double s) {
+        if (s <= 0 || Double.isNaN(s)) {
+            return 1.0;   // inget sparat värde
+        }
+        return Math.max(MIN_SCALE, Math.min(MAX_SCALE, s));
+    }
+
+    /** Låter användaren välja typsnitt bland de installerade. */
+    private void chooseFont() {
+        final String bookFont = "(Bokens typsnitt)";
+        java.util.List<String> choices = new java.util.ArrayList<>();
+        choices.add(bookFont);
+        choices.addAll(javafx.scene.text.Font.getFamilies());
+
+        String current = contentView.getFontFamily();
+        javafx.scene.control.ChoiceDialog<String> dialog =
+            new javafx.scene.control.ChoiceDialog<>(current == null ? bookFont : current, choices);
+        dialog.initOwner(stage);
+        dialog.setTitle("Typsnitt");
+        dialog.setHeaderText("Typsnitt för texten");
+        dialog.setContentText("Typsnitt:");
+
+        dialog.showAndWait().ifPresent(choice -> {
+            String family = choice.equals(bookFont) ? null : choice;
+            contentView.setFontFamily(family);
+            settings.addFontFamily(family);
+        });
     }
 
     // ------------------------------------------------------------ hastighet
@@ -883,6 +971,11 @@ public class MainViewController implements Initializable {
     @FXML
     void handleMenuItemLocations(ActionEvent event) {
         setLocations();
+    }
+
+    @FXML
+    void handleMenuItemFont(ActionEvent event) {
+        chooseFont();
     }
 
 }

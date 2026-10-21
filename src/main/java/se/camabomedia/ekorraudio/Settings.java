@@ -178,6 +178,37 @@ public class Settings {
         }
     }
 
+    /** Typsnitt för texten, eller null för bokens eget. */
+    @SuppressWarnings("unchecked")
+    public void addFontFamily(String family) {
+        if (family == null || family.isBlank()) {
+            settings.remove("fontFamily");
+        }
+        else {
+            settings.put("fontFamily", family);
+        }
+        writeJSON();
+    }
+
+    /** Valt typsnitt, eller null för bokens eget. */
+    public String getFontFamily() {
+        Object value = settings.get("fontFamily");
+        return value instanceof String ? (String) value : null;
+    }
+
+    /** Textstorlek, 1.0 = normal. */
+    @SuppressWarnings("unchecked")
+    public void addFontScale(double scale) {
+        settings.put("fontScale", scale);
+        writeJSON();
+    }
+
+    /** Sparad textstorlek, eller 0 om ingen finns. */
+    public double getFontScale() {
+        Object value = settings.get("fontScale");
+        return value instanceof Number ? ((Number) value).doubleValue() : 0;
+    }
+
     /** Den högre hastighet (procent) som "-" växlar till. */
     @SuppressWarnings("unchecked")
     public void addFastSpeed(int percent) {
