@@ -32,7 +32,7 @@ public class CommentTable {
     public CommentTable() {
         TableColumn<Comment, String> nr = column("Nr", 40, Comment::getNr);
         TableColumn<Comment, String> page = column("Sida", 50, Comment::getPage);
-        TableColumn<Comment, String> type = column("Typ", 110, Comment::getType);
+        TableColumn<Comment, String> type = column("Typ", 70, Comment::getType);
         TableColumn<Comment, String> seek = column("Söktext", 200, Comment::getSeek);
 
         // Nr och Sida har fast bredd. Utan minsta bredd trycker
@@ -40,6 +40,7 @@ public class CommentTable {
         // (då är den 0 px bred), och då syns varken rubrik eller innehåll.
         fixedWidth(nr, 40);
         fixedWidth(page, 50);
+        fixedWidth(type, 70);
         // Siffror högerjusteras (rubrikerna behåller standardjusteringen)
         nr.setStyle("-fx-alignment: CENTER-RIGHT;");
         page.setStyle("-fx-alignment: CENTER-RIGHT; -fx-padding: 0 8 0 0;");
