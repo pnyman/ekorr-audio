@@ -47,7 +47,7 @@ public class WaveformView extends Pane {
 
     /** Färger per tema. */
     private static final class Palette {
-        static final Palette LIGHT = new Palette("#fafafa", "#5a7fa8", "#c9c9c9", "#fff3b0",
+        static final Palette LIGHT = new Palette("#fafafa", "#268bd2", "#c9c9c9", "#fff3b0",
                                                  "#d0302f", "#e0303033", "#808080");
         static final Palette SOLARIZED_LIGHT = new Palette("#fdf6e3", "#268bd2", "#d8d1bc", "#f3e2a9",
                                                            "#cb4b16", "#dc322f33", "#93a1a1");
