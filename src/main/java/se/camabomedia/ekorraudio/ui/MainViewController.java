@@ -46,6 +46,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.GridPane;
@@ -77,6 +78,11 @@ public class MainViewController implements Initializable {
     private Button btnNewComment;
     private Button btnEditComment;
     private Button btnDeleteComment;
+    private Button btnWaveform;
+
+    // Ljudkurvan under verktygsraden
+    private WaveformView waveformView;
+    private se.camabomedia.ekorraudio.daisy.Waveform waveform;
     @FXML private MenuItem menuItemOpen;
     @FXML private javafx.scene.control.Menu menuTheme;
     @FXML private Label labelStatus;
@@ -167,6 +173,9 @@ public class MainViewController implements Initializable {
         btnFaster = IconButton.create("mdi2p-plus-circle-outline", "Snabbare (.)",
                                       () -> changeSpeed(+SPEED_STEP));
 
+        btnWaveform = IconButton.create("mdi2w-waveform", "Visa/dölj ljudkurvan",
+                                        this::toggleWaveform);
+
         btnNewComment = IconButton.create("mdi2c-comment-plus-outline", "Ny kommentar (Enter)",
                                           this::createComment);
         btnEditComment = IconButton.create("mdi2c-comment-edit-outline", "Redigera kommentar (dubbelklick)",
@@ -193,7 +202,9 @@ public class MainViewController implements Initializable {
             separator(),
             btnSlower, speedLabel, btnFaster,
             separator(),
-            btnNewComment, btnEditComment, btnDeleteComment);
+            btnNewComment, btnEditComment, btnDeleteComment,
+            separator(),
+            btnWaveform);
         updateSpeedLabel();
     }
 
@@ -251,6 +262,14 @@ public class MainViewController implements Initializable {
 
         contentView.setFontFamily(settings.getFontFamily());
         contentView.setFontScale(clampScale(settings.getFontScale()));
+
+        // Ljudkurvan, längst ned – mellan kolumnerna och statusraden
+        waveformView = new WaveformView();
+        waveformView.setOnSeek(this::seekToTime);
+        waveformView.managedProperty().bind(waveformView.visibleProperty());
+        waveformView.setVisible(settings.getShowWaveform());
+        VBox root = (VBox) splitPane.getParent();
+        root.getChildren().add(root.getChildren().indexOf(splitPane) + 1, waveformView);
 
         buildThemeMenu();
         applyTheme(Theme.fromName(settings.getTheme()));
@@ -335,6 +354,7 @@ public class MainViewController implements Initializable {
         smil = new Smil(ncc, content);
         timeline = new Timeline(ncc, smil);
         seekTarget = -1;
+        openWaveform();
         reportMissingSyncPoints(content);
         loadReport();
 
@@ -411,7 +431,15 @@ public class MainViewController implements Initializable {
         // Under ett pågående hopp är mpv:s position inaktuell – utgå från målet,
         // så att flera snabba tryck läggs ihop
         long from = seekTarget >= 0 ? seekTarget : mpv.getPosition();
-        long target = Math.max(0, Math.min(from + deltaMs, timeline.duration() - 1));
+        seekToTime(from + deltaMs);
+    }
+
+    /** Hoppar till en tid i boken (t.ex. klick i ljudkurvan). Pausläget behålls. */
+    private void seekToTime(long ms) {
+        if (timeline == null) {
+            return;
+        }
+        long target = Math.max(0, Math.min(ms, timeline.duration() - 1));
 
         int index = timeline.indexAt(target);
         if (index != currentIndex) {
@@ -655,6 +683,35 @@ public class MainViewController implements Initializable {
         });
     }
 
+    // ------------------------------------------------------------ ljudkurva
+
+    /** Ny ljudkurva för boken. Avkodningen sker löpande när kurvan visas. */
+    private void openWaveform() {
+        closeWaveform();
+        waveform = new se.camabomedia.ekorraudio.daisy.Waveform(timeline, MpvPlayer.defaultMpvPath());
+        // En avkodad bit kommer från en bakgrundstråd – rita om på JavaFX-tråden
+        waveform.setOnChunkLoaded(() -> Platform.runLater(waveformView::redraw));
+        waveformView.setSource(timeline, waveform);
+    }
+
+    private void closeWaveform() {
+        if (waveform != null) {
+            waveform.close();
+            waveform = null;
+        }
+        waveformView.setSource(null, null);
+    }
+
+    private void toggleWaveform() {
+        boolean show = !waveformView.isVisible();
+        waveformView.setVisible(show);
+        settings.addShowWaveform(show);
+        if (show && timeline != null && currentIndex >= 0) {
+            long ms = seekTarget >= 0 ? seekTarget : mpv.getPosition();
+            waveformView.setPosition(ms, currentIndex);
+        }
+    }
+
     // ------------------------------------------------------------ tema
 
     /** Inställningar → Tema: ett radioval per tema. */
@@ -689,6 +746,9 @@ public class MainViewController implements Initializable {
 
         contentView.setTheme(theme);
         nccView.setTheme(theme);
+        if (waveformView != null) {
+            waveformView.setTheme(theme);
+        }
         TitleBar.applyWhenShown(stage, theme);   // namnlisten ritas av Windows
 
         if (menuTheme != null) {
@@ -790,6 +850,10 @@ public class MainViewController implements Initializable {
         if (timeline == null || currentIndex < 0) {
             labelStatus.setText("");
             return;
+        }
+        // Anropas vid varje ny position (uppspelning, hopp, stegning)
+        if (waveformView != null && waveformView.isVisible()) {
+            waveformView.setPosition(ms, currentIndex);
         }
         String page = timeline.get(currentIndex).getPage();
         labelStatus.setText((page != null ? "Sida " + page + "   " : "")
@@ -927,6 +991,7 @@ public class MainViewController implements Initializable {
     /** Stänger talboken: stoppar ljudet och tömmer alla vyer. */
     private void closeProject() {
         mpv.close();
+        closeWaveform();
         timeline = null;
         smil = null;
         ncc = null;

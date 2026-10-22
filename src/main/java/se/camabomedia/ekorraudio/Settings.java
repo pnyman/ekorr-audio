@@ -236,6 +236,18 @@ public class Settings {
         return value instanceof Number ? ((Number) value).intValue() : 0;
     }
 
+    /** Om ljudkurvan ska visas. */
+    @SuppressWarnings("unchecked")
+    public void addShowWaveform(boolean show) {
+        settings.put("showWaveform", show);
+        writeJSON();
+    }
+
+    /** Om ljudkurvan ska visas (standard: ja). */
+    public boolean getShowWaveform() {
+        return !Boolean.FALSE.equals(settings.get("showWaveform"));
+    }
+
     @SuppressWarnings("unchecked")
     public void addLastProject(String ncc, String title, String author, String ID) {
         settings.put("lastProjectNcc", ncc);
