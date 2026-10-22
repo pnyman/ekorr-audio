@@ -261,6 +261,17 @@ public class ContentView {
         webEngine.load(contentFile.toURI().toString());
     }
 
+    /** Tömmer vyn (när talboken stängs). */
+    public void clear() {
+        currentElement = null;
+        currentElementID = null;
+        pendingElementID = null;
+        styleNode = null;
+        loading = false;
+        webEngine.loadContent("");
+        updateScrollBar(0, 0, 0);
+    }
+
     /** Anropas (på JavaFX-tråden) med id:t för det element man klickade på. */
     public void setOnSyncPointClicked(Consumer<String> handler) {
         onSyncPointClicked = handler == null ? id -> {} : handler;
@@ -270,11 +281,23 @@ public class ContentView {
      * Lägger in programmets egen stil sist i head, så att den går före bokens
      * CSS. Elementet sparas så att typsnittet kan bytas utan omladdning.
      */
+    // private void applyCSS() {
+    //     Document doc = webEngine.getDocument();
+    //     styleNode = doc.createElement("style");
+    //     styleNode.appendChild(doc.createTextNode(buildCss()));
+    //     doc.getDocumentElement().getElementsByTagName("head").item(0).appendChild(styleNode);
+    // }
+
     private void applyCSS() {
         Document doc = webEngine.getDocument();
+        if (doc == null || doc.getDocumentElement() == null) {
+            return;
+        }
         styleNode = doc.createElement("style");
         styleNode.appendChild(doc.createTextNode(buildCss()));
-        doc.getDocumentElement().getElementsByTagName("head").item(0).appendChild(styleNode);
+        org.w3c.dom.Node head = doc.getDocumentElement().getElementsByTagName("head").item(0);
+        // Ett tomt dokument (efter clear) kan sakna head
+        (head != null ? head : doc.getDocumentElement()).appendChild(styleNode);
     }
 
     private String buildCss() {

@@ -45,6 +45,9 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Separator;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.stage.DirectoryChooser;
@@ -57,11 +60,23 @@ public class MainViewController implements Initializable {
     @FXML private SplitPane splitPane;
     @FXML private AnchorPane contentPane;
     @FXML private AnchorPane nccPane;
-    @FXML private Button btnOpen;
-    @FXML private Button btnBack;
-    @FXML private Button btnForward;
-    @FXML private Button btnPause;
-    @FXML private Button btnPlay;
+    @FXML private HBox toolbar;
+
+    // Verktygsradens knappar – skapas i buildToolbar()
+    private Button btnOpen;
+    private Button btnClose;
+    private Button btnShowReport;
+    private Button btnReportFolder;
+    private Button btnBack;
+    private Button btnPlay;
+    private Button btnPause;
+    private Button btnForward;
+    private Button btnSlower;
+    private Button btnFaster;
+    private Label speedLabel;
+    private Button btnNewComment;
+    private Button btnEditComment;
+    private Button btnDeleteComment;
     @FXML private MenuItem menuItemOpen;
     @FXML private Label labelStatus;
 
@@ -112,7 +127,80 @@ public class MainViewController implements Initializable {
                 Platform.runLater(() -> updateButtons());
             }
         });
+        buildToolbar();
         updateButtons();
+    }
+
+    /**
+     * Verktygsraden: ikonknappar i grupper. Ikonnamnen kommer från Ikonlis
+     * Material Design-paket (mdi2…). Ett namn som inte finns ger en
+     * frågetecken-ikon och ett meddelande i konsolen.
+     */
+    private void buildToolbar() {
+        toolbar.getStyleClass().add("toolbar");
+
+        btnOpen = IconButton.create("mdi2f-folder-open-outline", "Öppna talbok", this::selectProject);
+        btnClose = IconButton.create("mdi2c-close-box-outline", "Stäng talboken", this::closeProject);
+
+        btnShowReport = IconButton.create("mdi2f-file-document-outline", "Visa rapporten", this::showReport);
+        btnReportFolder = IconButton.create("mdi2f-folder-text-outline", "Öppna rapportmappen", this::openReportFolder);
+
+        btnBack = IconButton.create("mdi2s-skip-previous", "Föregående fras (↑)",
+                                    () -> step(false, Timeline.Level.PHRASE));
+        btnPlay = IconButton.create("mdi2p-play", "Spela (Mellanslag)", () -> {
+            if (timeline != null) {
+                play();
+            }
+        });
+        btnPause = IconButton.create("mdi2p-pause", "Pausa (Mellanslag)", mpv::pause);
+        btnForward = IconButton.create("mdi2s-skip-next", "Nästa fras (↓)",
+                                       () -> step(true, Timeline.Level.PHRASE));
+
+        btnSlower = IconButton.create("mdi2m-minus-circle-outline", "Långsammare (,)",
+                                      () -> changeSpeed(-SPEED_STEP));
+        speedLabel = new Label();
+        speedLabel.getStyleClass().add("speed-label");
+        btnFaster = IconButton.create("mdi2p-plus-circle-outline", "Snabbare (.)",
+                                      () -> changeSpeed(+SPEED_STEP));
+
+        btnNewComment = IconButton.create("mdi2c-comment-plus-outline", "Ny kommentar (Enter)",
+                                          this::createComment);
+        btnEditComment = IconButton.create("mdi2c-comment-edit-outline", "Redigera kommentar (dubbelklick)",
+                                           () -> {
+                                               Comment c = commentTable.getSelected();
+                                               if (c != null) {
+                                                   editComment(c);
+                                               }
+                                           });
+        btnDeleteComment = IconButton.create("mdi2c-comment-remove-outline", "Ta bort kommentar (Delete)",
+                                             () -> {
+                                                 Comment c = commentTable.getSelected();
+                                                 if (c != null) {
+                                                     deleteComment(c);
+                                                 }
+                                             });
+
+        toolbar.getChildren().setAll(
+            btnOpen, btnClose,
+            separator(),
+            btnShowReport, btnReportFolder,
+            separator(),
+            btnBack, btnPlay, btnPause, btnForward,
+            separator(),
+            btnSlower, speedLabel, btnFaster,
+            separator(),
+            btnNewComment, btnEditComment, btnDeleteComment);
+        updateSpeedLabel();
+    }
+
+    private static Separator separator() {
+        return new Separator(Orientation.VERTICAL);
+    }
+
+    private void updateSpeedLabel() {
+        if (speedLabel != null) {
+            speedLabel.setText(speed + " %");
+        }
     }
 
     void initData(Stage stage, Settings settings) {
@@ -145,6 +233,12 @@ public class MainViewController implements Initializable {
         commentTable.setOnEdit(this::editComment);
         commentTable.setOnDelete(this::deleteComment);
         commentTable.setOnReordered(this::reorderComments);
+        // Redigera/Ta bort-knapparna gäller markerad kommentar
+        commentTable.getNode().getSelectionModel().selectedItemProperty()
+            .addListener((obs, old, selected) -> updateButtons());
+
+        stage.getScene().getStylesheets().add(
+            getClass().getResource("/se/camabomedia/ekorraudio/main.css").toExternalForm());
 
         for (AnchorPane side : new AnchorPane[] { nccPane, commentPane }) {
             side.setMinWidth(120);
@@ -571,6 +665,8 @@ public class MainViewController implements Initializable {
         speed = percent;
         mpv.setSpeed(percent / 100.0);
         updateStatus(mpv.getPosition());
+        updateSpeedLabel();
+        updateButtons();
     }
 
     private void rememberFastSpeed(int percent) {
@@ -601,12 +697,24 @@ public class MainViewController implements Initializable {
     // ------------------------------------------------------------ visning
 
     private void updateButtons() {
-        boolean ready = timeline != null && mpv.isOpen();
+        boolean open = timeline != null;
+        boolean ready = open && mpv.isOpen();
         boolean playing = ready && !mpv.isPaused();
+        boolean hasReport = report != null && report.exists();
+        boolean selected = commentTable != null && commentTable.getSelected() != null;
+
+        btnClose.setDisable(!open);
+        btnShowReport.setDisable(!hasReport);
+        btnReportFolder.setDisable(!hasReport);
         btnPlay.setDisable(!ready || playing);
         btnPause.setDisable(!playing);
-        btnBack.setDisable(timeline == null);
-        btnForward.setDisable(timeline == null);
+        btnBack.setDisable(!open);
+        btnForward.setDisable(!open);
+        btnSlower.setDisable(!ready || speed <= MIN_SPEED);
+        btnFaster.setDisable(!ready || speed >= MAX_SPEED);
+        btnNewComment.setDisable(report == null);
+        btnEditComment.setDisable(report == null || !selected);
+        btnDeleteComment.setDisable(report == null || !selected);
     }
 
     private void updateStatus(long ms) {
@@ -741,6 +849,56 @@ public class MainViewController implements Initializable {
     private void afterChange(Comment select) {
         copyReport();
         commentTable.setComments(report.getComments(), select);
+        updateButtons();   // rapporten finns nu på disk
+    }
+
+    /** Stänger talboken: stoppar ljudet och tömmer alla vyer. */
+    private void closeProject() {
+        mpv.close();
+        timeline = null;
+        smil = null;
+        ncc = null;
+        report = null;
+        currentIndex = -1;
+        seekTarget = -1;
+        contentView.clear();
+        nccView.clear();
+        commentTable.clear();
+        updateStatus(0);
+        updateButtons();
+    }
+
+    /** Öppnar rapporten i systemets webbläsare. */
+    private void showReport() {
+        if (report != null && report.exists()) {
+            openWithSystem(report.getReportFile());
+        }
+    }
+
+    /** Öppnar bokens rapportmapp (___Korrektur-rapport) i Utforskaren. */
+    private void openReportFolder() {
+        if (report != null && report.getReportDirectory().isDirectory()) {
+            openWithSystem(report.getReportDirectory());
+        }
+    }
+
+    /**
+     * Öppnar en fil eller mapp med det program Windows har kopplat till den.
+     * java.awt.Desktop körs i en egen tråd – anropet kan ta en stund och ska
+     * inte låsa JavaFX-tråden.
+     */
+    private void openWithSystem(File file) {
+        Thread t = new Thread(() -> {
+            try {
+                java.awt.Desktop.getDesktop().open(file);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                Platform.runLater(() -> showError("Kunde inte öppna " + file.getName(), e.getMessage()));
+            }
+        }, "open-with-system");
+        t.setDaemon(true);
+        t.start();
     }
 
     private boolean writeReport() {
@@ -931,10 +1089,6 @@ public class MainViewController implements Initializable {
 
     // ------------------------------------------------------------ FXML
 
-    @FXML
-    void handleBtnOpen(ActionEvent event) {
-        selectProject();
-    }
 
     @FXML
     void handleMenuItemOpen(ActionEvent event) {
@@ -942,26 +1096,13 @@ public class MainViewController implements Initializable {
     }
 
     @FXML
-    void handleBtnBack(ActionEvent event) {
-        step(false, Timeline.Level.PHRASE);
+    void handleMenuItemClose(ActionEvent event) {
+        closeProject();
     }
 
-    @FXML
-    void handleButtonForward(ActionEvent event) {
-        step(true, Timeline.Level.PHRASE);
-    }
 
-    @FXML
-    void handleBtnPlay(ActionEvent event) {
-        if (timeline != null) {
-            play();
-        }
-    }
 
-    @FXML
-    void handleBtnPause(ActionEvent event) {
-        mpv.pause();
-    }
+
 
     @FXML
     void handleMenuItemName(ActionEvent event) {

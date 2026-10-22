@@ -60,6 +60,11 @@ public class NccView {
         webEngine.load(nccFile.toURI().toString());
     }
 
+    /** Tömmer vyn (när talboken stängs). */
+    public void clear() {
+        webEngine.loadContent("");
+    }
+
     /** Anropas (på JavaFX-tråden) med par-id:t för den klickade posten. */
     public void setOnItemClicked(Consumer<String> handler) {
         onItemClicked = handler == null ? parID -> {} : handler;

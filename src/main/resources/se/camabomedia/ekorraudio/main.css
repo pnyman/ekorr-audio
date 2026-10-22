@@ -1,0 +1,59 @@
+/* ---------------------------------------------------------------- verktygsrad */
+
+.toolbar {
+    -fx-padding: 4 8 4 8;
+    -fx-spacing: 2;
+    -fx-alignment: center-left;
+    -fx-background-color: linear-gradient(to bottom, #fbfbfb, #eeeeee);
+    -fx-border-color: transparent transparent #d4d4d4 transparent;
+}
+
+.toolbar .separator:vertical .line {
+    -fx-border-color: transparent #d0d0d0 transparent transparent;
+}
+
+.toolbar .separator:vertical {
+    -fx-padding: 4 6 4 6;
+}
+
+/* Hastighet mellan knapparna, t.ex. "150 %" */
+.toolbar .speed-label {
+    -fx-text-fill: #555555;
+    -fx-font-size: 11px;
+    -fx-min-width: 42px;
+    -fx-alignment: center;
+}
+
+/* ---------------------------------------------------------------- ikonknappar */
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
+    -fx-border-color: transparent;
+    -fx-padding: 5;
+    -fx-cursor: hand;
+    /* ingen fokusram – knapparna tar inte fokus */
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.icon-button .ikonli-font-icon {
+    -fx-icon-size: 22px;
+    -fx-icon-color: #3c3c3c;
+}
+
+.icon-button:hover {
+    -fx-background-color: #e2ebf6;
+}
+
+.icon-button:hover .ikonli-font-icon {
+    -fx-icon-color: #1a5fb4;
+}
+
+.icon-button:pressed {
+    -fx-background-color: #c6d8ef;
+}
+
+.icon-button:disabled {
+    -fx-opacity: 0.3;
+}
