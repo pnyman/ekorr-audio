@@ -31,9 +31,10 @@ public class ContentView {
     private static final double MIN_THUMB_FRACTION = 0.06;
 
     /*
-     * Markeringen görs med en klass och !important, och gäller även
-     * barnelementen (em, strong …). Annars kan bokens egen CSS – t.ex. en
-     * bakgrund på blockquote, em eller p – dölja den gula färgen.
+     * Programmets grund-CSS för texten. Därefter läggs temats färger, ev.
+     * typsnitt och sist markeringen (buildCss). Markeringen görs med en klass
+     * och !important och gäller även barnelementen (em, strong …), annars kan
+     * bokens egen CSS – t.ex. en bakgrund på blockquote, em eller p – dölja den.
      */
     private static final String CSS =
         // WebView:s egen rullningslist döljs (den tonades bort vid inaktivitet).
@@ -50,18 +51,30 @@ public class ContentView {
         // bokens CSS kan sätta egen radhöjd på p, li m.m.
         + "body, body * {"
         + "    line-height: 1.6 !important; "
-        + "}"
-        + "." + CURRENT_CLASS + ", ." + CURRENT_CLASS + " * {"
-        + "    background-color: yellow !important; "
-        + "}"
-        // Bakgrunden på ett inline-element täcker bara texthöjden, inte hela
-        // radhöjden. En gul skugga 0.2em uppåt och nedåt fyller glappen mellan
-        // raderna. OBS: inte padding – på element som är block (t.ex. sidnummer
-        // med display:block) ändrar padding layouten, texten nedanför flyttas
-        // och WebView lämnar kvar gamla bilder (dubbla rader, kvarglömd gult).
-        + "." + CURRENT_CLASS + " {"
-        + "    box-shadow: 0 0.3em 0 yellow, 0 -0.3em 0 yellow !important; "
         + "}";
+
+    /**
+     * Markeringen. Färgen kommer från temat (se highlightCss). Läggs sist,
+     * efter temats CSS, så att den alltid syns.
+     *
+     * Bakgrunden på ett inline-element täcker bara texthöjden, inte hela
+     * radhöjden. En skugga 0.3em uppåt och nedåt fyller glappen mellan
+     * raderna. OBS: inte padding – på element som är block (t.ex. sidnummer
+     * med display:block) ändrar padding layouten, texten nedanför flyttas och
+     * WebView lämnar kvar gamla bilder (dubbla rader, kvarglömd markering).
+     */
+    private static String highlightCss(Theme theme) {
+        String color = theme.getHighlight();
+        String css = "." + CURRENT_CLASS + ", ." + CURRENT_CLASS + " * {"
+            + "    background-color: " + color + " !important; "
+            + (theme.getHighlightText() != null
+               ? "    color: " + theme.getHighlightText() + " !important; " : "")
+            + "}"
+            + "." + CURRENT_CLASS + " {"
+            + "    box-shadow: 0 0.3em 0 " + color + ", 0 -0.3em 0 " + color + " !important; "
+            + "}";
+        return css;
+    }
 
     /**
      * Klick: leta upp närmaste element med id (uppåt i trädet) och skicka
@@ -120,6 +133,8 @@ public class ContentView {
     private Element styleNode = null;
     /** Valt typsnitt, eller null för bokens eget. */
     private String fontFamily = null;
+    /** Färgtema för texten och markeringen. */
+    private Theme theme = Theme.STANDARD;
 
     private Consumer<String> onSyncPointClicked = id -> {};
 
@@ -300,13 +315,23 @@ public class ContentView {
         (head != null ? head : doc.getDocumentElement()).appendChild(styleNode);
     }
 
+    /** Grund-CSS, temats färger, ev. typsnitt och sist markeringen. */
     private String buildCss() {
-        if (fontFamily == null || fontFamily.isBlank()) {
-            return CSS;
+        StringBuilder css = new StringBuilder(CSS);
+        css.append(theme.getContentCss());
+        if (fontFamily != null && !fontFamily.isBlank()) {
+            // Gäller alla element, även de som bokens CSS ger ett eget typsnitt
+            String family = fontFamily.replace("\\", "").replace("\"", "");
+            css.append("body, body * { font-family: \"").append(family).append("\" !important; }");
         }
-        // Gäller alla element, även de som bokens CSS ger ett eget typsnitt
-        String family = fontFamily.replace("\\", "").replace("\"", "");
-        return CSS + "body, body * { font-family: \"" + family + "\" !important; }";
+        css.append(highlightCss(theme));
+        return css.toString();
+    }
+
+    /** Byter färgtema. Gäller direkt, utan att boken laddas om. */
+    public void setTheme(Theme newTheme) {
+        theme = newTheme == null ? Theme.STANDARD : newTheme;
+        updateCss();   // vid laddning läggs det in av applyCSS
     }
 
     private void updateCss() {

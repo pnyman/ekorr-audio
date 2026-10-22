@@ -1,0 +1,48 @@
+/*
+ * Solarized mörk. Skriver över JavaFX:s (Modena) basfärger och
+ * programmets egna variabler från main.css.
+ *
+ * base03 #002b36  base02 #073642  base01 #586e75  base00 #657b83
+ * base0  #839496  base1  #93a1a1  base2  #eee8d5  base3  #fdf6e3
+ * yellow #b58900  orange #cb4b16  blue   #268bd2  cyan   #2aa198
+ */
+
+.root {
+    -fx-base: #073642;
+    -fx-background: #002b36;
+    -fx-control-inner-background: #002b36;
+    -fx-control-inner-background-alt: #04313d;
+    -fx-accent: #268bd2;
+    -fx-default-button: #0b4a5a;
+    -fx-focus-color: #268bd2;
+    -fx-faint-focus-color: #268bd233;
+    -fx-selection-bar: #268bd2;
+    -fx-selection-bar-non-focused: #31535c;
+    -fx-selection-bar-text: #fdf6e3;
+
+    -fx-text-base-color: #93a1a1;
+    -fx-text-background-color: #93a1a1;
+    -fx-text-inner-color: #93a1a1;
+    -fx-mark-color: #93a1a1;
+
+    -ekorr-toolbar-top: #073642;
+    -ekorr-toolbar-bottom: #05303b;
+    -ekorr-toolbar-border: #001f27;
+    -ekorr-separator: #2a4f58;
+    -ekorr-icon: #93a1a1;
+    -ekorr-icon-hover: #2aa198;
+    -ekorr-hover-background: #0e4553;
+    -ekorr-pressed-background: #155463;
+    -ekorr-muted-text: #839496;
+}
+
+.menu-bar {
+    -fx-background-color: #073642;
+}
+
+/* Rubrikraden i tabellen */
+.table-view .column-header,
+.table-view .column-header-background,
+.table-view .filler {
+    -fx-background-color: #073642;
+}

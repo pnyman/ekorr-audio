@@ -209,6 +209,19 @@ public class Settings {
         return value instanceof Number ? ((Number) value).doubleValue() : 0;
     }
 
+    /** Färgtema (namnet på Theme-konstanten, t.ex. "SOLARIZED_DARK"). */
+    @SuppressWarnings("unchecked")
+    public void addTheme(String theme) {
+        settings.put("theme", theme);
+        writeJSON();
+    }
+
+    /** Sparat tema, eller null om inget valts. */
+    public String getTheme() {
+        Object value = settings.get("theme");
+        return value instanceof String ? (String) value : null;
+    }
+
     /** Den högre hastighet (procent) som "-" växlar till. */
     @SuppressWarnings("unchecked")
     public void addFastSpeed(int percent) {

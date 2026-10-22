@@ -85,6 +85,7 @@
             <MenuItem fx:id="menuItemName" mnemonicParsing="false" onAction="#handleMenuItemName" text="Namn..." />
             <MenuItem fx:id="menuItemLocations" mnemonicParsing="false" onAction="#handleMenuItemLocations" text="Mappar..." />
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemFont" text="Typsnitt …" />
+            <Menu fx:id="menuTheme" mnemonicParsing="false" text="Tema" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Help">

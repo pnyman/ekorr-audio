@@ -1,0 +1,41 @@
+/*
+ * Solarized ljus. Skriver över JavaFX:s (Modena) basfärger och
+ * programmets egna variabler från main.css.
+ *
+ * base03 #002b36  base02 #073642  base01 #586e75  base00 #657b83
+ * base0  #839496  base1  #93a1a1  base2  #eee8d5  base3  #fdf6e3
+ * yellow #b58900  orange #cb4b16  blue   #268bd2  cyan   #2aa198
+ */
+
+.root {
+    -fx-base: #eee8d5;
+    -fx-background: #fdf6e3;
+    -fx-control-inner-background: #fdf6e3;
+    -fx-control-inner-background-alt: #f6f0dd;
+    -fx-accent: #268bd2;
+    -fx-default-button: #d9e8f3;
+    -fx-focus-color: #268bd2;
+    -fx-faint-focus-color: #268bd222;
+    -fx-selection-bar: #268bd2;
+    -fx-selection-bar-non-focused: #c9c3b0;
+    -fx-selection-bar-text: #fdf6e3;
+
+    -fx-text-base-color: #586e75;
+    -fx-text-background-color: #586e75;
+    -fx-text-inner-color: #586e75;
+    -fx-mark-color: #586e75;
+
+    -ekorr-toolbar-top: #fdf6e3;
+    -ekorr-toolbar-bottom: #eee8d5;
+    -ekorr-toolbar-border: #d8d1bc;
+    -ekorr-separator: #d8d1bc;
+    -ekorr-icon: #586e75;
+    -ekorr-icon-hover: #268bd2;
+    -ekorr-hover-background: #e4ddc8;
+    -ekorr-pressed-background: #d8d1bc;
+    -ekorr-muted-text: #93a1a1;
+}
+
+.menu-bar {
+    -fx-background-color: #eee8d5;
+}

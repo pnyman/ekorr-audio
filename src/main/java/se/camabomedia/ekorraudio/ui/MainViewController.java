@@ -78,6 +78,7 @@ public class MainViewController implements Initializable {
     private Button btnEditComment;
     private Button btnDeleteComment;
     @FXML private MenuItem menuItemOpen;
+    @FXML private javafx.scene.control.Menu menuTheme;
     @FXML private Label labelStatus;
 
     private Stage stage;
@@ -93,6 +94,9 @@ public class MainViewController implements Initializable {
 
     private CommentTable commentTable;
     private Report report;
+
+    private static final String MAIN_CSS = "/se/camabomedia/ekorraudio/main.css";
+    private Theme theme = Theme.STANDARD;
 
     /** Index (i tidslinjen) för det par som är markerat/spelas, eller -1. */
     private int currentIndex = -1;
@@ -237,8 +241,7 @@ public class MainViewController implements Initializable {
         commentTable.getNode().getSelectionModel().selectedItemProperty()
             .addListener((obs, old, selected) -> updateButtons());
 
-        stage.getScene().getStylesheets().add(
-            getClass().getResource("/se/camabomedia/ekorraudio/main.css").toExternalForm());
+        stage.getScene().getStylesheets().add(resource(MAIN_CSS));
 
         for (AnchorPane side : new AnchorPane[] { nccPane, commentPane }) {
             side.setMinWidth(120);
@@ -248,6 +251,12 @@ public class MainViewController implements Initializable {
 
         contentView.setFontFamily(settings.getFontFamily());
         contentView.setFontScale(clampScale(settings.getFontScale()));
+
+        buildThemeMenu();
+        applyTheme(Theme.fromName(settings.getTheme()));
+        // Tomma dokument i vyerna, så att temats bakgrund syns innan en bok öppnas
+        contentView.clear();
+        nccView.clear();
 
         restoreLayout();
         // Spara layouten när fönstret stängs. addEventHandler körs före App:s
@@ -634,6 +643,7 @@ public class MainViewController implements Initializable {
         javafx.scene.control.ChoiceDialog<String> dialog =
             new javafx.scene.control.ChoiceDialog<>(current == null ? bookFont : current, choices);
         dialog.initOwner(stage);
+        styleDialog(dialog.getDialogPane());
         dialog.setTitle("Typsnitt");
         dialog.setHeaderText("Typsnitt för texten");
         dialog.setContentText("Typsnitt:");
@@ -643,6 +653,61 @@ public class MainViewController implements Initializable {
             contentView.setFontFamily(family);
             settings.addFontFamily(family);
         });
+    }
+
+    // ------------------------------------------------------------ tema
+
+    /** Inställningar → Tema: ett radioval per tema. */
+    private void buildThemeMenu() {
+        if (menuTheme == null) {
+            return;   // menyn saknas i FXML
+        }
+        javafx.scene.control.ToggleGroup group = new javafx.scene.control.ToggleGroup();
+        menuTheme.getItems().clear();
+        for (Theme t : Theme.values()) {
+            javafx.scene.control.RadioMenuItem item = new javafx.scene.control.RadioMenuItem(t.toString());
+            item.setToggleGroup(group);
+            item.setUserData(t);
+            item.setOnAction(e -> {
+                applyTheme(t);
+                settings.addTheme(t.name());
+            });
+            menuTheme.getItems().add(item);
+        }
+    }
+
+    /** Byter tema i fönstret, i texten och i NCC-listan. */
+    private void applyTheme(Theme newTheme) {
+        theme = newTheme;
+
+        // main.css först, sedan temats stilark som skriver över färgvariablerna
+        List<String> sheets = stage.getScene().getStylesheets();
+        sheets.removeIf(s -> s.contains("/themes/"));
+        if (theme.getStylesheet() != null) {
+            sheets.add(resource(theme.getStylesheet()));
+        }
+
+        contentView.setTheme(theme);
+        nccView.setTheme(theme);
+
+        if (menuTheme != null) {
+            for (MenuItem item : menuTheme.getItems()) {
+                if (item instanceof javafx.scene.control.RadioMenuItem) {
+                    ((javafx.scene.control.RadioMenuItem) item).setSelected(item.getUserData() == theme);
+                }
+            }
+        }
+    }
+
+    /** Dialogrutor har en egen scen – ge dem samma stilark som huvudfönstret. */
+    private void styleDialog(javafx.scene.control.DialogPane pane) {
+        if (stage != null && stage.getScene() != null) {
+            pane.getStylesheets().setAll(stage.getScene().getStylesheets());
+        }
+    }
+
+    private String resource(String path) {
+        return getClass().getResource(path).toExternalForm();
     }
 
     // ------------------------------------------------------------ hastighet
@@ -731,6 +796,7 @@ public class MainViewController implements Initializable {
     private void showError(String header, String message) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.initOwner(stage);
+        styleDialog(alert.getDialogPane());
         alert.setTitle("Fel");
         alert.setHeaderText(header);
         alert.setContentText(message);
@@ -800,6 +866,7 @@ public class MainViewController implements Initializable {
             commentStage.initModality(Modality.APPLICATION_MODAL);
             commentStage.initOwner(stage);
             commentStage.setScene(new Scene(loader.load()));
+            commentStage.getScene().getStylesheets().setAll(stage.getScene().getStylesheets());
             commentStage.setTitle(comment == null ? "Ekorr – Skapa kommentar" : "Ekorr – Redigera kommentar");
             commentStage.getIcons().add(
                 new Image(getClass().getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
@@ -979,6 +1046,7 @@ public class MainViewController implements Initializable {
     private void setLocations() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(stage);
+        styleDialog(dialog.getDialogPane());
         dialog.setTitle("Ange mappar");
         dialog.setHeaderText("Var ligger talböckerna, och var ska kopior av rapporterna sparas?");
 
@@ -1045,6 +1113,7 @@ public class MainViewController implements Initializable {
     private void setProofReaderName() {
         Dialog<ButtonType> dialog = new Dialog<>();
         dialog.initOwner(stage);
+        styleDialog(dialog.getDialogPane());
         dialog.setTitle("Korrekturläsare");
         dialog.setHeaderText("Ange ditt namn");
 

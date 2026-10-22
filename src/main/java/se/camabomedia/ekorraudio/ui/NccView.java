@@ -3,6 +3,9 @@ package se.camabomedia.ekorraudio.ui;
 import java.io.File;
 import java.util.function.Consumer;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import javafx.concurrent.Worker;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -40,6 +43,10 @@ public class NccView {
 
     private Consumer<String> onItemClicked = parID -> {};
 
+    /** Färgtema och dess style-element i det laddade dokumentet. */
+    private Theme theme = Theme.STANDARD;
+    private Element styleNode = null;
+
     public NccView() {
         webView = new WebView();
         webEngine = webView.getEngine();
@@ -49,6 +56,7 @@ public class NccView {
 
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED) {
+                applyThemeCss();
                 JSObject window = (JSObject) webEngine.executeScript("window");
                 window.setMember("java", javaBridge);
                 webEngine.executeScript(CLICK_SCRIPT);
@@ -57,12 +65,38 @@ public class NccView {
     }
 
     public void openNcc(File nccFile) {
+        styleNode = null;
         webEngine.load(nccFile.toURI().toString());
     }
 
     /** Tömmer vyn (när talboken stängs). */
     public void clear() {
+        styleNode = null;
         webEngine.loadContent("");
+    }
+
+    /**
+     * Byter färgtema. Temats CSS har !important och går därför före ncc.css
+     * (som är ett användarstilark). Gäller direkt, utan omladdning.
+     */
+    public void setTheme(Theme newTheme) {
+        theme = newTheme == null ? Theme.STANDARD : newTheme;
+        if (styleNode != null) {
+            styleNode.setTextContent(theme.getNccCss());
+        }
+    }
+
+    /** Lägger temats style-element sist i dokumentet. */
+    private void applyThemeCss() {
+        Document doc = webEngine.getDocument();
+        if (doc == null || doc.getDocumentElement() == null) {
+            return;
+        }
+        styleNode = doc.createElement("style");
+        styleNode.appendChild(doc.createTextNode(theme.getNccCss()));
+        org.w3c.dom.Node head = doc.getDocumentElement().getElementsByTagName("head").item(0);
+        // Ett tomt dokument (efter clear) kan sakna head
+        (head != null ? head : doc.getDocumentElement()).appendChild(styleNode);
     }
 
     /** Anropas (på JavaFX-tråden) med par-id:t för den klickade posten. */
