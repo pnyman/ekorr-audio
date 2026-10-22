@@ -35,6 +35,17 @@ public class NccView {
         + "    if (hash >= 0) { java.handleClick(href.substring(hash + 1)); }"
         + "});";
 
+    /**
+     * Visa bara rubriker och sidnummer. Övriga poster i NCC:n (t.ex.
+     * producentanteckningar, sidopaneler, noter) döljs – de finns kvar i
+     * filen och påverkar inte navigeringen.
+     */
+    private static final String FILTER_CSS =
+        "body > :not(h1):not(h2):not(h3):not(h4):not(h5):not(h6)"
+        + ":not(.page-normal):not(.page-front):not(.page-special) {"
+        + "    display: none !important; "
+        + "}";
+
     public final WebView webView;
     private final WebEngine webEngine;
 
@@ -82,7 +93,7 @@ public class NccView {
     public void setTheme(Theme newTheme) {
         theme = newTheme == null ? Theme.STANDARD : newTheme;
         if (styleNode != null) {
-            styleNode.setTextContent(theme.getNccCss());
+            styleNode.setTextContent(FILTER_CSS + theme.getNccCss());
         }
     }
 
@@ -93,7 +104,7 @@ public class NccView {
             return;
         }
         styleNode = doc.createElement("style");
-        styleNode.appendChild(doc.createTextNode(theme.getNccCss()));
+        styleNode.appendChild(doc.createTextNode(FILTER_CSS + theme.getNccCss()));
         org.w3c.dom.Node head = doc.getDocumentElement().getElementsByTagName("head").item(0);
         // Ett tomt dokument (efter clear) kan sakna head
         (head != null ? head : doc.getDocumentElement()).appendChild(styleNode);
