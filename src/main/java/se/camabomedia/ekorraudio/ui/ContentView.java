@@ -31,7 +31,7 @@ public class ContentView {
     private static final String MISSING_CLASS = "ekorr-missing";
 
     /**
-     * Röd överstrykning av text utan inläsning. text-decoration ärvs visuellt
+     * Röd understrykning av text utan inläsning. text-decoration ärvs visuellt
      * av barnelementen (em, strong …), men färgen måste sättas med både
      * standard- och WebKit-namnet för äldre WebView.
      */
