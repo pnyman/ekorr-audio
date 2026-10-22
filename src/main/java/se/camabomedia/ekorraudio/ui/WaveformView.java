@@ -84,7 +84,7 @@ public class WaveformView extends Pane {
         // Utanför layouten – annars hindrar canvas:ens bredd panelen från att krympa
         canvas.setManaged(false);
         setMinHeight(40);
-        setPrefHeight(80);
+        setPrefHeight(60);
         // Canvas följer panelens storlek
         canvas.widthProperty().bind(widthProperty());
         canvas.heightProperty().bind(heightProperty());
