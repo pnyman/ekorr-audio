@@ -27,6 +27,27 @@ public class ContentView {
     /** Klass som sätts på den synkpunkt som spelas. */
     private static final String CURRENT_CLASS = "ekorr-current";
 
+    /** Klass på synkpunkter som saknar ljud (inläsning saknas). */
+    private static final String MISSING_CLASS = "ekorr-missing";
+
+    /**
+     * Röd överstrykning av text utan inläsning. text-decoration ärvs visuellt
+     * av barnelementen (em, strong …), men färgen måste sättas med både
+     * standard- och WebKit-namnet för äldre WebView.
+     */
+    private static final String MISSING_CSS =
+        "." + MISSING_CLASS + " {"
+        + "    text-decoration: underline !important; "
+        + "    text-decoration-line: underline !important; "
+        + "    text-decoration-style: wavy !important; "
+        + "    text-decoration-color: #dc322f !important; "
+        + "    -webkit-text-decoration-color: #dc322f !important; "
+        + "    -webkit-text-decoration-style: wavy !important; "
+        + "    text-decoration-thickness: 2px; "
+        + "    text-underline-offset: 3px; "
+        + "}";
+
+
     /** Minsta höjd på rullningslistens reglage, som andel av listen. */
     private static final double MIN_THUMB_FRACTION = 0.06;
 
@@ -135,6 +156,8 @@ public class ContentView {
     private String fontFamily = null;
     /** Färgtema för texten och markeringen. */
     private Theme theme = Theme.STANDARD;
+    /** id:n för synkpunkter som saknar ljud – markeras vid varje laddning. */
+    private java.util.Set<String> missingIDs = java.util.Collections.emptySet();
 
     private Consumer<String> onSyncPointClicked = id -> {};
 
@@ -161,6 +184,7 @@ public class ContentView {
             window.setMember("java", javaBridge);
             webEngine.executeScript(CLICK_SCRIPT);
             webEngine.executeScript(SCROLL_SCRIPT);
+            applyMissing();
 
             if (pendingElementID != null) {
                 String id = pendingElementID;
@@ -277,6 +301,44 @@ public class ContentView {
     }
 
     /** Tömmer vyn (när talboken stängs). */
+    /**
+     * Synkpunkter (id i innehållsfilen) vars par saknar ljud. De får röd
+     * överstrykning, nu och vid varje ny laddning.
+     */
+    public void setMissingAudio(java.util.Collection<String> ids) {
+        missingIDs = ids == null ? java.util.Collections.emptySet() : new java.util.HashSet<>(ids);
+        if (!loading && webEngine.getDocument() != null) {
+            applyMissing();
+        }
+    }
+
+    private void applyMissing() {
+        if (webEngine.getDocument() == null) {
+            return;
+        }
+        // Ta bort gamla markeringar och lägg in de aktuella
+        StringBuilder js = new StringBuilder("(function() {"
+            + "  var old = document.getElementsByClassName('" + MISSING_CLASS + "');"
+            + "  for (var i = old.length - 1; i >= 0; i--) { old[i].classList.remove('" + MISSING_CLASS + "'); }"
+            + "  var ids = [");
+        boolean first = true;
+        for (String id : missingIDs) {
+            if (!first) {
+                js.append(',');
+            }
+            // id:n i DAISY innehåller bara bokstäver, siffror, - och _ – men var försiktig
+            js.append('\'').append(id.replace("\\", "").replace("'", "")).append('\'');
+            first = false;
+        }
+        js.append("];"
+            + "  for (var j = 0; j < ids.length; j++) {"
+            + "    var el = document.getElementById(ids[j]);"
+            + "    if (el) { el.classList.add('" + MISSING_CLASS + "'); }"
+            + "  }"
+            + "})()");
+        webEngine.executeScript(js.toString());
+    }
+
     public void clear() {
         currentElement = null;
         currentElementID = null;
@@ -324,6 +386,7 @@ public class ContentView {
             String family = fontFamily.replace("\\", "").replace("\"", "");
             css.append("body, body * { font-family: \"").append(family).append("\" !important; }");
         }
+        css.append(MISSING_CSS);
         css.append(highlightCss(theme));
         return css.toString();
     }

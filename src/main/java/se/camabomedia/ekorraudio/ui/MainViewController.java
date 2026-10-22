@@ -355,6 +355,7 @@ public class MainViewController implements Initializable {
         timeline = new Timeline(ncc, smil);
         seekTarget = -1;
         openWaveform();
+        contentView.setMissingAudio(missingAudioIDs());
         reportMissingSyncPoints(content);
         loadReport();
 
@@ -475,11 +476,29 @@ public class MainViewController implements Initializable {
             return;
         }
         int index = timeline.indexAt(ms);
+        if (keepSilentParHighlighted(ms)) {
+            index = currentIndex;
+        }
         if (index != currentIndex) {
             currentIndex = index;
             contentView.highlight(timeline.get(index).getContentID());
         }
         updateStatus(ms);
+    }
+
+    /**
+     * Ett par utan ljud (inläsning saknas) har samma starttid som nästa par.
+     * Utan det här skulle positionen genast flytta markeringen till nästa
+     * par – och "föregående fras" skulle aldrig komma förbi. Markeringen får
+     * stå kvar tills uppspelningen gått förbi parets starttid.
+     */
+    private boolean keepSilentParHighlighted(long ms) {
+        if (currentIndex < 0 || currentIndex >= timeline.size()) {
+            return false;
+        }
+        long start = timeline.startOf(currentIndex);
+        boolean silent = timeline.endOf(currentIndex) == start;
+        return silent && ms < start + 150;
     }
 
     /**
@@ -684,6 +703,17 @@ public class MainViewController implements Initializable {
     }
 
     // ------------------------------------------------------------ ljudkurva
+
+    /** Synkpunkterna (id i texten) för alla par som saknar ljud. */
+    private List<String> missingAudioIDs() {
+        List<String> ids = new java.util.ArrayList<>();
+        for (int i = 0; i < timeline.size(); i++) {
+            if (timeline.endOf(i) == timeline.startOf(i)) {
+                ids.add(timeline.get(i).getContentID());
+            }
+        }
+        return ids;
+    }
 
     /** Ny ljudkurva för boken. Avkodningen sker löpande när kurvan visas. */
     private void openWaveform() {
@@ -992,6 +1022,7 @@ public class MainViewController implements Initializable {
     private void closeProject() {
         mpv.close();
         closeWaveform();
+        contentView.setMissingAudio(null);
         timeline = null;
         smil = null;
         ncc = null;
