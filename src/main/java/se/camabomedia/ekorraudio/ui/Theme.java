@@ -26,8 +26,14 @@ public enum Theme {
         "/se/camabomedia/ekorraudio/themes/solarized-dark.css",
         textCss("#002b36", "#93a1a1", "#eee8d5", "#586e75", "#268bd2", "#073642"),
         nccCss("#002b36", "#93a1a1", "#268bd2", "#073642", "#eee8d5"),
-        "#5c4d06", "#fdf6e3",
+               "#124f5c", "#fdf6e3",
         true, "#073642", "#93a1a1");
+
+    // "#5c4d06", "#fdf6e3",
+    // "#0b4452", "#eee8d5",
+    // "#124f5c", "#fdf6e3",
+    // #b58900 // guldgul, för text i markering
+
 
     private final String label;
     private final String stylesheet;
