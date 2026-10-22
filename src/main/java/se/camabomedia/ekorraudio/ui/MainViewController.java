@@ -128,6 +128,8 @@ public class MainViewController implements Initializable {
     /** Den högre hastighet som "-" växlar till (senast inställda över 100 %). */
     private int fastSpeed = DEFAULT_FAST_SPEED;
 
+    private static final String APP_NAME = "Ekorr+";
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // mpv rapporterar från en bakgrundstråd – flytta till JavaFX-tråden
@@ -334,6 +336,16 @@ public class MainViewController implements Initializable {
         AnchorPane.setLeftAnchor(node, 0.0);
     }
 
+    /** Fönstrets titel: bokens titel och id, eller bara programnamnet. */
+    private void updateWindowTitle() {
+        if (ncc == null || ncc.getTitle() == null) {
+            stage.setTitle(APP_NAME);
+            return;
+        }
+        String id = ncc.getIdentifier() != null ? " (" + ncc.getIdentifier() + ")" : "";
+        stage.setTitle(APP_NAME + "     " + ncc.getTitle() + " " + id);
+    }
+
     // ------------------------------------------------------------ projekt
 
     private void selectProject() {
@@ -355,6 +367,7 @@ public class MainViewController implements Initializable {
         currentIndex = -1;
 
         ncc = new Ncc(nccFile);
+        updateWindowTitle();
         Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
         smil = new Smil(ncc, content);
         timeline = new Timeline(ncc, smil);
@@ -718,7 +731,7 @@ public class MainViewController implements Initializable {
         List<se.camabomedia.ekorraudio.daisy.NccItem> items = ncc.getNccItems();
         for (int k = 0; k < items.size(); k++) {
             se.camabomedia.ekorraudio.daisy.NccItem item = items.get(k);
-            if (!item.getCssClass().startsWith("page-")) {
+            if (!item.getName().matches("h[1-6]")) {
                 continue;
             }
             int index = timeline.indexOf(smil.getParFromParID(item.getParID()));
@@ -1080,6 +1093,7 @@ public class MainViewController implements Initializable {
         timeline = null;
         smil = null;
         ncc = null;
+        updateWindowTitle();
         report = null;
         currentIndex = -1;
         seekTarget = -1;
