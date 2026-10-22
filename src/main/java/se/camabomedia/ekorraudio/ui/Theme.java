@@ -12,19 +12,22 @@ package se.camabomedia.ekorraudio.ui;
  */
 public enum Theme {
 
-    STANDARD("Standard", null, "", "", "yellow", null),
+    STANDARD("Standard", null, "", "", "yellow", null,
+        false, null, null),
 
     SOLARIZED_LIGHT("Solarized ljus",
         "/se/camabomedia/ekorraudio/themes/solarized-light.css",
         textCss("#fdf6e3", "#657b83", "#586e75", "#93a1a1", "#268bd2", "#eee8d5"),
         nccCss("#fdf6e3", "#657b83", "#268bd2", "#eee8d5", "#586e75"),
-        "#f3e2a9", null),
+        "#f3e2a9", null,
+        false, "#eee8d5", "#586e75"),
 
     SOLARIZED_DARK("Solarized mörk",
         "/se/camabomedia/ekorraudio/themes/solarized-dark.css",
         textCss("#002b36", "#93a1a1", "#eee8d5", "#586e75", "#268bd2", "#073642"),
         nccCss("#002b36", "#93a1a1", "#268bd2", "#073642", "#eee8d5"),
-        "#5c4d06", "#fdf6e3");
+        "#5c4d06", "#fdf6e3",
+        true, "#073642", "#93a1a1");
 
     private final String label;
     private final String stylesheet;
@@ -32,15 +35,22 @@ public enum Theme {
     private final String nccCss;
     private final String highlight;
     private final String highlightText;
+    private final boolean darkTitleBar;
+    private final String titleBarColor;
+    private final String titleBarText;
 
     Theme(String label, String stylesheet, String contentCss, String nccCss,
-          String highlight, String highlightText) {
+          String highlight, String highlightText,
+          boolean darkTitleBar, String titleBarColor, String titleBarText) {
         this.label = label;
         this.stylesheet = stylesheet;
         this.contentCss = contentCss;
         this.nccCss = nccCss;
         this.highlight = highlight;
         this.highlightText = highlightText;
+        this.darkTitleBar = darkTitleBar;
+        this.titleBarColor = titleBarColor;
+        this.titleBarText = titleBarText;
     }
 
     @Override
@@ -71,6 +81,21 @@ public enum Theme {
     /** Textfärg i markeringen, eller null för att behålla textens färg. */
     public String getHighlightText() {
         return highlightText;
+    }
+
+    /** Mörk namnlist (Windows 10 och 11). */
+    public boolean isDarkTitleBar() {
+        return darkTitleBar;
+    }
+
+    /** Namnlistens färg (#rrggbb, bara Windows 11), eller null för systemets. */
+    public String getTitleBarColor() {
+        return titleBarColor;
+    }
+
+    /** Namnlistens textfärg (#rrggbb, bara Windows 11), eller null för systemets. */
+    public String getTitleBarText() {
+        return titleBarText;
     }
 
     /** Tema från sparat namn, standard om namnet saknas eller är okänt. */

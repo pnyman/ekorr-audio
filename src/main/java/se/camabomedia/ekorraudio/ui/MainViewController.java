@@ -689,6 +689,7 @@ public class MainViewController implements Initializable {
 
         contentView.setTheme(theme);
         nccView.setTheme(theme);
+        TitleBar.applyWhenShown(stage, theme);   // namnlisten ritas av Windows
 
         if (menuTheme != null) {
             for (MenuItem item : menuTheme.getItems()) {
@@ -703,6 +704,9 @@ public class MainViewController implements Initializable {
     private void styleDialog(javafx.scene.control.DialogPane pane) {
         if (stage != null && stage.getScene() != null) {
             pane.getStylesheets().setAll(stage.getScene().getStylesheets());
+        }
+        if (pane.getScene() != null && pane.getScene().getWindow() instanceof Stage) {
+            TitleBar.applyWhenShown((Stage) pane.getScene().getWindow(), theme);
         }
     }
 
@@ -867,6 +871,7 @@ public class MainViewController implements Initializable {
             commentStage.initOwner(stage);
             commentStage.setScene(new Scene(loader.load()));
             commentStage.getScene().getStylesheets().setAll(stage.getScene().getStylesheets());
+            TitleBar.applyWhenShown(commentStage, theme);
             commentStage.setTitle(comment == null ? "Ekorr – Skapa kommentar" : "Ekorr – Redigera kommentar");
             commentStage.getIcons().add(
                 new Image(getClass().getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
