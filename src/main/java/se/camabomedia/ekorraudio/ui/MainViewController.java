@@ -83,6 +83,11 @@ public class MainViewController implements Initializable {
     // Ljudkurvan under verktygsraden
     private WaveformView waveformView;
     private se.camabomedia.ekorraudio.daisy.Waveform waveform;
+
+    // Sidorna i NCC:n: tidslinjeindex (sorterat) och par-id, för markering i NCC-vyn
+    private int[] pageIndices = new int[0];
+    private String[] pageParIDs = new String[0];
+    private String currentPageParID = null;
     @FXML private MenuItem menuItemOpen;
     @FXML private javafx.scene.control.Menu menuTheme;
     @FXML private Label labelStatus;
@@ -356,6 +361,7 @@ public class MainViewController implements Initializable {
         seekTarget = -1;
         openWaveform();
         contentView.setMissingAudio(missingAudioIDs());
+        buildPageIndex();
         reportMissingSyncPoints(content);
         loadReport();
 
@@ -704,6 +710,49 @@ public class MainViewController implements Initializable {
 
     // ------------------------------------------------------------ ljudkurva
 
+    // ------------------------------------------------------------ NCC-sida
+
+    /** Sidnumren i NCC:n, sorterade efter var de ligger i tidslinjen. */
+    private void buildPageIndex() {
+        List<int[]> pages = new java.util.ArrayList<>();   // {index, plats i NCC-listan}
+        List<se.camabomedia.ekorraudio.daisy.NccItem> items = ncc.getNccItems();
+        for (int k = 0; k < items.size(); k++) {
+            se.camabomedia.ekorraudio.daisy.NccItem item = items.get(k);
+            if (!item.getCssClass().startsWith("page-")) {
+                continue;
+            }
+            int index = timeline.indexOf(smil.getParFromParID(item.getParID()));
+            if (index >= 0) {
+                pages.add(new int[] { index, k });
+            }
+        }
+        pages.sort((a, b) -> Integer.compare(a[0], b[0]));
+        pageIndices = new int[pages.size()];
+        pageParIDs = new String[pages.size()];
+        for (int k = 0; k < pages.size(); k++) {
+            pageIndices[k] = pages.get(k)[0];
+            pageParIDs[k] = items.get(pages.get(k)[1]).getParID();
+        }
+        currentPageParID = null;
+    }
+
+    /** Markerar i NCC-vyn den sida som den aktuella meningen ligger på. */
+    private void syncNccPage() {
+        String parID = null;
+        if (currentIndex >= 0 && pageIndices.length > 0) {
+            // Sista sidan som börjar på eller före den aktuella meningen
+            int k = java.util.Arrays.binarySearch(pageIndices, currentIndex);
+            if (k < 0) {
+                k = -k - 2;
+            }
+            parID = k >= 0 ? pageParIDs[k] : null;
+        }
+        if (!java.util.Objects.equals(parID, currentPageParID)) {
+            currentPageParID = parID;
+            nccView.setCurrentPage(parID);
+        }
+    }
+
     /** Synkpunkterna (id i texten) för alla par som saknar ljud. */
     private List<String> missingAudioIDs() {
         List<String> ids = new java.util.ArrayList<>();
@@ -885,6 +934,7 @@ public class MainViewController implements Initializable {
         if (waveformView != null && waveformView.isVisible()) {
             waveformView.setPosition(ms, currentIndex);
         }
+        syncNccPage();
         String page = timeline.get(currentIndex).getPage();
         labelStatus.setText((page != null ? "Sida " + page + "   " : "")
                             + Timeline.format(ms) + " / " + Timeline.format(timeline.duration())
@@ -1023,6 +1073,10 @@ public class MainViewController implements Initializable {
         mpv.close();
         closeWaveform();
         contentView.setMissingAudio(null);
+        pageIndices = new int[0];
+        pageParIDs = new String[0];
+        currentPageParID = null;
+        nccView.setCurrentPage(null);
         timeline = null;
         smil = null;
         ncc = null;

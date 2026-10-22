@@ -46,6 +46,32 @@ public class NccView {
         + "    display: none !important; "
         + "}";
 
+
+    /** Klass på NCC-posten för sidan man befinner sig på. */
+    private static final String CURRENT_CLASS = "ekorr-ncc-current";
+
+    /** Markerar posten och scrollar dit om den inte syns (utan animering). */
+    private static final String CURRENT_SCRIPT =
+        "(function(id) {"
+        + "  var old = document.getElementsByClassName('" + CURRENT_CLASS + "');"
+        + "  for (var i = old.length - 1; i >= 0; i--) { old[i].classList.remove('" + CURRENT_CLASS + "'); }"
+        + "  if (!id) { return; }"
+        + "  var links = document.getElementsByTagName('a');"
+        + "  for (var j = 0; j < links.length; j++) {"
+        + "    var href = links[j].getAttribute('href') || '';"
+        + "    if (href.substring(href.indexOf('#') + 1) !== id) { continue; }"
+        + "    var item = links[j];"
+        + "    while (item && !item.id) { item = item.parentNode; }"
+        + "    if (!item || !item.classList) { return; }"
+        + "    item.classList.add('" + CURRENT_CLASS + "');"
+        + "    var r = item.getBoundingClientRect();"
+        + "    if (r.top < 0 || r.bottom > window.innerHeight) {"
+        + "      item.scrollIntoView({ behavior: 'auto', block: 'center' });"
+        + "    }"
+        + "    return;"
+        + "  }"
+        + "})";
+
     public final WebView webView;
     private final WebEngine webEngine;
 
@@ -57,6 +83,8 @@ public class NccView {
     /** Färgtema och dess style-element i det laddade dokumentet. */
     private Theme theme = Theme.STANDARD;
     private Element styleNode = null;
+    /** Par-id för sidan som ska vara markerad, eller null. */
+    private String currentParID = null;
 
     public NccView() {
         webView = new WebView();
@@ -68,6 +96,7 @@ public class NccView {
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED) {
                 applyThemeCss();
+                applyCurrent();
                 JSObject window = (JSObject) webEngine.executeScript("window");
                 window.setMember("java", javaBridge);
                 webEngine.executeScript(CLICK_SCRIPT);
@@ -83,6 +112,7 @@ public class NccView {
     /** Tömmer vyn (när talboken stängs). */
     public void clear() {
         styleNode = null;
+        currentParID = null;
         webEngine.loadContent("");
     }
 
@@ -93,8 +123,35 @@ public class NccView {
     public void setTheme(Theme newTheme) {
         theme = newTheme == null ? Theme.STANDARD : newTheme;
         if (styleNode != null) {
-            styleNode.setTextContent(FILTER_CSS + theme.getNccCss());
+            styleNode.setTextContent(css());
         }
+    }
+
+    /** Filtret, temats färger och markeringen av aktuell sida. */
+    private String css() {
+        String current = "." + CURRENT_CLASS + ", ." + CURRENT_CLASS + " * {"
+            + "    background-color: " + theme.getHighlight() + " !important; "
+            + (theme.getHighlightText() != null
+               ? "    color: " + theme.getHighlightText() + " !important; " : "")
+            + "}";
+        return FILTER_CSS + theme.getNccCss() + current;
+    }
+
+    /**
+     * Markerar NCC-posten (sidnumret) med detta par-id, eller ingen om null.
+     * Listan scrollas bara om posten inte syns.
+     */
+    public void setCurrentPage(String parID) {
+        currentParID = parID;
+        applyCurrent();
+    }
+
+    private void applyCurrent() {
+        if (webEngine.getDocument() == null) {
+            return;
+        }
+        String id = currentParID == null ? "" : currentParID.replace("\\", "").replace("'", "");
+        webEngine.executeScript(CURRENT_SCRIPT + "('" + id + "')");
     }
 
     /** Lägger temats style-element sist i dokumentet. */
@@ -104,7 +161,7 @@ public class NccView {
             return;
         }
         styleNode = doc.createElement("style");
-        styleNode.appendChild(doc.createTextNode(FILTER_CSS + theme.getNccCss()));
+        styleNode.appendChild(doc.createTextNode(css()));
         org.w3c.dom.Node head = doc.getDocumentElement().getElementsByTagName("head").item(0);
         // Ett tomt dokument (efter clear) kan sakna head
         (head != null ? head : doc.getDocumentElement()).appendChild(styleNode);
