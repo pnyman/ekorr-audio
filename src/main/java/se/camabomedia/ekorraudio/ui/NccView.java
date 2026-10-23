@@ -134,7 +134,7 @@ public class NccView {
             + (theme.getHighlightText() != null
                ? "    color: " + theme.getHighlightText() + " !important; " : "")
             + "}";
-        return FILTER_CSS + theme.getNccCss() + current;
+        return uiFontCss() + FILTER_CSS + theme.getNccCss() + current;
     }
 
     /**
@@ -165,6 +165,20 @@ public class NccView {
         org.w3c.dom.Node head = doc.getDocumentElement().getElementsByTagName("head").item(0);
         // Ett tomt dokument (efter clear) kan sakna head
         (head != null ? head : doc.getDocumentElement()).appendChild(styleNode);
+    }
+
+    /**
+     * Samma typsnitt och storlek som JavaFX använder i resten av fönstret
+     * (t.ex. kommentarstabellen). JavaFX kallar standardtypsnittet "System",
+     * vilket WebView inte känner till – därför Segoe UI och sans-serif som reserv.
+     */
+    private static String uiFontCss() {
+        javafx.scene.text.Font f = javafx.scene.text.Font.getDefault();
+        String family = f.getFamily();
+        String families = (family == null || family.equalsIgnoreCase("System") ? "" : "\"" + family + "\", ")
+            + "\"Segoe UI\", sans-serif";
+        return "body { font-family: " + families + " !important; "
+            + "font-size: " + Math.round(f.getSize()) + "px !important; } ";
     }
 
     /** Anropas (på JavaFX-tråden) med par-id:t för den klickade posten. */
