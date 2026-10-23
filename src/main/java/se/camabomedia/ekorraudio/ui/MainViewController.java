@@ -22,6 +22,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.WindowEvent;
@@ -80,6 +81,7 @@ public class MainViewController implements Initializable {
     private Button btnEditComment;
     private Button btnDeleteComment;
     private Button btnWaveform;
+    private Button btnSearch;
 
     // Ljudkurvan under verktygsraden
     private WaveformView waveformView;
@@ -180,7 +182,8 @@ public class MainViewController implements Initializable {
         speedLabel.getStyleClass().add("speed-label");
         btnFaster = IconButton.create("mdi2p-plus-circle-outline", "Snabbare (.)",
                                       () -> changeSpeed(+SPEED_STEP));
-
+        btnSearch = IconButton.create("mdi2m-magnify", "Sök i texten (Ctrl+F)",
+                                      this::toggleSearch);
         btnWaveform = IconButton.create("mdi2w-waveform", "Visa/dölj ljudkurvan",
                                         this::toggleWaveform);
 
@@ -212,8 +215,19 @@ public class MainViewController implements Initializable {
             separator(),
             btnNewComment, btnEditComment, btnDeleteComment,
             separator(),
+            btnSearch,
             btnWaveform);
         updateSpeedLabel();
+    }
+
+    /** Sökknappen: öppnar sökraden, eller stänger den om den redan är öppen. */
+    private void toggleSearch() {
+        if (contentView.isSearchVisible()) {
+            contentView.hideSearch();
+        }
+        else {
+            contentView.showSearch();
+        }
     }
 
     private static Separator separator() {
@@ -298,8 +312,8 @@ public class MainViewController implements Initializable {
         // fungerar oberoende av tangentbordslayout – även minus på numeriska
         // tangentbordet
         stage.getScene().addEventFilter(KeyEvent.KEY_TYPED, e -> {
-            if (timeline == null || e.isShortcutDown()) {
-                return;   // Ctrl+- är textstorlek, inte hastighet
+                if (timeline == null || e.isShortcutDown() || isTyping()) {
+                    return;   // Ctrl+- är textstorlek, inte hastighet
             }
             switch (e.getCharacter()) {
             case " ":
@@ -322,11 +336,16 @@ public class MainViewController implements Initializable {
             }
         });
         stage.getScene().addEventFilter(KeyEvent.KEY_RELEASED, e -> {
-            if (timeline != null && isPlayerKey(e)) {
-                e.consume();
+                if (timeline != null &&!isTyping() && isPlayerKey(e)) {
+                    e.consume();
             }
         });
         stage.setOnHidden(e -> mpv.close());
+    }
+
+    /** Sant när ett textfält har fokus – då gäller inte spelartangenterna. */
+    private boolean isTyping() {
+        return stage.getScene().getFocusOwner() instanceof javafx.scene.control.TextInputControl;
     }
 
     private static void anchorToAllSides(javafx.scene.Node node) {
@@ -571,6 +590,22 @@ public class MainViewController implements Initializable {
      * (hastighetstangenterna hanteras som tecken, se initData)
      */
     private void onKeyPressed(KeyEvent event) {
+        // Ctrl+F: sök i texten. F3 / Skift+F3: nästa/föregående träff.
+        if (event.isShortcutDown() && event.getCode() == KeyCode.F) {
+            contentView.showSearch();
+            event.consume();
+            return;
+        }
+        if (event.getCode() == KeyCode.F3 && contentView.isSearchVisible()) {
+            contentView.searchStep(!event.isShiftDown());
+            event.consume();
+            return;
+        }
+        // I ett textfält (sökfältet) är tangenterna till för texten
+        if (isTyping()) {
+            return;
+        }
+
         // Textstorlek fungerar även utan öppnad bok
         if (event.isShortcutDown() && handleZoomKey(event)) {
             event.consume();
@@ -936,6 +971,7 @@ public class MainViewController implements Initializable {
         btnNewComment.setDisable(report == null);
         btnEditComment.setDisable(report == null || !selected);
         btnDeleteComment.setDisable(report == null || !selected);
+        btnSearch.setDisable(!open);
     }
 
     private void updateStatus(long ms) {

@@ -31,9 +31,8 @@ public class ContentView {
     private static final String MISSING_CLASS = "ekorr-missing";
 
     /**
-     * Röd understrykning av text utan inläsning. text-decoration ärvs visuellt
-     * av barnelementen (em, strong …), men färgen måste sättas med både
-     * standard- och WebKit-namnet för äldre WebView.
+     * Röd vågig understrykning av text utan inläsning. Färg och stil måste
+     * anges med både standard- och WebKit-namn för äldre WebView.
      */
     private static final String MISSING_CSS =
         "." + MISSING_CLASS + " {"
@@ -46,7 +45,6 @@ public class ContentView {
         + "    text-decoration-thickness: 2px; "
         + "    text-underline-offset: 3px; "
         + "}";
-
 
     /** Minsta höjd på rullningslistens reglage, som andel av listen. */
     private static final double MIN_THUMB_FRACTION = 0.06;
@@ -156,6 +154,14 @@ public class ContentView {
     private String fontFamily = null;
     /** Färgtema för texten och markeringen. */
     private Theme theme = Theme.STANDARD;
+
+    // Sökning (Ctrl+F): sökrad ovanför texten, skriptet i search.js
+    private final javafx.scene.layout.HBox searchBar = new javafx.scene.layout.HBox(4);
+    private final javafx.scene.control.TextField searchField = new javafx.scene.control.TextField();
+    private final javafx.scene.control.Label searchCount = new javafx.scene.control.Label();
+    private final javafx.animation.PauseTransition searchDelay =
+        new javafx.animation.PauseTransition(javafx.util.Duration.millis(250));
+    private String searchScript;
     /** id:n för synkpunkter som saknar ljud – markeras vid varje laddning. */
     private java.util.Set<String> missingIDs = java.util.Collections.emptySet();
 
@@ -184,6 +190,10 @@ public class ContentView {
             window.setMember("java", javaBridge);
             webEngine.executeScript(CLICK_SCRIPT);
             webEngine.executeScript(SCROLL_SCRIPT);
+            webEngine.executeScript(searchScript());
+            if (searchBar.isVisible()) {
+                runSearch();   // ny laddning – sök igen med samma text
+            }
             applyMissing();
 
             if (pendingElementID != null) {
@@ -249,6 +259,8 @@ public class ContentView {
             e.consume();
         });
 
+        setUpSearchBar();
+        container.setTop(searchBar);
         container.setCenter(webView);
         container.setRight(scrollBar);
         // Behållaren fyller mittkolumnen (AnchorPane) utan ändring i kontrollern
@@ -289,11 +301,186 @@ public class ContentView {
         });
     }
 
+    // ---------------------------------------------------------------- sökning
+
+    /**
+     * Sökraden: fält, antal träffar, föregående/nästa, stäng.
+     *   Enter nästa, Skift+Enter föregående, Esc stänger.
+     * Sökningen görs medan man skriver (efter en kort paus).
+     */
+    private void setUpSearchBar() {
+        searchBar.getStyleClass().add("search-bar");
+        searchBar.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        searchBar.setPadding(new javafx.geometry.Insets(3, 6, 3, 6));
+        searchField.setPromptText("Sök i texten");
+        searchField.setPrefColumnCount(24);
+        searchCount.getStyleClass().add("search-count");
+        searchCount.setMinWidth(70);
+
+        javafx.scene.control.Button previous =
+            IconButton.create("mdi2c-chevron-up", "Föregående träff (Skift+Enter)", () -> step(false));
+        javafx.scene.control.Button next =
+            IconButton.create("mdi2c-chevron-down", "Nästa träff (Enter)", () -> step(true));
+        javafx.scene.control.Button close =
+            IconButton.create("mdi2c-close", "Stäng sökningen (Esc)", this::hideSearch);
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        javafx.scene.layout.HBox.setHgrow(spacer, javafx.scene.layout.Priority.ALWAYS);
+        searchBar.getChildren().addAll(searchField, searchCount, previous, next, spacer, close);
+
+        searchDelay.setOnFinished(e -> runSearch());
+        searchField.textProperty().addListener((obs, old, text) -> searchDelay.playFromStart());
+        searchField.setOnKeyPressed(e -> {
+            switch (e.getCode()) {
+            case ENTER:
+                searchDelay.stop();
+                if (lastQuery == null || !lastQuery.equals(searchField.getText())) {
+                    runSearch();
+                }
+                else {
+                    step(!e.isShiftDown());
+                }
+                e.consume();
+                break;
+            case ESCAPE:
+                hideSearch();
+                e.consume();
+                break;
+            default:
+                break;
+            }
+        });
+
+        searchBar.setVisible(false);
+        searchBar.managedProperty().bind(searchBar.visibleProperty());
+    }
+
+    private String lastQuery = null;
+
+    /** Ctrl+F: visa sökraden (med ev. markerad text i fältet) och ge fältet fokus. */
+    public void showSearch() {
+        if (webEngine.getDocument() != null) {
+            Object selection = webEngine.executeScript("String(window.getSelection())");
+            if (selection instanceof String && !((String) selection).isBlank()
+                && ((String) selection).length() < 100) {
+                searchField.setText(((String) selection).strip());
+            }
+        }
+        searchBar.setVisible(true);
+        searchField.requestFocus();
+        searchField.selectAll();
+        runSearch();
+    }
+
+    public void hideSearch() {
+        searchDelay.stop();
+        searchBar.setVisible(false);
+        lastQuery = null;
+        searchCount.setText("");
+        if (webEngine.getDocument() != null && !loading) {
+            webEngine.executeScript("if (window.ekorrSearch) ekorrSearch.clear();");
+        }
+        webView.requestFocus();
+    }
+
+    public boolean isSearchVisible() {
+        return searchBar.isVisible();
+    }
+
+    /** F3 / Skift+F3 i huvudfönstret. */
+    public void searchStep(boolean forward) {
+        if (searchBar.isVisible()) {
+            step(forward);
+        }
+    }
+
+    private void runSearch() {
+        if (loading || webEngine.getDocument() == null) {
+            return;
+        }
+        String query = searchField.getText() == null ? "" : searchField.getText();
+        lastQuery = query;
+        if (query.strip().length() < 2) {
+            webEngine.executeScript("if (window.ekorrSearch) ekorrSearch.clear();");
+            searchCount.setText("");
+            return;
+        }
+        Object n = webEngine.executeScript("ekorrSearch.run('" + jsString(query) + "')");
+        int count = n instanceof Number ? ((Number) n).intValue() : 0;
+        if (count > 0) {
+            webEngine.executeScript("ekorrSearch.go(0)");
+        }
+        updateSearchCount();
+    }
+
+    private void step(boolean forward) {
+        if (loading || webEngine.getDocument() == null) {
+            return;
+        }
+        webEngine.executeScript(forward ? "ekorrSearch.next()" : "ekorrSearch.previous()");
+        updateSearchCount();
+    }
+
+    private void updateSearchCount() {
+        Object n = webEngine.executeScript("ekorrSearch.count()");
+        Object c = webEngine.executeScript("ekorrSearch.current()");
+        int count = n instanceof Number ? ((Number) n).intValue() : 0;
+        int current = c instanceof Number ? ((Number) c).intValue() : -1;
+        if (lastQuery == null || lastQuery.strip().length() < 2) {
+            searchCount.setText("");
+        }
+        else if (count == 0) {
+            searchCount.setText("Inga träffar");
+        }
+        else {
+            searchCount.setText((current + 1) + " av " + count);
+        }
+    }
+
+    /** Text som JavaScript-sträng inom '…'. */
+    private static String jsString(String s) {
+        return s.replace("\\", "\\\\").replace("'", "\\'")
+                .replace("\n", " ").replace("\r", " ");
+    }
+
+    private String searchScript() {
+        if (searchScript == null) {
+            try (java.io.InputStream in = getClass().getResourceAsStream("/se/camabomedia/ekorraudio/search.js")) {
+                searchScript = new String(in.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                searchScript = "";
+            }
+        }
+        return searchScript;
+    }
+
+    /** Färger för sökträffar (alla träffar och den aktuella) per tema. */
+    private static String searchCss(Theme theme) {
+        String all, current, currentText;
+        switch (theme) {
+        case SOLARIZED_LIGHT:
+            all = "#f5d9a8"; current = "#cb4b16"; currentText = "#fdf6e3";
+            break;
+        case SOLARIZED_DARK:
+            all = "#4d4416"; current = "#cb4b16"; currentText = "#fdf6e3";
+            break;
+        default:
+            all = "#ffe08a"; current = "#ff9632"; currentText = "#000000";
+        }
+        // mark.… (0,1,1) går före temats "body *" (0,0,1) som annars gör bakgrunden genomskinlig
+        return "mark.ekorr-search { background-color: " + all + " !important; color: inherit !important; } "
+            + "mark.ekorr-search.ekorr-search-current { background-color: " + current + " !important; "
+            + "color: " + currentText + " !important; } ";
+    }
+
     public void openContent(File contentFile) {
         currentElement = null;
         currentElementID = null;
         pendingElementID = null;
         styleNode = null;
+        lastQuery = null;
+        searchCount.setText("");
         // Egen flagga: direkt efter load() kan motorns tillstånd fortfarande
         // vara SUCCEEDED från förra dokumentet
         loading = true;
@@ -345,6 +532,11 @@ public class ContentView {
         pendingElementID = null;
         styleNode = null;
         loading = false;
+        // Stäng sökraden – den hör till boken som stängs
+        searchDelay.stop();
+        searchBar.setVisible(false);
+        lastQuery = null;
+        searchCount.setText("");
         webEngine.loadContent("");
         updateScrollBar(0, 0, 0);
     }
@@ -387,6 +579,7 @@ public class ContentView {
             css.append("body, body * { font-family: \"").append(family).append("\" !important; }");
         }
         css.append(MISSING_CSS);
+        css.append(searchCss(theme));
         css.append(highlightCss(theme));
         return css.toString();
     }
