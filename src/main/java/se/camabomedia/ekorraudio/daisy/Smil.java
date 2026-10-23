@@ -146,18 +146,11 @@ public class Smil {
         return smilPar;
     }
 
-    // private ArrayList<SmilAudio> getAudio(Element parElement) {
-    //     ArrayList<SmilAudio> smilAudio = new ArrayList<>();
-    //     Element seq = parElement.select("seq").first();
-    //     if (seq != null) {
-    //         for (Element audio : seq.getElementsByTag("audio")) {
-    //             smilAudio.add(new SmilAudio(audio));
-    //         }
-    //     }
-    //     return smilAudio;
-    // }
-
-    // Testet för det här finns i SmilAudioWithoutSeqTest.java
+    /**
+     * Alla audio-element i par:et, i dokumentordning. I DAISY 2.02 kan ett
+     * ensamt klipp ligga direkt under par (utan seq), t.ex.
+     * <par><text .../><audio .../></par> – vanligt för bokens titel.
+     */
     private ArrayList<SmilAudio> getAudio(Element parElement) {
         ArrayList<SmilAudio> smilAudio = new ArrayList<>();
         for (Element audio : parElement.getElementsByTag("audio")) {
@@ -234,8 +227,14 @@ public class Smil {
         return mp3StartTimesTable;
     }
 
+    /**
+     * Par för ett id ur en NCC-länk (smilfil#id). Länken pekar oftast på
+     * par-elementet, men får enligt DAISY 2.02 också peka på text-elementet
+     * i par:et (t.ex. kret0002.smil#text_0002) – då söks det också.
+     */
     public SmilPar getParFromParID(String parID) {
-        return parElementIDTable.get(parID);
+        SmilPar par = parElementIDTable.get(parID);
+        return par != null ? par : textElementIDTable.get(parID);
     }
 
     public SmilPar getParFromTextID(String textID) {

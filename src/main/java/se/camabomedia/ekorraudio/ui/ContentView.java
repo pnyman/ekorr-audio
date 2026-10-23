@@ -73,6 +73,25 @@ public class ContentView {
         + "}";
 
     /**
+     * När NCC:n visas som innehåll (talbok utan text): länkarna ska se ut
+     * som vanlig text, och varje sidnummer får en egen rad med "Sida"
+     * framför – i NCC:n är de inline-element som annars hamnar på rad.
+     */
+    private static final String NCC_CONTENT_CSS =
+        "a, a:link, a:visited {"
+        + "    color: inherit !important; "
+        + "    text-decoration: none !important; "
+        + "    cursor: default; "
+        + "}"
+        + ".page-normal, .page-front, .page-special {"
+        + "    display: block !important; "
+        + "    margin: 0.3em 0 !important; "
+        + "}"
+        + ".page-normal::before, .page-front::before, .page-special::before {"
+        + "    content: 'Sida '; "
+        + "}";
+
+    /**
      * Markeringen. Färgen kommer från temat (se highlightCss). Läggs sist,
      * efter temats CSS, så att den alltid syns.
      *
@@ -103,10 +122,10 @@ public class ContentView {
      */
     private static final String CLICK_SCRIPT =
         "document.addEventListener('click', function(event) {"
+        + "    event.preventDefault();"
         + "    if (String(window.getSelection()).length > 0) { return; }"
         + "    var el = event.target;"
         + "    while (el && !(el.id)) { el = el.parentNode; }"
-        + "    event.preventDefault();"
         + "    if (el && el.id) { java.handleClick(el.id); }"
         + "});";
 
@@ -162,6 +181,8 @@ public class ContentView {
     private final javafx.animation.PauseTransition searchDelay =
         new javafx.animation.PauseTransition(javafx.util.Duration.millis(250));
     private String searchScript;
+    /** Sant när innehållet är NCC:n (talbok utan text). */
+    private boolean nccAsContent = false;
     /** id:n för synkpunkter som saknar ljud – markeras vid varje laddning. */
     private java.util.Set<String> missingIDs = java.util.Collections.emptySet();
 
@@ -475,6 +496,15 @@ public class ContentView {
     }
 
     public void openContent(File contentFile) {
+        openContent(contentFile, false);
+    }
+
+    /**
+     * @param nccAsContent sant när filen är NCC:n i en talbok utan text –
+     *                     då läggs NCC_CONTENT_CSS till
+     */
+    public void openContent(File contentFile, boolean nccAsContent) {
+        this.nccAsContent = nccAsContent;
         currentElement = null;
         currentElementID = null;
         pendingElementID = null;
@@ -577,6 +607,9 @@ public class ContentView {
             // Gäller alla element, även de som bokens CSS ger ett eget typsnitt
             String family = fontFamily.replace("\\", "").replace("\"", "");
             css.append("body, body * { font-family: \"").append(family).append("\" !important; }");
+        }
+        if (nccAsContent) {
+            css.append(NCC_CONTENT_CSS);
         }
         css.append(MISSING_CSS);
         css.append(searchCss(theme));

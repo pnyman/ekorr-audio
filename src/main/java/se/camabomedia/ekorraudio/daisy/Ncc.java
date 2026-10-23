@@ -28,6 +28,14 @@ public class Ncc {
     private String narrator;
     private String totalTime;
     private String contentFile = null;
+    /** ncc:multimediaType, t.ex. "audioFullText" eller "audioNcc". */
+    private String multimediaType = null;
+    /**
+     * Sant för en talbok utan textfil (bara ncc och smil, t.ex. "audioNcc").
+     * Smil-filernas text-element pekar då på ncc.html, och NCC:n används
+     * som innehåll.
+     */
+    private boolean audioOnly = false;
     private ArrayList<String> creators = new ArrayList<>();
     private ArrayList<NccItem> nccItems = new ArrayList<>();
     private ArrayList<String> smilFiles = new ArrayList<>();
@@ -66,7 +74,28 @@ public class Ncc {
         }
     }
 
+    /**
+     * Letar upp textfilen via smil-filernas text-element. Finns ingen (alla
+     * pekar på ncc.html) är det en talbok utan text – då blir NCC:n
+     * innehållet. För typerna utan text i ncc:multimediaType letas inte alls,
+     * så att inte alla smil-filer läses i onödan.
+     */
     private void findContentFile() {
+        if (!isTextlessType(multimediaType)) {
+            searchContentFile();
+        }
+        if (contentFile == null) {
+            audioOnly = true;
+            contentFile = nccFile.getName();
+        }
+    }
+
+    private static boolean isTextlessType(String type) {
+        return type != null
+            && (type.equalsIgnoreCase("audioNcc") || type.equalsIgnoreCase("audioOnly"));
+    }
+
+    private void searchContentFile() {
         Path path = Paths.get(directory.toString());
 
         try (DirectoryStream<Path> ds = Files.newDirectoryStream(path, "*.smil")) {
@@ -78,7 +107,8 @@ public class Ncc {
                 for (Element par : doc.getElementsByTag("par")) {
                     try {
                         String src = par.select("text").first().attr("src");
-                        if (!src.contains("ncc.html"))
+                        String file = src.split("#")[0];
+                        if (!file.isEmpty() && !file.equalsIgnoreCase(nccFile.getName()))
                             contentFile = src.split("#")[0];
                     }
                     catch (Exception ignore) {}
@@ -105,6 +135,8 @@ public class Ncc {
                 totalTime = elt.attr("content");
             else if (elt.attr("name").equals("ncc:narrator"))
                 narrator = elt.attr("content");
+            else if (elt.attr("name").equals("ncc:multimediaType"))
+                multimediaType = elt.attr("content").strip();
         }
     }
 
@@ -191,6 +223,15 @@ public class Ncc {
 
     public String getContentFile() {
         return contentFile;
+    }
+
+    /** Sant om talboken saknar textfil – innehållet är då NCC:n. */
+    public boolean isAudioOnly() {
+        return audioOnly;
+    }
+
+    public String getMultimediaType() {
+        return multimediaType;
     }
 
     public File getContentFilePath() {

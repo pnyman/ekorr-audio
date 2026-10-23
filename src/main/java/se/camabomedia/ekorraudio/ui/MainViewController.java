@@ -116,6 +116,11 @@ public class MainViewController implements Initializable {
     private int currentIndex = -1;
     /** Mål för pågående hopp (ms), eller -1. */
     private long seekTarget = -1;
+    /**
+     * Föregående fras (talbok utan text): är man mer än så här långt in i
+     * klippet går man till dess början, annars till klippet före.
+     */
+    private static final long PREVIOUS_PHRASE_GRACE_MS = 800;
     private long seekStarted = 0;
 
     /** Hopp med vänster-/högerpil, ms. */
@@ -397,7 +402,8 @@ public class MainViewController implements Initializable {
         reportMissingSyncPoints(content);
         loadReport();
 
-        contentView.openContent(ncc.getContentFilePath());
+        // Talbok utan text: NCC:n (med alla poster) visas som innehåll
+        contentView.openContent(ncc.getContentFilePath(), ncc.isAudioOnly());
         nccView.openNcc(nccFile);
 
         if (timeline.size() == 0) {
@@ -499,6 +505,17 @@ public class MainViewController implements Initializable {
 
     private void step(boolean forward, Timeline.Level level) {
         if (timeline == null) {
+            return;
+        }
+        // Talbok utan text: ett par är ofta ett helt avsnitt med många
+        // ljudklipp, så "fras" blir nästa/föregående ljudklipp i stället
+        if (level == Timeline.Level.PHRASE && ncc.isAudioOnly()) {
+            long now = seekTarget >= 0 ? seekTarget : mpv.getPosition();
+            long t = forward ? timeline.nextClipStart(now)
+                : timeline.previousClipStart(now, PREVIOUS_PHRASE_GRACE_MS);
+            if (t >= 0) {
+                seekToTime(t);
+            }
             return;
         }
         int from = Math.max(currentIndex, 0);

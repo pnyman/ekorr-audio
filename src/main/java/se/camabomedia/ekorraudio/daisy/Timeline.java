@@ -83,6 +83,8 @@ public class Timeline {
     private final int[] headings;
     private final int[] pages;
     private final long duration;
+    /** Global starttid (ms) för varje ljudklipp, stigande. */
+    private final long[] clipStarts;
 
     public Timeline(Ncc ncc, Smil smil) {
         pars = Collections.unmodifiableList(new ArrayList<>(smil.getSmilPars()));
@@ -94,6 +96,7 @@ public class Timeline {
         File segFile = null;
         long segBegin = 0, segEnd = 0, segStart = 0;
         long t = 0;
+        ArrayList<Long> clips = new ArrayList<>();
 
         for (int i = 0; i < n; i++) {
             SmilPar par = pars.get(i);
@@ -118,6 +121,10 @@ public class Timeline {
                     segEnd = clip.getClipEnd();
                     segStart = t;
                 }
+                long clipStart = segStart + (clip.getClipBegin() - segBegin);
+                if (clips.isEmpty() || clips.get(clips.size() - 1) < clipStart) {
+                    clips.add(clipStart);
+                }
                 // Global tid räknas ur segmentets geometri, så att EDL:en och
                 // tidslinjen alltid stämmer exakt med varandra
                 t = segStart + (segEnd - segBegin);
@@ -128,6 +135,7 @@ public class Timeline {
             segments.add(new Segment(segFile, segBegin, segEnd, segStart));
         }
         duration = t;
+        clipStarts = clips.stream().mapToLong(Long::longValue).toArray();
 
         // Rubriker och sidor hämtas från NCC:n, som pekar på par-id:n
         TreeSet<Integer> h = new TreeSet<>();
@@ -201,6 +209,57 @@ public class Timeline {
             }
         }
         return found;
+    }
+
+    /**
+     * Index för sidnummerparet för sidan page (t.ex. "12"), eller -1.
+     */
+    public int indexOfPage(String page) {
+        if (page == null) {
+            return -1;
+        }
+        String wanted = page.strip();
+        for (int i : pages) {
+            String p = pars.get(i).getPage();
+            if (p != null && p.strip().equals(wanted)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** Index för nästa sida efter from, eller size() om det inte finns fler. */
+    public int nextPageOrEnd(int from) {
+        int i = firstAfter(pages, from);
+        return i < 0 ? size() : i;
+    }
+
+    /**
+     * Starttid för nästa ljudklipp efter tiden ms, eller -1. Används som
+     * "nästa fras" i talböcker utan text, där ett par ofta är ett helt
+     * avsnitt med många klipp.
+     */
+    public long nextClipStart(long ms) {
+        int i = Arrays.binarySearch(clipStarts, ms + 1);
+        if (i < 0) {
+            i = -i - 1;
+        }
+        return i < clipStarts.length ? clipStarts[i] : -1;
+    }
+
+    /**
+     * Starttid för föregående ljudklipp, eller -1. Är man mer än
+     * graceMs in i ett klipp går man till dess början (som i en
+     * ljudspelare), annars till klippet före.
+     */
+    public long previousClipStart(long ms, long graceMs) {
+        long limit = ms - graceMs;
+        int i = Arrays.binarySearch(clipStarts, limit);
+        if (i < 0) {
+            i = -i - 1;
+        }
+        // i är första position med värde >= limit
+        return i - 1 >= 0 ? clipStarts[i - 1] : (clipStarts.length > 0 ? clipStarts[0] : -1);
     }
 
     /** Nästa mål efter from på given nivå, eller -1. */
