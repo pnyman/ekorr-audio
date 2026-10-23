@@ -61,6 +61,7 @@ public class MainViewController implements Initializable {
     @FXML private SplitPane splitPane;
     @FXML private AnchorPane contentPane;
     @FXML private AnchorPane nccPane;
+    @FXML private AnchorPane commentPane;
     @FXML private HBox toolbar;
 
     // Verktygsradens knappar – skapas i buildToolbar()
@@ -247,7 +248,6 @@ public class MainViewController implements Initializable {
 
         // Högerkolumnen: kommentarstabellen. Kolumnerna i FXML har fast bredd
         // (min = max = 250) – lås upp dem så att avdelarna går att dra.
-        AnchorPane commentPane = (AnchorPane) splitPane.getItems().get(2);
         commentPane.getChildren().clear();   // etiketten "Comments" från FXML
         commentTable = new CommentTable();
         commentPane.getChildren().add(commentTable.getNode());
