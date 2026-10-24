@@ -89,8 +89,17 @@ public class ContentView {
         + "}"
         + ".page-normal::before, .page-front::before, .page-special::before {"
         + "    content: 'Sida '; "
+        + "}"
+        // Rubrikerna är hela NCC:n – webbläsarens standardstorlekar (h1 = 2em)
+        // blir för stora. Fortfarande fetstil och något större per nivå.
+        + "h1 { font-size: 1.3em !important; } "
+        + "h2 { font-size: 1.2em !important; } "
+        + "h3 { font-size: 1.1em !important; } "
+        + "h4, h5, h6 { font-size: 1em !important; } "
+        + "h1, h2, h3, h4, h5, h6 {"
+        + "    margin-top: 0.8em !important; "
+        + "    margin-bottom: 0.3em !important; "
         + "}";
-
     /**
      * Markeringen. Färgen kommer från temat (se highlightCss). Läggs sist,
      * efter temats CSS, så att den alltid syns.
