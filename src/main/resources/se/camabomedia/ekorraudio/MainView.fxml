@@ -52,19 +52,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
       <menus>
         <Menu mnemonicParsing="false" text="Arkiv">
           <items>
-            <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Öppna…" />
+            <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Öppna…" accelerator="Shortcut+O" />
             <Menu fx:id="menuRecent" mnemonicParsing="false" text="Öppna senaste" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemClose" text="Stäng boken" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemClose" text="Stäng Boken" accelerator="Shortcut+W" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" text="Avsluta" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Redigera">
           <items>
-            <MenuItem mnemonicParsing="false" text="Skapa kommentar" />
-            <MenuItem mnemonicParsing="false" text="Redigera kommenter" />
-            <MenuItem mnemonicParsing="false" text="Ta bort kommentar" />
+            <MenuItem mnemonicParsing="false" text="Skapa kommentar (Enter)" />
+            <MenuItem mnemonicParsing="false" text="Redigera kommenter (dubbelklick)" />
+            <MenuItem mnemonicParsing="false" text="Ta bort kommentar (Delete)" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Inställningar">

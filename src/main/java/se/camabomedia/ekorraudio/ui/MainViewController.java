@@ -167,9 +167,9 @@ public class MainViewController implements Initializable {
     private void buildToolbar() {
         toolbar.getStyleClass().add("toolbar");
 
-        btnOpen = IconButton.create("mdi2f-folder-open-outline", "Öppna talbok", this::selectProject);
+        btnOpen = IconButton.create("mdi2f-folder-open-outline", "Öppna talbok (Ctrl-O)", this::selectProject);
         btnOpenRecent = IconButton.create("mdi2h-history", "Öppna senaste bok (Ctrl+Skift+O)", this::openMostRecent);
-        btnClose = IconButton.create("mdi2c-close-box-outline", "Stäng talboken", this::closeProject);
+        btnClose = IconButton.create("mdi2c-close-box-outline", "Stäng talboken (Ctrl-W)", this::closeProject);
 
         btnShowReport = IconButton.create("mdi2f-file-document-outline", "Visa rapporten", this::showReport);
         btnReportFolder = IconButton.create("mdi2f-folder-text-outline", "Öppna rapportmappen", this::openReportFolder);
