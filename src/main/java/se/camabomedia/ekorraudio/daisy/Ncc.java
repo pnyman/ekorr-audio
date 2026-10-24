@@ -145,6 +145,9 @@ public class Ncc {
     // <span class="page-normal" id="page-68">
         Pattern headingPattern = Pattern.compile("^h(\\d)");
         ArrayList<String> breadCrumb = new ArrayList<>();
+        // Nivån för varje post i breadCrumb – så att hoppade nivåer (h1 → h3)
+        // inte gör att för många rubriker tas bort när man går tillbaka
+        ArrayList<Integer> crumbLevels = new ArrayList<>();
         int thisLevel = 1;
         int previousLevel = 1;
         String page = null;
@@ -168,15 +171,14 @@ public class Ncc {
             Matcher m = headingPattern.matcher(name);
             if (m.find()) {
                 thisLevel = Integer.parseInt(m.group(1));
-                if (thisLevel == 1) {
-                    breadCrumb = new ArrayList<>();
-                }
-                else {
-                    breadCrumb = new ArrayList<>(breadCrumb);
-                    for (int i = previousLevel; i >= thisLevel; i--)
-                        breadCrumb.remove(breadCrumb.size() - 1);
+                // Ny lista (de gamla delas av tidigare poster)
+                breadCrumb = new ArrayList<>(breadCrumb);
+                while (!crumbLevels.isEmpty() && crumbLevels.get(crumbLevels.size() - 1) >= thisLevel) {
+                    crumbLevels.remove(crumbLevels.size() - 1);
+                    breadCrumb.remove(breadCrumb.size() - 1);
                 }
                 breadCrumb.add(parID);
+                crumbLevels.add(thisLevel);
             }
 
             NccItem nccItem = new NccItem(name, cssClass, text, smil, parID,

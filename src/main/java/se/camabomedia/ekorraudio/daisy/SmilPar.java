@@ -55,6 +55,11 @@ public class SmilPar {
         return textElementID;
     }
 
+    /** Smil-filen som par:et står i (= rubriken det hör till). */
+    public String getSmilFile() {
+        return smilFile;
+    }
+
     public String getContentFile() {
         return contentFile;
     }

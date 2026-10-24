@@ -1196,7 +1196,7 @@ public class MainViewController implements Initializable {
         }
         mpv.pause();
         String page = currentIndex >= 0 ? timeline.get(currentIndex).getPage() : null;
-        if (openCommentDialog(null, page)) {
+        if (openCommentDialog(null, page, currentPosition())) {
             List<Comment> comments = report.getComments();
             afterChange(comments.isEmpty() ? null : comments.get(comments.size() - 1));
         }
@@ -1208,7 +1208,7 @@ public class MainViewController implements Initializable {
             return;
         }
         mpv.pause();
-        if (openCommentDialog(comment, null)) {
+        if (openCommentDialog(comment, null, null)) {
             // Redigeringen ersätter objektet i listan – markera det nya på samma plats
             int index = Math.min(report.getComments().size() - 1,
                                  Math.max(0, commentIndexBefore));
@@ -1219,10 +1219,45 @@ public class MainViewController implements Initializable {
     private int commentIndexBefore = -1;
 
     /**
+     * Var i boken man är: boktid och rubriktid, och för talböcker utan text
+     * också event och rubrik med överordnade rubriker (nivå1 > nivå2 > …).
+     */
+    private se.camabomedia.ekorraudio.report.Position currentPosition() {
+        if (timeline == null || currentIndex < 0) {
+            return null;
+        }
+        long ms = seekTarget >= 0 ? seekTarget : mpv.getPosition();
+        // Inom det markerade par:et (ett par utan ljud har samma start som nästa)
+        ms = Math.max(timeline.startOf(currentIndex), Math.min(ms, timeline.endOf(currentIndex)));
+
+        String event = "";
+        String heading = "";
+        if (ncc.isAudioOnly()) {
+            event = Integer.toString(timeline.eventAt(currentIndex, ms));
+            List<String> names = new java.util.ArrayList<>();
+            List<String> crumbs = timeline.get(currentIndex).getBreadCrumbs();
+            if (crumbs != null) {
+                for (String parID : crumbs) {
+                    se.camabomedia.ekorraudio.daisy.NccItem item = ncc.getNccItem(parID);
+                    if (item != null) {
+                        names.add(item.getText());
+                    }
+                }
+            }
+            heading = String.join(" > ", names);
+        }
+        return new se.camabomedia.ekorraudio.report.Position(
+            se.camabomedia.ekorraudio.report.Position.format(ms),
+            se.camabomedia.ekorraudio.report.Position.format(timeline.headingTime(currentIndex, ms)),
+            event, heading);
+    }
+
+    /**
      * Visar kommentarsformuläret (CommentView3). comment == null betyder ny.
      * @return true om kommentaren sparades
      */
-    private boolean openCommentDialog(Comment comment, String page) {
+    private boolean openCommentDialog(Comment comment, String page,
+                                      se.camabomedia.ekorraudio.report.Position position) {
         if (settings.getProofreader() == null) {
             setProofReaderName();
         }
@@ -1245,7 +1280,7 @@ public class MainViewController implements Initializable {
 
             CommentView3Controller ctrl = loader.getController();
             if (comment == null) {
-                ctrl.initData(commentStage, report, ncc, page);
+                ctrl.initData(commentStage, report, ncc, page, position);
             }
             else {
                 ctrl.initData(commentStage, report, comment, ncc);

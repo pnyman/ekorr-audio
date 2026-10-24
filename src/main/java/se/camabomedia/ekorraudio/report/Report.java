@@ -111,8 +111,10 @@ public class Report {
         addMetadata();
 
         int nr = 0;
+        boolean showSeek = !ncc.isAudioOnly();   // ingen text att söka i
         for (Comment comment : comments) {
             comment.setNr(Integer.toString(++nr));
+            comment.setShowSeek(showSeek);
             doc.getElementById("comments").append(comment.toString());
         }
 
@@ -208,6 +210,10 @@ public class Report {
             String wrong = "";
             String right = "";
             String audio = null;
+            String bookTime = "";
+            String headingTime = "";
+            String event = "";
+            String heading = "";
 
             for (Element elt : comment.getElementsByClass("comment-nr")) {
                 nr = elt.text().replaceAll("\\.$", "");
@@ -232,7 +238,21 @@ public class Report {
                 // src = data:audio/wav;base64,UklGRkJpAABXQVZFZm10IB...
                 audio = audio.replace("data:audio/wav;base64,", "");
             }
+            for (Element elt : comment.getElementsByClass("comment-booktime")) {
+                bookTime = elt.text();
+            }
+            for (Element elt : comment.getElementsByClass("comment-headingtime")) {
+                headingTime = elt.text();
+            }
+            for (Element elt : comment.getElementsByClass("comment-event")) {
+                event = elt.text();
+            }
+            for (Element elt : comment.getElementsByClass("comment-heading")) {
+                heading = elt.text();
+            }
             addComment(nr, page, type, seek, wrong, right, audio);
+            comments.get(comments.size() - 1)
+                .setPosition(new Position(bookTime, headingTime, event, heading));
         }
     }
 

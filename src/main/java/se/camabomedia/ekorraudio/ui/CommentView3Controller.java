@@ -72,6 +72,8 @@ public class CommentView3Controller implements Initializable {
     };
 
     private Ncc ncc;
+    /** Var i boken kommentaren görs (boktid m.m.) – skrivs bara i rapporten. */
+    private se.camabomedia.ekorraudio.report.Position position;
     private AudioRecorderPlayer audioRecorderPlayer;
 
     /**
@@ -284,6 +286,13 @@ public class CommentView3Controller implements Initializable {
      * Ny kommentar med sidnumret förifyllt (sidan som spelas/är markerad).
      */
     public void initData(Stage stage, Report report, Ncc ncc, String page) {
+        initData(stage, report, ncc, page, null);
+    }
+
+    /** Ny kommentar med sidnummer och position (boktid, rubriktid …). */
+    public void initData(Stage stage, Report report, Ncc ncc, String page,
+                         se.camabomedia.ekorraudio.report.Position position) {
+        this.position = position;
         this.stage = stage;
         this.report = report;
         this.ncc = ncc;
@@ -306,6 +315,7 @@ public class CommentView3Controller implements Initializable {
         this.stage = stage;
         this.report = report;
         this.comment = comment;
+        this.position = comment.getPosition();   // redigering behåller platsen
         this.ncc = ncc;
         this.audioRecorderPlayer = new AudioRecorderPlayer(report.getReportDirectory());
         audioRecorderPlayer.setWavData(comment.getAudioData());
@@ -440,6 +450,7 @@ public class CommentView3Controller implements Initializable {
         // Att skriva rapporten tar bara några millisekunder – gör det direkt,
         // så att ett fel kan visas och fönstret hållas öppet
         Comment newComment = new Comment(null, page, type, seek, wrong, right, audioRecorderPlayer.getWavData());
+        newComment.setPosition(position);
         try {
             if (editComment) {
                 report.replaceComment(comment, newComment);

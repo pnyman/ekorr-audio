@@ -19,6 +19,10 @@ public class Comment {
     String wrong = "";
     String right = "";
     String base64EncodedAudio = null;
+    /** Boktid, rubriktid m.m., eller null (äldre kommentarer). */
+    private Position position = null;
+    /** Om raden Sök: ska skrivas – inte för talböcker utan text. */
+    private boolean showSeek = true;
     private final String ENDASH = "–";
 
     public Comment(String commentNr, String page, String type, String seek,
@@ -91,6 +95,19 @@ public class Comment {
         return base64EncodedAudio;
     }
 
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setPosition(Position position) {
+        this.position = position == null || position.isEmpty() ? null : position;
+    }
+
+    /** Sätts av Report när rapporten skrivs: false för talböcker utan text. */
+    void setShowSeek(boolean showSeek) {
+        this.showSeek = showSeek;
+    }
+
 
     @Override
     public String toString() {
@@ -119,9 +136,30 @@ public class Comment {
                 + "</td></tr>";
         }
 
-        html += "<tr><td class='comment-head'>Sida:</td><td class='comment-page'>" + html(page) + "</td></tr>";
+        // Sida, och på samma rad boktid, rubriktid och (utan text) event.
+        // Varje värde i ett eget span, så att rapporten kan läsas in igen.
+        String sep = "&nbsp;&nbsp;&nbsp;";
+        html += "<tr><td class='comment-head'>Sida:</td><td class='comment-page-row'>"
+            + "<span class='comment-page'>" + html(page) + "</span>";
+        if (position != null) {
+            if (!position.bookTime.isEmpty()) {
+                html += sep + "Boktid: <span class='comment-booktime'>" + html(position.bookTime) + "</span>";
+            }
+            if (!position.headingTime.isEmpty()) {
+                html += sep + "Rubriktid: <span class='comment-headingtime'>" + html(position.headingTime) + "</span>";
+            }
+            if (!position.event.isEmpty()) {
+                html += sep + "Event: <span class='comment-event'>" + html(position.event) + "</span>";
+            }
+        }
+        html += "</td></tr>";
 
-        if (!seek.equals("")) {
+        if (position != null && !position.heading.isEmpty()) {
+            html += "<tr><td class='comment-head'>Rubrik:</td><td class='comment-heading'>"
+                + html(position.heading) + "</td></tr>";
+        }
+
+        if (showSeek && !seek.equals("")) {
             html += "<tr>"
                 + "<td class='comment-head'>Sök:</td><td class='comment-seek'>"
                 + html(seek) + "</td></tr>";

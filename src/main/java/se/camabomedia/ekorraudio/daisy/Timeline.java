@@ -83,6 +83,12 @@ public class Timeline {
     private final int[] headings;
     private final int[] pages;
     private final long duration;
+    /** Global starttid för första par:et i samma smil-fil (rubrik), per par. */
+    private final long[] smilStarts;
+    /** Antal event (par + audio) före par:et i dess smil-fil, per par. */
+    private final int[] eventBase;
+    /** Global starttid för varje ljudklipp i par:et, per par. */
+    private final long[][] parClipStarts;
     /** Global starttid (ms) för varje ljudklipp, stigande. */
     private final long[] clipStarts;
 
@@ -97,11 +103,27 @@ public class Timeline {
         long segBegin = 0, segEnd = 0, segStart = 0;
         long t = 0;
         ArrayList<Long> clips = new ArrayList<>();
+        smilStarts = new long[n];
+        eventBase = new int[n];
+        parClipStarts = new long[n][];
+        String smilFile = null;
+        long smilStart = 0;
+        int events = 0;
 
         for (int i = 0; i < n; i++) {
             SmilPar par = pars.get(i);
             indexOf.put(par, i);
             starts[i] = t;
+            if (!java.util.Objects.equals(par.getSmilFile(), smilFile)) {
+                smilFile = par.getSmilFile();
+                smilStart = t;
+                events = 0;
+            }
+            smilStarts[i] = smilStart;
+            eventBase[i] = events;
+            events += 1 + par.getSmilAudio().size();   // par:et och dess klipp
+            parClipStarts[i] = new long[par.getSmilAudio().size()];
+            int c = 0;
 
             for (SmilAudio clip : par.getSmilAudio()) {
                 File f = new File(directory, clip.getSrc());
@@ -122,6 +144,7 @@ public class Timeline {
                     segStart = t;
                 }
                 long clipStart = segStart + (clip.getClipBegin() - segBegin);
+                parClipStarts[i][c++] = clipStart;
                 if (clips.isEmpty() || clips.get(clips.size() - 1) < clipStart) {
                     clips.add(clipStart);
                 }
@@ -272,6 +295,25 @@ public class Timeline {
         }
         // i är första position med värde >= limit
         return i - 1 >= 0 ? clipStarts[i - 1] : (clipStarts.length > 0 ? clipStarts[0] : -1);
+    }
+
+    /** Förfluten tid (ms) i rubriken – smil-filen – för par index vid tiden ms. */
+    public long headingTime(int index, long ms) {
+        return Math.max(0, ms - smilStarts[index]);
+    }
+
+    /**
+     * Eventnummer i smil-filen vid tiden ms i par index. Både par och varje
+     * audio räknas, från 1 i varje smil-fil: ett par med tre klipp är
+     * event 1 (par:et), 2, 3 och 4 (klippen).
+     */
+    public int eventAt(int index, long ms) {
+        long[] clipsInPar = parClipStarts[index];
+        int started = 0;
+        while (started < clipsInPar.length && clipsInPar[started] <= ms) {
+            started++;
+        }
+        return eventBase[index] + 1 + started;
     }
 
     /** Nästa mål efter from på given nivå, eller -1. */
