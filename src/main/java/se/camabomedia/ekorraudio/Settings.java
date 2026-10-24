@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -178,6 +179,31 @@ public class Settings {
         }
     }
 
+    /** Om ljudkurvan ska visas. */
+    @SuppressWarnings("unchecked")
+    public void addShowWaveform(boolean show) {
+        settings.put("showWaveform", show);
+        writeJSON();
+    }
+
+    /** Om ljudkurvan ska visas (standard: ja). */
+    public boolean getShowWaveform() {
+        return !Boolean.FALSE.equals(settings.get("showWaveform"));
+    }
+
+    /** Färgtema (namnet på Theme-konstanten, t.ex. "SOLARIZED_DARK"). */
+    @SuppressWarnings("unchecked")
+    public void addTheme(String theme) {
+        settings.put("theme", theme);
+        writeJSON();
+    }
+
+    /** Sparat tema, eller null om inget valts. */
+    public String getTheme() {
+        Object value = settings.get("theme");
+        return value instanceof String ? (String) value : null;
+    }
+
     /** Typsnitt för texten, eller null för bokens eget. */
     @SuppressWarnings("unchecked")
     public void addFontFamily(String family) {
@@ -209,19 +235,6 @@ public class Settings {
         return value instanceof Number ? ((Number) value).doubleValue() : 0;
     }
 
-    /** Färgtema (namnet på Theme-konstanten, t.ex. "SOLARIZED_DARK"). */
-    @SuppressWarnings("unchecked")
-    public void addTheme(String theme) {
-        settings.put("theme", theme);
-        writeJSON();
-    }
-
-    /** Sparat tema, eller null om inget valts. */
-    public String getTheme() {
-        Object value = settings.get("theme");
-        return value instanceof String ? (String) value : null;
-    }
-
     /** Den högre hastighet (procent) som "-" växlar till. */
     @SuppressWarnings("unchecked")
     public void addFastSpeed(int percent) {
@@ -234,18 +247,6 @@ public class Settings {
         Object value = settings.get("fastSpeed");
         // json-simple läser tal som Long
         return value instanceof Number ? ((Number) value).intValue() : 0;
-    }
-
-    /** Om ljudkurvan ska visas. */
-    @SuppressWarnings("unchecked")
-    public void addShowWaveform(boolean show) {
-        settings.put("showWaveform", show);
-        writeJSON();
-    }
-
-    /** Om ljudkurvan ska visas (standard: ja). */
-    public boolean getShowWaveform() {
-        return !Boolean.FALSE.equals(settings.get("showWaveform"));
     }
 
     @SuppressWarnings("unchecked")
@@ -279,6 +280,104 @@ public class Settings {
         catch (NullPointerException ignore) {}
 
         return lastProject;
+    }
+
+    // ------------------------------------------------------------ senaste böcker
+
+    /** Så många böcker sparas i listan "Senaste". */
+    private static final int MAX_RECENT = 10;
+
+    /** En bok i listan över senast öppnade. */
+    public static final class RecentBook {
+        public final String ncc;
+        public final String title;
+        /** Position i boken (ms från början) när den lämnades. */
+        public final long positionMs;
+
+        RecentBook(String ncc, String title, long positionMs) {
+            this.ncc = ncc;
+            this.title = title;
+            this.positionMs = positionMs;
+        }
+    }
+
+    /**
+     * Lägger boken först i listan över senaste böcker, med positionen
+     * man är på. Finns den redan flyttas den upp.
+     */
+    @SuppressWarnings("unchecked")
+    public void addRecentBook(String ncc, String title, long positionMs) {
+        if (ncc == null) {
+            return;
+        }
+        JSONArray list = new JSONArray();
+        JSONObject entry = new JSONObject();
+        entry.put("ncc", ncc);
+        entry.put("title", title == null ? "" : title);
+        entry.put("position", Math.max(0, positionMs));
+        list.add(entry);
+        for (RecentBook b : getRecentBooks()) {
+            if (!b.ncc.equalsIgnoreCase(ncc) && list.size() < MAX_RECENT) {
+                JSONObject e = new JSONObject();
+                e.put("ncc", b.ncc);
+                e.put("title", b.title);
+                e.put("position", b.positionMs);
+                list.add(e);
+            }
+        }
+        settings.put("recentBooks", list);
+        writeJSON();
+    }
+
+    /** Tar bort en bok ur listan (t.ex. om den inte finns längre). */
+    @SuppressWarnings("unchecked")
+    public void removeRecentBook(String ncc) {
+        JSONArray list = new JSONArray();
+        for (RecentBook b : getRecentBooks()) {
+            if (!b.ncc.equalsIgnoreCase(ncc)) {
+                JSONObject e = new JSONObject();
+                e.put("ncc", b.ncc);
+                e.put("title", b.title);
+                e.put("position", b.positionMs);
+                list.add(e);
+            }
+        }
+        settings.put("recentBooks", list);
+        writeJSON();
+    }
+
+    /** De senaste böckerna, senast använda först. */
+    public java.util.List<RecentBook> getRecentBooks() {
+        java.util.List<RecentBook> books = new java.util.ArrayList<>();
+        Object value = settings.get("recentBooks");
+        if (!(value instanceof JSONArray)) {
+            return books;
+        }
+        for (Object o : (JSONArray) value) {
+            if (!(o instanceof JSONObject)) {
+                continue;
+            }
+            JSONObject e = (JSONObject) o;
+            Object ncc = e.get("ncc");
+            Object title = e.get("title");
+            Object pos = e.get("position");
+            if (ncc instanceof String) {
+                books.add(new RecentBook((String) ncc,
+                                         title instanceof String ? (String) title : "",
+                                         pos instanceof Number ? ((Number) pos).longValue() : 0));
+            }
+        }
+        return books;
+    }
+
+    /** Sparad position (ms) för boken, eller 0 om den inte finns i listan. */
+    public long getBookPosition(String ncc) {
+        for (RecentBook b : getRecentBooks()) {
+            if (b.ncc.equalsIgnoreCase(ncc)) {
+                return b.positionMs;
+            }
+        }
+        return 0;
     }
 
     private void writeJSON() {

@@ -54,7 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           <items>
             <MenuItem mnemonicParsing="false" text="New" />
             <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
+            <Menu fx:id="menuRecent" mnemonicParsing="false" text="Open Recent" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemClose" text="Close" />
             <MenuItem mnemonicParsing="false" text="Save" />

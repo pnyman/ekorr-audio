@@ -94,6 +94,7 @@ public class MainViewController implements Initializable {
     private String currentPageParID = null;
     @FXML private MenuItem menuItemOpen;
     @FXML private javafx.scene.control.Menu menuTheme;
+    @FXML private javafx.scene.control.Menu menuRecent;
     @FXML private Label labelStatus;
 
     private Stage stage;
@@ -182,17 +183,17 @@ public class MainViewController implements Initializable {
         btnForward = IconButton.create("mdi2s-skip-next", "Nästa fras (↓)",
                                        () -> step(true, Timeline.Level.PHRASE));
 
-        btnSlower = IconButton.create("mdi2m-minus-circle-outline", "Långsammare (,)",
+        btnSlower = IconButton.create("mdi2m-minus-circle-outline", "Långsammare (kommatecken)",
                                       () -> changeSpeed(-SPEED_STEP));
         speedLabel = new Label();
         speedLabel.getStyleClass().add("speed-label");
-        btnFaster = IconButton.create("mdi2p-plus-circle-outline", "Snabbare (.)",
+        btnFaster = IconButton.create("mdi2p-plus-circle-outline", "Snabbare (punkt)",
                                       () -> changeSpeed(+SPEED_STEP));
         btnGoToPage = IconButton.create("mdi2b-book-open-page-variant", "Gå till sida (Ctrl+G)",
                                         this::goToPage);
         btnSearch = IconButton.create("mdi2m-magnify", "Sök i texten (Ctrl+F)",
                                       this::toggleSearch);
-        btnWaveform = IconButton.create("mdi2w-waveform", "Visa/dölj ljudkurvan",
+        btnWaveform = IconButton.create("mdi2w-waveform", "Visa/dölj ljudkurvan (Ctrl+K)",
                                         this::toggleWaveform);
 
         btnNewComment = IconButton.create("mdi2c-comment-plus-outline", "Ny kommentar (Enter)",
@@ -310,7 +311,11 @@ public class MainViewController implements Initializable {
         restoreLayout();
         // Spara layouten när fönstret stängs. addEventHandler körs före App:s
         // setOnCloseRequest, som avslutar med System.exit.
-        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e -> saveLayout());
+        stage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e -> {
+                saveLayout();
+                rememberBook();   // position i boken till nästa gång
+            });
+        buildRecentMenu();
 
         // Filter (inte handler) så att tangenterna fungerar även när en WebView
         // eller knapp har fokus
@@ -391,6 +396,13 @@ public class MainViewController implements Initializable {
     }
 
     public void openProject(File nccFile) {
+        if (!nccFile.isFile()) {
+            showError("Hittar inte talboken", nccFile.getPath());
+            settings.removeRecentBook(nccFile.getAbsolutePath());
+            buildRecentMenu();
+            return;
+        }
+        rememberBook();   // boken som var öppen, innan den stängs
         mpv.close();
         currentIndex = -1;
 
@@ -416,7 +428,15 @@ public class MainViewController implements Initializable {
             return;
         }
 
-        goTo(0, false);
+        // Fortsätt där man var senast i den här boken, annars från början
+        long start = settings.getBookPosition(nccFile.getAbsolutePath());
+        if (start <= 0 || start >= timeline.duration()) {
+            start = timeline.startOf(0);
+        }
+        goTo(timeline.indexAt(start), false);
+        updateStatus(start);
+        settings.addRecentBook(nccFile.getAbsolutePath(), ncc.getTitle(), start);
+        buildRecentMenu();
 
         try {
             if (edlFile == null) {
@@ -424,7 +444,7 @@ public class MainViewController implements Initializable {
                 edlFile.toFile().deleteOnExit();
             }
             timeline.writeEdl(edlFile);
-            mpv.open(edlFile, timeline.startOf(0));
+            mpv.open(edlFile, start);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -620,6 +640,11 @@ public class MainViewController implements Initializable {
         if (event.isShortcutDown() && event.getCode() == KeyCode.G) {
             // Efter tangenthändelsen, så att G inte hamnar i dialogens fält
             Platform.runLater(this::goToPage);
+            event.consume();
+            return;
+        }
+        if (event.isShortcutDown() && event.getCode() == KeyCode.K) {
+            toggleWaveform();
             event.consume();
             return;
         }
@@ -1179,6 +1204,7 @@ public class MainViewController implements Initializable {
 
     /** Stänger talboken: stoppar ljudet och tömmer alla vyer. */
     private void closeProject() {
+        rememberBook();
         mpv.close();
         closeWaveform();
         contentView.setMissingAudio(null);
@@ -1198,6 +1224,7 @@ public class MainViewController implements Initializable {
         commentTable.clear();
         updateStatus(0);
         updateButtons();
+        buildRecentMenu();
     }
 
     /** Öppnar rapporten i systemets webbläsare. */
@@ -1279,6 +1306,48 @@ public class MainViewController implements Initializable {
         if (d != null && d.length == splitPane.getDividers().size()) {
             // Efter att fönstret visats, annars skriver första layouten över dem
             Platform.runLater(() -> splitPane.setDividerPositions(d));
+        }
+    }
+
+    /** Sparar öppen bok och positionen i den överst i listan "Senaste". */
+    private void rememberBook() {
+        if (ncc == null || timeline == null) {
+            return;
+        }
+        long position = seekTarget >= 0 ? seekTarget : mpv.getPosition();
+        settings.addRecentBook(ncc.getNccFile().getAbsolutePath(), ncc.getTitle(), position);
+        buildRecentMenu();
+    }
+
+    /**
+     * Arkiv → Senaste: de senast öppnade böckerna (utom den som är öppen),
+     * med position. Den översta öppnas också med Ctrl+Skift+O.
+     */
+    private void buildRecentMenu() {
+        if (menuRecent == null) {
+            return;
+        }
+        menuRecent.getItems().clear();
+        String open = ncc == null ? null : ncc.getNccFile().getAbsolutePath();
+        for (Settings.RecentBook book : settings.getRecentBooks()) {
+            if (book.ncc.equalsIgnoreCase(open)) {
+                continue;
+            }
+            File file = new File(book.ncc);
+            String title = book.title == null || book.title.isBlank()
+                ? file.getParentFile().getName() : book.title;
+            MenuItem item = new MenuItem(title + "  –  " + Timeline.format(book.positionMs));
+            item.setMnemonicParsing(false);
+            item.setOnAction(e -> openProject(file));
+            if (menuRecent.getItems().isEmpty()) {
+                item.setAccelerator(javafx.scene.input.KeyCombination.keyCombination("Shortcut+Shift+O"));
+            }
+            menuRecent.getItems().add(item);
+        }
+        if (menuRecent.getItems().isEmpty()) {
+            MenuItem none = new MenuItem("(inga)");
+            none.setDisable(true);
+            menuRecent.getItems().add(none);
         }
     }
 
