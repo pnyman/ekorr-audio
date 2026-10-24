@@ -82,6 +82,7 @@ public class MainViewController implements Initializable {
     private Button btnDeleteComment;
     private Button btnWaveform;
     private Button btnSearch;
+    private Button btnGoToPage;
 
     // Ljudkurvan under verktygsraden
     private WaveformView waveformView;
@@ -187,6 +188,8 @@ public class MainViewController implements Initializable {
         speedLabel.getStyleClass().add("speed-label");
         btnFaster = IconButton.create("mdi2p-plus-circle-outline", "Snabbare (.)",
                                       () -> changeSpeed(+SPEED_STEP));
+        btnGoToPage = IconButton.create("mdi2b-book-open-page-variant", "Gå till sida (Ctrl+G)",
+                                        this::goToPage);
         btnSearch = IconButton.create("mdi2m-magnify", "Sök i texten (Ctrl+F)",
                                       this::toggleSearch);
         btnWaveform = IconButton.create("mdi2w-waveform", "Visa/dölj ljudkurvan",
@@ -220,6 +223,7 @@ public class MainViewController implements Initializable {
             separator(),
             btnNewComment, btnEditComment, btnDeleteComment,
             separator(),
+            btnGoToPage,
             btnSearch,
             btnWaveform);
         updateSpeedLabel();
@@ -613,6 +617,12 @@ public class MainViewController implements Initializable {
             event.consume();
             return;
         }
+        if (event.isShortcutDown() && event.getCode() == KeyCode.G) {
+            // Efter tangenthändelsen, så att G inte hamnar i dialogens fält
+            Platform.runLater(this::goToPage);
+            event.consume();
+            return;
+        }
         if (event.getCode() == KeyCode.F3 && contentView.isSearchVisible()) {
             contentView.searchStep(!event.isShiftDown());
             event.consume();
@@ -988,6 +998,7 @@ public class MainViewController implements Initializable {
         btnNewComment.setDisable(report == null);
         btnEditComment.setDisable(report == null || !selected);
         btnDeleteComment.setDisable(report == null || !selected);
+        btnGoToPage.setDisable(!open || timeline.pageCount() == 0);
         btnSearch.setDisable(!open);
     }
 
@@ -1005,6 +1016,38 @@ public class MainViewController implements Initializable {
         labelStatus.setText((page != null ? "Sida " + page + "   " : "")
                             + Timeline.format(ms) + " / " + Timeline.format(timeline.duration())
                             + "   " + speed + " %");
+    }
+
+    /**
+     * Frågar efter ett sidnummer och hoppar dit. Pausläget behålls. Fältet
+     * har aktuell sida ifylld (markerad), så det räcker att skriva det nya.
+     */
+    private void goToPage() {
+        if (timeline == null || timeline.pageCount() == 0) {
+            return;
+        }
+        String current = currentIndex >= 0 ? timeline.get(currentIndex).getPage() : null;
+        javafx.scene.control.TextInputDialog dialog =
+            new javafx.scene.control.TextInputDialog(current == null ? "" : current.strip());
+        dialog.initOwner(stage);
+        styleDialog(dialog.getDialogPane());
+        dialog.setTitle("Gå till sida");
+        dialog.setHeaderText(null);
+        dialog.setGraphic(null);
+        dialog.setContentText("Sida (" + timeline.pageLabel(0) + "–"
+                              + timeline.pageLabel(timeline.pageCount() - 1) + "):");
+
+        java.util.Optional<String> answer = dialog.showAndWait();
+        if (answer.isEmpty() || answer.get().isBlank()) {
+            return;
+        }
+        String page = answer.get().strip();
+        int index = timeline.indexOfPage(page);
+        if (index < 0) {
+            showError("Sidan finns inte", "Hittade ingen sida " + page + " i boken.");
+            return;
+        }
+        goTo(index, true);
     }
 
     private void showError(String header, String message) {

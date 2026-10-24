@@ -221,11 +221,23 @@ public class Timeline {
         String wanted = page.strip();
         for (int i : pages) {
             String p = pars.get(i).getPage();
-            if (p != null && p.strip().equals(wanted)) {
+            // Utan hänsyn till skiftläge, så att "xii" hittar "XII"
+            if (p != null && p.strip().equalsIgnoreCase(wanted)) {
                 return i;
             }
         }
         return -1;
+    }
+
+    /** Antal sidnummer i boken. */
+    public int pageCount() {
+        return pages.length;
+    }
+
+    /** Sidnumret (texten) för sida nummer i i bokordning, 0 ≤ i < pageCount(). */
+    public String pageLabel(int i) {
+        String p = pars.get(pages[i]).getPage();
+        return p == null ? "" : p.strip();
     }
 
     /** Index för nästa sida efter from, eller size() om det inte finns fler. */
