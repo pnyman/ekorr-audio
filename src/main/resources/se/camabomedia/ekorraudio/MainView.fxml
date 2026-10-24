@@ -56,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <Menu fx:id="menuRecent" mnemonicParsing="false" text="Öppna senaste" />
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemClose" text="Stäng Boken" accelerator="Shortcut+W" />
             <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Avsluta" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemQuit" text="Avsluta" accelerator="Shortcut+Q" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Redigera">

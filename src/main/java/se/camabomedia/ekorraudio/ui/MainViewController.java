@@ -1025,6 +1025,7 @@ public class MainViewController implements Initializable {
         btnDeleteComment.setDisable(report == null || !selected);
         btnGoToPage.setDisable(!open || timeline.pageCount() == 0);
         btnSearch.setDisable(!open);
+        btnWaveform.setDisable(!open);
     }
 
     private void updateStatus(long ms) {
@@ -1525,7 +1526,6 @@ public class MainViewController implements Initializable {
 
     // ------------------------------------------------------------ FXML
 
-
     @FXML
     void handleMenuItemOpen(ActionEvent event) {
         selectProject();
@@ -1536,9 +1536,10 @@ public class MainViewController implements Initializable {
         closeProject();
     }
 
-
-
-
+    @FXML
+    void handleMenuItemQuit(ActionEvent event) {
+        stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+    }
 
     @FXML
     void handleMenuItemName(ActionEvent event) {
