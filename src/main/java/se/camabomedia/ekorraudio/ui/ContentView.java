@@ -100,6 +100,7 @@ public class ContentView {
         + "    margin-top: 0.8em !important; "
         + "    margin-bottom: 0.3em !important; "
         + "}";
+
     /**
      * Markeringen. Färgen kommer från temat (se highlightCss). Läggs sist,
      * efter temats CSS, så att den alltid syns.
@@ -207,6 +208,7 @@ public class ContentView {
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.FAILED || newValue == Worker.State.CANCELLED) {
                 loading = false;
+                notifyLoaded();   // så att "Öppnar …" inte blir hängande
                 return;
             }
             if (newValue != Worker.State.SUCCEEDED) {
@@ -231,7 +233,24 @@ public class ContentView {
                 pendingElementID = null;
                 highlight(id);
             }
+            notifyLoaded();
         });
+    }
+
+    /** Anropas när en bok laddats klart i vyn (inte efter clear). */
+    private Runnable onLoaded = () -> {};
+    /** Sant från openContent tills laddningen är klar. */
+    private boolean notifyOnLoad = false;
+
+    public void setOnLoaded(Runnable handler) {
+        onLoaded = handler == null ? () -> {} : handler;
+    }
+
+    private void notifyLoaded() {
+        if (notifyOnLoad) {
+            notifyOnLoad = false;
+            onLoaded.run();
+        }
     }
 
     /**
@@ -514,6 +533,7 @@ public class ContentView {
      */
     public void openContent(File contentFile, boolean nccAsContent) {
         this.nccAsContent = nccAsContent;
+        notifyOnLoad = true;
         currentElement = null;
         currentElementID = null;
         pendingElementID = null;
@@ -571,6 +591,7 @@ public class ContentView {
         pendingElementID = null;
         styleNode = null;
         loading = false;
+        notifyOnLoad = false;
         // Stäng sökraden – den hör till boken som stängs
         searchDelay.stop();
         searchBar.setVisible(false);

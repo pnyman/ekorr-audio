@@ -53,40 +53,52 @@ public class Smil {
         this.content = content;
         directory = ncc.getDirectory();
 
-        for (String smilFile : ncc.getSmilFiles()) {
-            addSmil(smilFile, ncc.getBreadCrumbs(smilFile));
+        // Filerna läses parallellt (det är det som tar tid), men gås sedan
+        // igenom i bokordning – collect behåller ordningen från listan
+        ArrayList<String> files = ncc.getSmilFiles();
+        java.util.List<Document> docs = files.parallelStream()
+            .map(this::parseSmil)
+            .collect(java.util.stream.Collectors.toList());
+        for (int i = 0; i < files.size(); i++) {
+            if (docs.get(i) != null) {
+                addSmil(files.get(i), docs.get(i), ncc.getBreadCrumbs(files.get(i)));
+            }
         }
     }
 
-    private void addSmil(String smilFile, ArrayList<String> breadCrumbs) {
+    /** Läser en smil-fil, eller null (med felutskrift) om det inte går. */
+    private Document parseSmil(String smilFile) {
         try {
-            Document doc = Jsoup.parse(new File(directory, smilFile), "UTF-8");
-            SmilPar thisSmilPar;
-
-            for (Element parElement : doc.getElementsByTag("par")) {
-                thisSmilPar = addSmilPar(parElement, smilFile, breadCrumbs);
-
-                if (firstSmilPar == null) {
-                    firstSmilPar = thisSmilPar;
-                }
-
-                if (previousSmilPar != null) {
-                    thisSmilPar.setPreviousSmilPar(previousSmilPar);
-                    previousSmilPar.setNextSmilPar(thisSmilPar);
-                }
-                // else {
-                //     thisSmilPar.setPreviousSmilPar(null);
-                // }
-
-                populateMp3StartTimesTable(thisSmilPar);
-                populateMp3ContentIdTable(thisSmilPar);
-                smilPars.add(thisSmilPar);
-                previousSmilPar = thisSmilPar;
-            }
+            return Jsoup.parse(new File(directory, smilFile), "UTF-8");
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void addSmil(String smilFile, Document doc, ArrayList<String> breadCrumbs) {
+        SmilPar thisSmilPar;
+
+        for (Element parElement : doc.getElementsByTag("par")) {
+            thisSmilPar = addSmilPar(parElement, smilFile, breadCrumbs);
+
+            if (firstSmilPar == null) {
+                firstSmilPar = thisSmilPar;
+            }
+
+            if (previousSmilPar != null) {
+                thisSmilPar.setPreviousSmilPar(previousSmilPar);
+                previousSmilPar.setNextSmilPar(thisSmilPar);
+            }
+            // else {
+            //     thisSmilPar.setPreviousSmilPar(null);
+            // }
+
+            populateMp3StartTimesTable(thisSmilPar);
+            populateMp3ContentIdTable(thisSmilPar);
+            smilPars.add(thisSmilPar);
+            previousSmilPar = thisSmilPar;
         }
     }
 

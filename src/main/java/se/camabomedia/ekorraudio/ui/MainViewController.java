@@ -261,6 +261,11 @@ public class MainViewController implements Initializable {
 
         contentView = new ContentView();
         contentPane.getChildren().add(contentView.getContentView());
+        buildLoadingOverlay();
+        contentView.setOnLoaded(() -> {
+            textReady = true;
+            hideLoadingWhenReady();
+        });
         anchorToAllSides(contentView.webView);
 
         nccView = new NccView();
@@ -402,27 +407,99 @@ public class MainViewController implements Initializable {
             buildRecentMenu();
             return;
         }
-        rememberBook();   // boken som var öppen, innan den stängs
-        mpv.close();
-        currentIndex = -1;
+        if (opening) {
+            return;   // en bok håller redan på att öppnas
+        }
+        closeProject();   // sparar positionen i den bok som var öppen
+        opening = true;
 
-        ncc = new Ncc(nccFile);
-        updateWindowTitle();
-        Content content = new Content(ncc.getDirectory(), ncc.getContentFile());
-        smil = new Smil(ncc, content);
-        timeline = new Timeline(ncc, smil);
+        // Läsningen av ncc, textfil och alla smil-filer tar tid – gör den i
+        // en bakgrundstråd och visa "Öppnar …" under tiden. Fälten (ncc,
+        // smil, timeline) sätts först på JavaFX-tråden när allt är klart.
+        String guess = recentTitleFor(nccFile);
+        javafx.concurrent.Task<OpenedBook> task = new javafx.concurrent.Task<>() {
+            @Override
+            protected OpenedBook call() {
+                updateMessage("Öppnar " + guess);
+                long t0 = System.nanoTime();
+                Ncc n = new Ncc(nccFile);
+                long t1 = System.nanoTime();
+                // Börja ladda texten i vyn direkt – WebView arbetar på
+                // JavaFX-tråden samtidigt som smil-filerna läses här
+                File contentFile = n.getContentFilePath();
+                boolean audioOnly = n.isAudioOnly();
+                Platform.runLater(() -> {
+                    contentView.openContent(contentFile, audioOnly);
+                    nccView.openNcc(nccFile);
+                });
+                if (n.getTitle() != null && !n.getTitle().isBlank()) {
+                    updateMessage("Öppnar " + n.getTitle());
+                }
+                Content c = new Content(n.getDirectory(), n.getContentFile());
+                long t2 = System.nanoTime();
+                Smil s = new Smil(n, c);
+                long t3 = System.nanoTime();
+                Timeline t = new Timeline(n, s);
+                long t4 = System.nanoTime();
+                reportMissingSyncPoints(c, t);
+                long t5 = System.nanoTime();
+                System.err.printf("[oppna] ncc %d ms, text %d ms, smil %d ms (%d filer), "
+                                  + "tidslinje %d ms, kontroll %d ms%n",
+                                  ms(t0, t1), ms(t1, t2), ms(t2, t3), n.getSmilFiles().size(),
+                                  ms(t3, t4), ms(t4, t5));
+                return new OpenedBook(n, s, t);
+            }
+        };
+        task.setOnSucceeded(e -> {
+            opening = false;
+            finishOpening(nccFile, task.getValue());
+        });
+        task.setOnFailed(e -> {
+            opening = false;
+            hideLoading();
+            Throwable error = task.getException();
+            error.printStackTrace();
+            showError("Kan inte öppna talboken", nccFile.getPath() + "\n\n" + error);
+            updateButtons();
+        });
+        loadStarted = System.nanoTime();
+        showLoading(task.messageProperty());
+        Thread thread = new Thread(task, "open-book");
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    /** Det som läses in i bakgrunden när en bok öppnas. */
+    private static final class OpenedBook {
+        final Ncc ncc;
+        final Smil smil;
+        final Timeline timeline;
+
+        OpenedBook(Ncc ncc, Smil smil, Timeline timeline) {
+            this.ncc = ncc;
+            this.smil = smil;
+            this.timeline = timeline;
+        }
+    }
+
+    /** Resten av öppnandet, på JavaFX-tråden. "Öppnar …" döljs när texten laddats. */
+    private void finishOpening(File nccFile, OpenedBook book) {
+        long t0 = System.nanoTime();
+        ncc = book.ncc;
+        smil = book.smil;
+        timeline = book.timeline;
+        currentIndex = -1;
         seekTarget = -1;
+        updateWindowTitle();
         openWaveform();
         contentView.setMissingAudio(missingAudioIDs());
         buildPageIndex();
-        reportMissingSyncPoints(content);
         loadReport();
 
-        // Talbok utan text: NCC:n (med alla poster) visas som innehåll
-        contentView.openContent(ncc.getContentFilePath(), ncc.isAudioOnly());
-        nccView.openNcc(nccFile);
+        // Texten och NCC:n laddas redan i vyerna (startat i openProject)
 
         if (timeline.size() == 0) {
+            hideLoading();
             showError("Kan inte spela upp", "Hittade inga synkpunkter i smil-filerna.");
             updateButtons();
             return;
@@ -451,17 +528,27 @@ public class MainViewController implements Initializable {
             showError("Kan inte spela upp ljudet", e.getMessage());
         }
         updateButtons();
+        System.err.printf("[oppna] JavaFX-delen %d ms%n", ms(t0, System.nanoTime()));
+        dataReady = true;
+        hideLoadingWhenReady();
+    }
+
+    /** Tid för mätningen när en bok öppnas (tas bort när den inte behövs). */
+    private long loadStarted = 0;
+
+    private static long ms(long fromNanos, long toNanos) {
+        return (toNanos - fromNanos) / 1_000_000;
     }
 
     /** Skriver ut synkpunkter som smil-filerna pekar på men som saknas i texten. */
-    private void reportMissingSyncPoints(Content content) {
+    private static void reportMissingSyncPoints(Content content, Timeline timeline) {
         if (content.getDoc() == null) {
             return;
         }
         int missing = 0;
         for (int i = 0; i < timeline.size(); i++) {
             String id = timeline.get(i).getContentID();
-            if (content.getDoc().getElementById(id) == null) {
+            if (!content.hasId(id)) {
                 if (missing < 10) {
                     System.err.println("Synkpunkt saknas i innehållsfilen: " + id
                                        + " (" + timeline.get(i).getParElementID() + ")");
@@ -1205,6 +1292,9 @@ public class MainViewController implements Initializable {
 
     /** Stänger talboken: stoppar ljudet och tömmer alla vyer. */
     private void closeProject() {
+        if (opening) {
+            return;   // vänta tills boken som öppnas är klar
+        }
         rememberBook();
         mpv.close();
         closeWaveform();
@@ -1309,6 +1399,80 @@ public class MainViewController implements Initializable {
             Platform.runLater(() -> splitPane.setDividerPositions(d));
         }
     }
+
+    // ------------------------------------------------------------ "Öppnar …"
+
+    /** Sant medan en bok läses in i bakgrunden. */
+    private boolean opening = false;
+    private VBox loadingOverlay;
+    private final Label loadingLabel = new Label();
+
+    /**
+     * Ett lager över textvyn med en snurra och "Öppnar <bok>". Ligger i
+     * contentPane ovanpå WebView och är dolt tills en bok öppnas.
+     */
+    private void buildLoadingOverlay() {
+        javafx.scene.control.ProgressIndicator spinner = new javafx.scene.control.ProgressIndicator();
+        spinner.setMaxSize(48, 48);
+        loadingLabel.getStyleClass().add("loading-label");
+        loadingLabel.setWrapText(true);
+
+        VBox card = new VBox(12, spinner, loadingLabel);
+        card.getStyleClass().add("loading-card");
+        card.setAlignment(javafx.geometry.Pos.CENTER);
+        card.setMaxSize(VBox.USE_PREF_SIZE, VBox.USE_PREF_SIZE);
+        card.setPadding(new Insets(20, 28, 20, 28));
+
+        loadingOverlay = new VBox(card);
+        loadingOverlay.getStyleClass().add("loading-overlay");
+        loadingOverlay.setAlignment(javafx.geometry.Pos.CENTER);
+        loadingOverlay.setVisible(false);
+        contentPane.getChildren().add(loadingOverlay);
+        anchorToAllSides(loadingOverlay);
+    }
+
+    /** Texten har laddats i vyn / boken är inläst – "Öppnar …" döljs när båda är klara. */
+    private boolean textReady = false;
+    private boolean dataReady = false;
+
+    private void hideLoadingWhenReady() {
+        if (textReady && dataReady) {
+            hideLoading();
+        }
+    }
+
+    private void showLoading(javafx.beans.value.ObservableValue<String> message) {
+        textReady = false;
+        dataReady = false;
+        loadingLabel.textProperty().bind(message);
+        loadingOverlay.setVisible(true);
+        loadingOverlay.toFront();
+    }
+
+    private void hideLoading() {
+        if (loadingOverlay == null) {
+            return;
+        }
+        if (loadStarted != 0) {
+            System.err.printf("[oppna] allt klart efter %d ms%n", ms(loadStarted, System.nanoTime()));
+            loadStarted = 0;
+        }
+        loadingOverlay.setVisible(false);
+        loadingLabel.textProperty().unbind();
+    }
+
+    /** Titeln ur listan "Senaste" (eller mappens namn) – innan ncc:n är läst. */
+    private String recentTitleFor(File nccFile) {
+        for (Settings.RecentBook book : settings.getRecentBooks()) {
+            if (book.ncc.equalsIgnoreCase(nccFile.getAbsolutePath())) {
+                return recentTitle(book);
+            }
+        }
+        File dir = nccFile.getAbsoluteFile().getParentFile();
+        return dir == null ? nccFile.getName() : dir.getName();
+    }
+
+    // ------------------------------------------------------------ senaste böcker
 
     /** Sparar öppen bok och positionen i den överst i listan "Senaste". */
     private void rememberBook() {

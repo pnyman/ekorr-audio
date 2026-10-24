@@ -75,3 +75,29 @@
 .icon-button:disabled {
     -fx-opacity: 0.3;
 }
+
+/* ---------------------------------------------------------------- "Öppnar …" */
+
+/* Lager över textvyn medan en bok öppnas. Färgerna följer temat. */
+.loading-overlay {
+    -fx-background-color: -fx-background;
+}
+
+.loading-card {
+    -fx-background-color: -fx-control-inner-background;
+    -fx-background-radius: 6;
+    -fx-border-color: -ekorr-toolbar-border;
+    -fx-border-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 12, 0, 0, 2);
+}
+
+.loading-label {
+    -fx-font-size: 1.15em;
+    -fx-text-fill: -fx-text-background-color;
+    -fx-text-alignment: center;
+    -fx-max-width: 420;
+}
+
+.loading-card .progress-indicator {
+    -fx-progress-color: -fx-accent;
+}
