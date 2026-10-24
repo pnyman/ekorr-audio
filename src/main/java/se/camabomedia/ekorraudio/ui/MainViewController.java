@@ -67,6 +67,7 @@ public class MainViewController implements Initializable {
 
     // Verktygsradens knappar – skapas i buildToolbar()
     private Button btnOpen;
+    private Button btnOpenRecent;
     private Button btnClose;
     private Button btnShowReport;
     private Button btnReportFolder;
@@ -167,6 +168,7 @@ public class MainViewController implements Initializable {
         toolbar.getStyleClass().add("toolbar");
 
         btnOpen = IconButton.create("mdi2f-folder-open-outline", "Öppna talbok", this::selectProject);
+        btnOpenRecent = IconButton.create("mdi2h-history", "Öppna senaste bok (Ctrl+Skift+O)", this::openMostRecent);
         btnClose = IconButton.create("mdi2c-close-box-outline", "Stäng talboken", this::closeProject);
 
         btnShowReport = IconButton.create("mdi2f-file-document-outline", "Visa rapporten", this::showReport);
@@ -214,7 +216,7 @@ public class MainViewController implements Initializable {
                                              });
 
         toolbar.getChildren().setAll(
-            btnOpen, btnClose,
+            btnOpen, btnOpenRecent, btnClose,
             separator(),
             btnShowReport, btnReportFolder,
             separator(),
@@ -224,9 +226,7 @@ public class MainViewController implements Initializable {
             separator(),
             btnNewComment, btnEditComment, btnDeleteComment,
             separator(),
-            btnGoToPage,
-            btnSearch,
-            btnWaveform);
+            btnGoToPage, btnSearch, btnWaveform);
         updateSpeedLabel();
     }
 
@@ -1324,6 +1324,14 @@ public class MainViewController implements Initializable {
      * med position. Den översta öppnas också med Ctrl+Skift+O.
      */
     private void buildRecentMenu() {
+        // Knappen i verktygsraden: senaste boken som inte är öppen
+        Settings.RecentBook recent = mostRecentBook();
+        if (btnOpenRecent != null) {
+            btnOpenRecent.setDisable(recent == null);
+            btnOpenRecent.setTooltip(new javafx.scene.control.Tooltip(
+                recent == null ? "Öppna senaste bok (Ctrl+Skift+O)"
+                               : "Öppna " + recentTitle(recent) + " (Ctrl+Skift+O)"));
+        }
         if (menuRecent == null) {
             return;
         }
@@ -1334,9 +1342,7 @@ public class MainViewController implements Initializable {
                 continue;
             }
             File file = new File(book.ncc);
-            String title = book.title == null || book.title.isBlank()
-                ? file.getParentFile().getName() : book.title;
-            MenuItem item = new MenuItem(title + "  –  " + Timeline.format(book.positionMs));
+            MenuItem item = new MenuItem(recentTitle(book) + "  –  " + Timeline.format(book.positionMs));
             item.setMnemonicParsing(false);
             item.setOnAction(e -> openProject(file));
             if (menuRecent.getItems().isEmpty()) {
@@ -1349,6 +1355,33 @@ public class MainViewController implements Initializable {
             none.setDisable(true);
             menuRecent.getItems().add(none);
         }
+    }
+
+    /** Senast använda bok som inte är den öppna, eller null. */
+    private Settings.RecentBook mostRecentBook() {
+        String open = ncc == null ? null : ncc.getNccFile().getAbsolutePath();
+        for (Settings.RecentBook book : settings.getRecentBooks()) {
+            if (!book.ncc.equalsIgnoreCase(open)) {
+                return book;
+            }
+        }
+        return null;
+    }
+
+    private void openMostRecent() {
+        Settings.RecentBook book = mostRecentBook();
+        if (book != null) {
+            openProject(new File(book.ncc));
+        }
+    }
+
+    /** Bokens titel, eller mappens namn om titel saknas. */
+    private static String recentTitle(Settings.RecentBook book) {
+        if (book.title != null && !book.title.isBlank()) {
+            return book.title;
+        }
+        File dir = new File(book.ncc).getParentFile();
+        return dir == null ? book.ncc : dir.getName();
     }
 
     private void saveLayout() {
