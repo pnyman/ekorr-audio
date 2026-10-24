@@ -44,6 +44,7 @@ public class CommentView3Controller implements Initializable {
     @FXML private Button btnOk;
     @FXML private ListView<String> listViewType;
     @FXML private TextArea textAreaSeek;
+    @FXML private javafx.scene.control.Label labelSeek;
     @FXML private TextArea textAreaRight;
     @FXML private TextArea textAreaWrong;
     @FXML private TextField textFieldPage;
@@ -297,10 +298,37 @@ public class CommentView3Controller implements Initializable {
         this.report = report;
         this.ncc = ncc;
         this.audioRecorderPlayer = new AudioRecorderPlayer(report.getReportDirectory());
+        hideSeekIfNoText();
         if (page != null && !page.isBlank()) {
             textFieldPage.setText(page.strip());
         }
         bindKeys();
+    }
+
+    /** Sant för en talbok utan text – då finns ingen text att söka i. */
+    private boolean noText() {
+        return ncc != null && ncc.isAudioOnly();
+    }
+
+    /**
+     * Talbok utan text: fältet Söktext från boken (och dess rubrik) tas bort
+     * ur formuläret. managed = false gör att resten flyttar upp, och fönstret
+     * blir lägre.
+     */
+    private void hideSeekIfNoText() {
+        if (!noText()) {
+            return;
+        }
+        for (Node n : new Node[] { labelSeek, textAreaSeek }) {
+            if (n != null) {
+                n.setVisible(false);
+                n.setManaged(false);
+            }
+        }
+        textAreaSeek.setText("");
+        if (stage != null) {
+            stage.sizeToScene();
+        }
     }
 
     /** Om kommentaren sparades (och inte avbröts). Läses när fönstret stängts. */
@@ -319,6 +347,7 @@ public class CommentView3Controller implements Initializable {
         this.ncc = ncc;
         this.audioRecorderPlayer = new AudioRecorderPlayer(report.getReportDirectory());
         audioRecorderPlayer.setWavData(comment.getAudioData());
+        hideSeekIfNoText();
         setHasAudio();
         editComment = true;
         bindKeys();
@@ -390,7 +419,7 @@ public class CommentView3Controller implements Initializable {
         }
 
         String seek = textAreaSeek.getText().strip();
-        if (seek == null || seek.strip().equals("")) {
+        if (!noText() && (seek == null || seek.strip().equals(""))) {
             showWarningDialog("Söktext saknas", null, "Infoga text i fältet Söktext från boken.");
             return false;
         }
@@ -413,12 +442,12 @@ public class CommentView3Controller implements Initializable {
             return false;
         }
 
-        if (seek.equals(wrong)) {
+        if (!seek.isEmpty() && seek.equals(wrong)) {
             showWarningDialog("Samma text", null, "Fälten Söktext från boken och Beskrivning av felet innehåller samma text.");
             return false;
         }
 
-        if (seek.equals(right)) {
+        if (!seek.isEmpty() && seek.equals(right)) {
             showWarningDialog("Samma text", null, "Fälten Söktext från boken och Rättelse innehåller samma text.");
             return false;
         }

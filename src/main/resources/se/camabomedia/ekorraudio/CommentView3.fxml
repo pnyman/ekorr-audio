@@ -56,8 +56,8 @@
                </HBox.margin>
             </GridPane>
             <VBox>
-               <children>
-                  <Label text="Söktext från boken">
+              <children>
+                <Label fx:id="labelSeek" text="Söktext från boken">
                      <VBox.margin>
                         <Insets top="8.0" />
                      </VBox.margin>
