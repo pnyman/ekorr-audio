@@ -56,6 +56,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <Menu fx:id="menuRecent" mnemonicParsing="false" text="Öppna senaste" />
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemClose" text="Stäng Boken" accelerator="Shortcut+W" />
             <SeparatorMenuItem mnemonicParsing="false" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemShowReport" text="Se rapport" accelerator="Shortcut+R" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemOpenReportFolder" text="Öppna rapportmappen" Accelerator="Shortcut+Shift+R" />
+            <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemQuit" text="Avsluta" accelerator="Shortcut+Q" />
           </items>
         </Menu>

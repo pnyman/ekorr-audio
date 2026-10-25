@@ -171,8 +171,8 @@ public class MainViewController implements Initializable {
         btnOpenRecent = IconButton.create("mdi2h-history", "Öppna senaste bok (Ctrl+Skift+O)", this::openMostRecent);
         btnClose = IconButton.create("mdi2c-close-box-outline", "Stäng talboken (Ctrl-W)", this::closeProject);
 
-        btnShowReport = IconButton.create("mdi2f-file-document-outline", "Visa rapporten", this::showReport);
-        btnReportFolder = IconButton.create("mdi2f-folder-text-outline", "Öppna rapportmappen", this::openReportFolder);
+        btnShowReport = IconButton.create("mdi2f-file-document-outline", "Visa rapporten (Ctrl+R)", this::showReport);
+        btnReportFolder = IconButton.create("mdi2f-folder-text-outline", "Öppna rapportmappen (Ctrl+Skift+R)", this::openReportFolder);
 
         btnBack = IconButton.create("mdi2s-skip-previous", "Föregående fras (↑)",
                                     () -> step(false, Timeline.Level.PHRASE));
@@ -1738,6 +1738,16 @@ public class MainViewController implements Initializable {
     @FXML
     void handleMenuItemQuit(ActionEvent event) {
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
+    }
+
+    @FXML
+    void handleMenuItemShowReport(ActionEvent event) {
+        showReport();
+    }
+
+    @FXML
+    void handleMenuItemOpenReportFolder(ActionEvent event) {
+        openReportFolder();
     }
 
     @FXML
