@@ -14,6 +14,9 @@
     -ekorr-hover-background: #e2ebf6;
     -ekorr-pressed-background: #c6d8ef;
     -ekorr-muted-text: #555555;
+    /* Markerad rad i kommentarstabellen när tabellen har fokus.
+       Standard: JavaFX:s vanliga blå. (Utan fokus: se .comments-table nedan.) */
+    -ekorr-list-selection: -fx-accent;
 }
 
 /* ---------------------------------------------------------------- verktygsrad */
@@ -100,4 +103,27 @@
 
 .loading-card .progress-indicator {
     -fx-progress-color: -fx-accent;
+}
+
+/* ---------------------------------------------------------------- kommentarstabell */
+/*
+ * Markerad rad. Utan fokus ser den ut som en vanlig rad – med randningen
+ * (varannan rad) och linjerna mellan kolumnerna. JavaFX:s egen regel byter
+ * annars både bakgrund och linjefärg på markerade rader.
+ * Med fokus får den -ekorr-list-selection. Texten blir automatiskt mörk
+ * eller ljus efter bakgrunden.
+ */
+.comments-table .table-row-cell:filled:selected {
+    -fx-background: -fx-control-inner-background;
+    -fx-table-cell-border-color: derive(-fx-color, 5%);
+}
+
+.comments-table .table-row-cell:filled:selected:odd {
+    -fx-background: -fx-control-inner-background-alt;
+}
+
+.comments-table:focused .table-row-cell:filled:selected,
+.comments-table:focused .table-row-cell:filled:selected:odd {
+    -fx-background: -ekorr-list-selection;
+    -fx-table-cell-border-color: derive(-ekorr-list-selection, 20%);
 }

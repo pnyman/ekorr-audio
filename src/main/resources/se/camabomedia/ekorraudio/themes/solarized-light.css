@@ -34,8 +34,17 @@
     -ekorr-hover-background: #e4ddc8;
     -ekorr-pressed-background: #d8d1bc;
     -ekorr-muted-text: #93a1a1;
+
+    -ekorr-list-selection: #f3e2a9;
+    -ekorr-list-selection-unfocused: #eee8d5;
 }
 
 .menu-bar {
     -fx-background-color: #eee8d5;
+}
+
+/* Kommentarstabellen: markerad rad syns svagt även utan fokus */
+.comments-table .table-row-cell:filled:selected,
+.comments-table .table-row-cell:filled:selected:odd {
+    -fx-background: #eee8d5;
 }

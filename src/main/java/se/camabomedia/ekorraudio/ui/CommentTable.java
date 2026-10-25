@@ -30,9 +30,10 @@ public class CommentTable {
     private Consumer<List<Comment>> onReordered = list -> {};
 
     public CommentTable() {
+        table.getStyleClass().add("comments-table");   // egen markeringsfärg, se main.css
         TableColumn<Comment, String> nr = column("Nr", 40, Comment::getNr);
         TableColumn<Comment, String> page = column("Sida", 50, Comment::getPage);
-        TableColumn<Comment, String> type = column("Typ", 70, Comment::getType);
+        TableColumn<Comment, String> type = column("Typ", 80, Comment::getType);
         TableColumn<Comment, String> seek = column("Söktext", 200, Comment::getSeek);
 
         // Nr och Sida har fast bredd. Utan minsta bredd trycker
