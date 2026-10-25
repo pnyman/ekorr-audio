@@ -75,6 +75,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <MenuItem fx:id="menuItemLocations" mnemonicParsing="false" onAction="#handleMenuItemLocations" text="Mappar..." />
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemFont" text="Typsnitt …" />
             <Menu fx:id="menuTheme" mnemonicParsing="false" text="Tema" />
+            <Menu fx:id="menuWaveform" mnemonicParsing="false" text="Ljudkurva" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Hjälp">

@@ -96,6 +96,7 @@ public class MainViewController implements Initializable {
     @FXML private MenuItem menuItemOpen;
     @FXML private javafx.scene.control.Menu menuTheme;
     @FXML private javafx.scene.control.Menu menuRecent;
+    @FXML private javafx.scene.control.Menu menuWaveform;
     @FXML private Label labelStatus;
 
     private Stage stage;
@@ -304,6 +305,8 @@ public class MainViewController implements Initializable {
         waveformView.setOnSeek(this::seekToTime);
         waveformView.managedProperty().bind(waveformView.visibleProperty());
         waveformView.setVisible(settings.getShowWaveform());
+        waveformView.setFixed(settings.getWaveformFixed());
+        buildWaveformMenu();
         VBox root = (VBox) splitPane.getParent();
         root.getChildren().add(root.getChildren().indexOf(splitPane) + 1, waveformView);
 
@@ -976,6 +979,30 @@ public class MainViewController implements Initializable {
             long ms = seekTarget >= 0 ? seekTarget : mpv.getPosition();
             waveformView.setPosition(ms, currentIndex);
         }
+    }
+
+    /** Inställningar → Ljudkurva: Rörlig (kurvan rör sig) eller Fast (markeringen rör sig). */
+    private void buildWaveformMenu() {
+        if (menuWaveform == null) {
+            return;   // menyn saknas i FXML
+        }
+        javafx.scene.control.ToggleGroup group = new javafx.scene.control.ToggleGroup();
+        javafx.scene.control.RadioMenuItem moving =
+            new javafx.scene.control.RadioMenuItem("Rörlig kurva");
+        javafx.scene.control.RadioMenuItem fixed =
+            new javafx.scene.control.RadioMenuItem("Fast kurva, rörlig markering");
+        moving.setToggleGroup(group);
+        fixed.setToggleGroup(group);
+        moving.setSelected(!waveformView.isFixed());
+        fixed.setSelected(waveformView.isFixed());
+        moving.setOnAction(e -> setWaveformFixed(false));
+        fixed.setOnAction(e -> setWaveformFixed(true));
+        menuWaveform.getItems().setAll(moving, fixed);
+    }
+
+    private void setWaveformFixed(boolean fixed) {
+        waveformView.setFixed(fixed);
+        settings.addWaveformFixed(fixed);
     }
 
     // ------------------------------------------------------------ tema

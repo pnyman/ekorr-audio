@@ -15,13 +15,20 @@ import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 /**
- * Ljudkurvan (längst ned i fönstret): ett rullande fönster runt uppspelningen.
+ * Ljudkurvan (längst ned i fönstret), i ett av två lägen:
+ *
+ *  - rörlig: kurvan rullar förbi och positionsstrecket står still, en
+ *    fjärdedel in från vänster
+ *  - fast: kurvan står still och strecket rör sig; när det når högerkanten
+ *    bläddras kurvan fram en skärmbredd (som att vända blad)
+ *
+ * Innehåll:
  *
  *  - kurvan (toppvärden), symmetrisk kring mittlinjen
  *  - lodräta streck vid varje mening (par) – där texten byts
  *  - den mening som spelas, svagt markerad
  *  - långa pauser, markerade med färg och längd i sekunder
- *  - uppspelningsposition (streck en fjärdedel in från vänster)
+ *  - uppspelningsposition (streck)
  *
  * Klick i kurvan hoppar dit.
  */
@@ -30,6 +37,13 @@ public class WaveformView extends Pane {
     /** Synligt fönster: så här långt före och efter positionen, ms. */
     private static final long BEFORE_MS = 5_000;
     private static final long AFTER_MS = 15_000;
+    private static final long WINDOW_MS = BEFORE_MS + AFTER_MS;
+    /**
+     * Fast läge: när strecket kommer så här nära högerkanten bläddras kurvan,
+     * och det nya fönstret börjar så här långt före positionen.
+     */
+    private static final long PAGE_MARGIN_MS = 500;
+    private static final long PAGE_LEAD_MS = 1_000;
 
     /** Nivå (0–32767) under vilken ljudet räknas som tyst. */
     public static final int SILENCE_THRESHOLD = 600;
@@ -43,11 +57,16 @@ public class WaveformView extends Pane {
     private int currentIndex = -1;
     private LongConsumer onSeek = ms -> {};
 
+    /** Fast kurva (strecket rör sig) i stället för rörlig. */
+    private boolean fixed = false;
+    /** Fast läge: fönstrets början, ms. */
+    private long fixedStart = 0;
+
     private Palette palette = Palette.LIGHT;
 
     /** Färger per tema. */
     private static final class Palette {
-        static final Palette LIGHT = new Palette("#fafafa", "#268bd2", "#c9c9c9", "#fff3b0",
+        static final Palette LIGHT = new Palette("#fafafa", "#5a7fa8", "#c9c9c9", "#fff3b0",
                                                  "#d0302f", "#e0303033", "#808080");
         static final Palette SOLARIZED_LIGHT = new Palette("#fdf6e3", "#268bd2", "#d8d1bc", "#f3e2a9",
                                                            "#cb4b16", "#dc322f33", "#93a1a1");
@@ -84,7 +103,7 @@ public class WaveformView extends Pane {
         // Utanför layouten – annars hindrar canvas:ens bredd panelen från att krympa
         canvas.setManaged(false);
         setMinHeight(40);
-        setPrefHeight(60);
+        setPrefHeight(80);
         // Canvas följer panelens storlek
         canvas.widthProperty().bind(widthProperty());
         canvas.heightProperty().bind(heightProperty());
@@ -107,7 +126,19 @@ public class WaveformView extends Pane {
         this.waveform = waveform;
         this.position = 0;
         this.currentIndex = -1;
+        this.fixedStart = 0;
         redraw();
+    }
+
+    /** true = fast kurva med rörlig markering, false = rörlig kurva. */
+    public void setFixed(boolean fixed) {
+        this.fixed = fixed;
+        fixedStart = pageStartFor(position);
+        redraw();
+    }
+
+    public boolean isFixed() {
+        return fixed;
     }
 
     public void setTheme(Theme theme) {
@@ -124,21 +155,32 @@ public class WaveformView extends Pane {
     public void setPosition(long ms, int index) {
         position = ms;
         currentIndex = index;
+        if (fixed && (ms < fixedStart || ms > fixedStart + WINDOW_MS - PAGE_MARGIN_MS)) {
+            // Utanför (eller nära slutet av) fönstret: bläddra dit. Ett klick
+            // i kurvan hamnar inom fönstret, så kurvan står kvar då.
+            fixedStart = pageStartFor(ms);
+        }
         if (waveform != null) {
             // Lite mer än det synliga, så att kurvan finns innan den behövs
-            waveform.prefetch(ms - BEFORE_MS, ms + AFTER_MS + Waveform.CHUNK_MS);
+            long from = windowStart();
+            waveform.prefetch(from, from + WINDOW_MS + Waveform.CHUNK_MS);
         }
         redraw();
+    }
+
+    /** Fast läge: fönstret som börjar strax före ms. */
+    private static long pageStartFor(long ms) {
+        return Math.max(0, ms - PAGE_LEAD_MS);
     }
 
     // ---------------------------------------------------------------- ritning
 
     private long windowStart() {
-        return position - BEFORE_MS;
+        return fixed ? fixedStart : position - BEFORE_MS;
     }
 
     private double msPerPixel() {
-        return (BEFORE_MS + AFTER_MS) / Math.max(1.0, canvas.getWidth());
+        return WINDOW_MS / Math.max(1.0, canvas.getWidth());
     }
 
     private double xAt(long ms) {
@@ -160,7 +202,7 @@ public class WaveformView extends Pane {
         }
 
         long from = windowStart();
-        long to = from + BEFORE_MS + AFTER_MS;
+        long to = from + WINDOW_MS;
         double mid = h / 2;
 
         // Meningen som spelas
@@ -222,10 +264,17 @@ public class WaveformView extends Pane {
         g.strokeLine(px, 0, px, h);
 
         // Tid vid positionen
+        // Tid vid positionen – till vänster om strecket nära högerkanten
         g.setFill(palette.text);
-        g.setTextAlign(TextAlignment.LEFT);
         g.setTextBaseline(VPos.BOTTOM);
-        g.fillText(Timeline.format(position), px + 4, h - 2);
+        if (px > w - 60) {
+            g.setTextAlign(TextAlignment.RIGHT);
+            g.fillText(Timeline.format(position), px - 4, h - 2);
+        }
+        else {
+            g.setTextAlign(TextAlignment.LEFT);
+            g.fillText(Timeline.format(position), px + 4, h - 2);
+        }
     }
 
     /**

@@ -191,6 +191,18 @@ public class Settings {
         return !Boolean.FALSE.equals(settings.get("showWaveform"));
     }
 
+    /** Ljudkurvan: true = fast kurva med rörlig markering, false = rörlig kurva. */
+    @SuppressWarnings("unchecked")
+    public void addWaveformFixed(boolean fixed) {
+        settings.put("waveformFixed", fixed);
+        writeJSON();
+    }
+
+    /** Fast kurva (standard: nej, kurvan rör sig). */
+    public boolean getWaveformFixed() {
+        return Boolean.TRUE.equals(settings.get("waveformFixed"));
+    }
+
     /** Färgtema (namnet på Theme-konstanten, t.ex. "SOLARIZED_DARK"). */
     @SuppressWarnings("unchecked")
     public void addTheme(String theme) {
