@@ -191,6 +191,24 @@ public class Settings {
         return !Boolean.FALSE.equals(settings.get("showWaveform"));
     }
 
+    /** Om vänster- respektive högerkolumnen ska visas. */
+    @SuppressWarnings("unchecked")
+    public void addShowSidePanes(boolean left, boolean right) {
+        settings.put("showLeftPane", left);
+        settings.put("showRightPane", right);
+        writeJSON();
+    }
+
+    /** Vänsterkolumnen visas (standard: ja). */
+    public boolean getShowLeftPane() {
+        return !Boolean.FALSE.equals(settings.get("showLeftPane"));
+    }
+
+    /** Högerkolumnen visas (standard: ja). */
+    public boolean getShowRightPane() {
+        return !Boolean.FALSE.equals(settings.get("showRightPane"));
+    }
+
     /** Ljudkurvan: true = fast kurva med rörlig markering, false = rörlig kurva. */
     @SuppressWarnings("unchecked")
     public void addWaveformFixed(boolean fixed) {

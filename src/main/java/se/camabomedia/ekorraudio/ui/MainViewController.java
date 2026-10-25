@@ -81,9 +81,11 @@ public class MainViewController implements Initializable {
     private Button btnNewComment;
     private Button btnEditComment;
     private Button btnDeleteComment;
-    private Button btnWaveform;
     private Button btnSearch;
     private Button btnGoToPage;
+    private Button btnWaveform;
+    private Button btnLeftPane;
+    private Button btnRightPane;
 
     // Ljudkurvan under verktygsraden
     private WaveformView waveformView;
@@ -198,6 +200,10 @@ public class MainViewController implements Initializable {
                                       this::toggleSearch);
         btnWaveform = IconButton.create("mdi2w-waveform", "Visa/dölj ljudkurvan (Ctrl+K)",
                                         this::toggleWaveform);
+        btnLeftPane = IconButton.create("mdi2d-dock-left", "Visa/dölj vänsterkolumnen (Ctrl+1)",
+                                        () -> toggleSidePane(true));
+        btnRightPane = IconButton.create("mdi2d-dock-right", "Visa/dölj högerkolumnen (Ctrl+2)",
+                                         () -> toggleSidePane(false));
 
         btnNewComment = IconButton.create("mdi2c-comment-plus-outline", "Ny kommentar (Enter)",
                                           this::createComment);
@@ -227,7 +233,9 @@ public class MainViewController implements Initializable {
             separator(),
             btnNewComment, btnEditComment, btnDeleteComment,
             separator(),
-            btnGoToPage, btnSearch, btnWaveform);
+            btnGoToPage, btnSearch,
+            separator(),
+            btnLeftPane, btnRightPane, btnWaveform);
         updateSpeedLabel();
     }
 
@@ -735,6 +743,18 @@ public class MainViewController implements Initializable {
         }
         if (event.isShortcutDown() && event.getCode() == KeyCode.K) {
             toggleWaveform();
+            event.consume();
+            return;
+        }
+        if (event.isShortcutDown() && !event.isShiftDown()
+            && (event.getCode() == KeyCode.DIGIT1 || event.getCode() == KeyCode.NUMPAD1)) {
+            toggleSidePane(true);
+            event.consume();
+            return;
+        }
+        if (event.isShortcutDown() && !event.isShiftDown()
+            && (event.getCode() == KeyCode.DIGIT2 || event.getCode() == KeyCode.NUMPAD2)) {
+            toggleSidePane(false);
             event.consume();
             return;
         }
@@ -1455,11 +1475,31 @@ public class MainViewController implements Initializable {
         }
         stage.setMaximized(settings.getWindowMaximized());
 
+        // double[] d = settings.getDividerPositions();
+        // if (d != null && d.length == splitPane.getDividers().size()) {
+        //     // Efter att fönstret visats, annars skriver första layouten över dem
+        //     Platform.runLater(() -> splitPane.setDividerPositions(d));
+        // }
+
+        // Kolumnerna i den ordning de står i FXML (vänster, text, höger)
+        leftPane = splitPane.getItems().get(0);
+        rightPane = splitPane.getItems().get(splitPane.getItems().size() - 1);
+
         double[] d = settings.getDividerPositions();
-        if (d != null && d.length == splitPane.getDividers().size()) {
-            // Efter att fönstret visats, annars skriver första layouten över dem
-            Platform.runLater(() -> splitPane.setDividerPositions(d));
+        if (d != null && d.length == 2 && d[0] < d[1]) {
+            dividers = d.clone();
         }
+        else {
+            double[] now = splitPane.getDividerPositions();
+            if (now.length == 2) {
+                dividers = now.clone();
+            }
+        }
+        showLeft = settings.getShowLeftPane();
+        showRight = settings.getShowRightPane();
+        applySidePanes();
+
+
     }
 
     // ------------------------------------------------------------ "Öppnar …"
@@ -1612,12 +1652,83 @@ public class MainViewController implements Initializable {
     }
 
     private void saveLayout() {
-        double[] dividers = splitPane.getDividerPositions();
+        captureDividers();
+        double[] dividers = this.dividers.clone();   // alltid tre kolumners läge
+        // double[] dividers = splitPane.getDividerPositions();
         double[] bounds = null;
         if (!stage.isMaximized() && !stage.isIconified()) {
             bounds = new double[] { stage.getX(), stage.getY(), stage.getWidth(), stage.getHeight() };
         }
         settings.addLayout(dividers, bounds, stage.isMaximized());
+    }
+
+    // ------------------------------------------------------------ kolumner
+
+    /** Vänster- och högerkolumnen (de yttre i splitPane). */
+    private Node leftPane;
+    private Node rightPane;
+    private boolean showLeft = true;
+    private boolean showRight = true;
+    /**
+     * Avdelarnas lägen när alla tre kolumner visas. Sparas också när en
+     * kolumn är dold, så att den kommer tillbaka med samma bredd.
+     */
+    private double[] dividers = { 0.15, 0.85 };
+
+    /** Ctrl+1 / Ctrl+2 och knapparna: dölj eller visa en sidokolumn. */
+    private void toggleSidePane(boolean left) {
+        captureDividers();
+        if (left) {
+            showLeft = !showLeft;
+        }
+        else {
+            showRight = !showRight;
+        }
+        settings.addShowSidePanes(showLeft, showRight);
+        applySidePanes();
+    }
+
+    /**
+     * Läser av avdelarna och för in dem i dividers. Med en dold kolumn finns
+     * bara en avdelare – den motsvarar textens vänster- eller högerkant.
+     */
+    private void captureDividers() {
+        double[] now = splitPane.getDividerPositions();
+        if (showLeft && showRight && now.length == 2) {
+            dividers = now.clone();
+        }
+        else if (!showLeft && showRight && now.length == 1) {
+            dividers[1] = now[0];   // textens högerkant
+            dividers[0] = Math.min(dividers[0], dividers[1] - 0.05);
+        }
+        else if (showLeft && !showRight && now.length == 1) {
+            dividers[0] = now[0];   // textens vänsterkant
+            dividers[1] = Math.max(dividers[1], dividers[0] + 0.05);
+        }
+    }
+
+    /** Lägger in de kolumner som ska synas och sätter avdelarna. */
+    private void applySidePanes() {
+        javafx.collections.ObservableList<Node> items = splitPane.getItems();
+        items.setAll(contentPane);
+        if (showLeft) {
+            items.add(0, leftPane);
+        }
+        if (showRight) {
+            items.add(rightPane);
+        }
+        // Efter layouten, annars skriver SplitPane över lägena
+        Platform.runLater(() -> {
+            if (showLeft && showRight) {
+                splitPane.setDividerPositions(dividers[0], dividers[1]);
+            }
+            else if (showLeft) {
+                splitPane.setDividerPositions(dividers[0]);
+            }
+            else if (showRight) {
+                splitPane.setDividerPositions(dividers[1]);
+            }
+        });
     }
 
     // ------------------------------------------------------------ settings
