@@ -27,7 +27,6 @@ import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -47,7 +46,11 @@ public class CommentView3Controller implements Initializable {
     @FXML private javafx.scene.control.Label labelSeek;
     @FXML private TextArea textAreaRight;
     @FXML private TextArea textAreaWrong;
-    @FXML private TextField textFieldPage;
+    /**
+     * Sidnumret. Visas inte i formuläret – det kommer från appen (sidan som
+     * spelas) eller, vid redigering, från kommentaren.
+     */
+    private String page = "";
     @FXML private Label labelAudio;
 
     private Stage stage;
@@ -83,14 +86,14 @@ public class CommentView3Controller implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        // Set focus on page number field initially
+        // Börja i typlistan. runLater: körs efter initData.
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
-                textFieldPage.requestFocus();
                 if (editComment) {
                     fillForm();
                 }
+                listViewType.requestFocus();
             }
         });
 
@@ -176,7 +179,6 @@ public class CommentView3Controller implements Initializable {
         areas.add(textAreaRight);
 
         for (TextArea area : areas) {
-            area.setWrapText(true);
             area.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
@@ -300,9 +302,7 @@ public class CommentView3Controller implements Initializable {
         this.ncc = ncc;
         this.audioRecorderPlayer = new AudioRecorderPlayer(report.getReportDirectory());
         hideSeekIfNoText();
-        if (page != null && !page.isBlank()) {
-            textFieldPage.setText(page.strip());
-        }
+        this.page = page == null ? "" : page.strip();
         bindKeys();
     }
 
@@ -384,13 +384,9 @@ public class CommentView3Controller implements Initializable {
             }
         }
 
+        // Sidan behålls som den var när kommentaren skapades
         String pageNr = comment.getPage();
-            if (pageNr.strip().equals(ENDASH)) {
-            textFieldPage.setText("");
-        }
-        else {
-            textFieldPage.setText(pageNr);
-        }
+        page = pageNr == null || pageNr.strip().equals(ENDASH) ? "" : pageNr.strip();
 
         textAreaSeek.setText(comment.getSeek());
         textAreaWrong.setText(comment.getWrong());
@@ -405,15 +401,6 @@ public class CommentView3Controller implements Initializable {
     }
 
     private boolean isCommentValid() {
-        String page = textFieldPage.getText().strip();
-
-        if (!checkPageNr(page)) {
-            showWarningDialog("Felaktigt sidnummer", "Detta sidnummer finns inte i talboken:", page);
-            textFieldPage.setText("");
-            Platform.runLater(() -> textFieldPage.requestFocus());
-            return false;
-        }
-
         if (type == null) {
             showWarningDialog("Kommentartyp saknas", null, "Välj typ av kommentar.");
             return false;
@@ -472,7 +459,6 @@ public class CommentView3Controller implements Initializable {
         }
         saving = true;
 
-        String page = textFieldPage.getText().strip();
         String seek = textAreaSeek.getText().strip();
         String wrong = textAreaWrong.getText().strip();
         String right = textAreaRight.getText().strip();
@@ -507,13 +493,6 @@ public class CommentView3Controller implements Initializable {
         saved = true;
         Stage stage = (Stage) btnOk.getScene().getWindow();
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
-    }
-
-    private boolean checkPageNr(String pageNr) {
-        if (pageNr.strip().equals("") || pageNr.strip().equals(ENDASH)) {
-            return true;
-        }
-        return ncc.getPages().contains(pageNr);
     }
 
     private void showWarningDialog(String title, String header, String content) {

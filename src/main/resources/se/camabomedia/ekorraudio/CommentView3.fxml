@@ -6,7 +6,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -24,11 +23,10 @@
                 <ColumnConstraints fillWidth="false" maxWidth="156.79999389648438" minWidth="10.0" prefWidth="142.4" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints maxHeight="114.8000244140625" minHeight="29.599990081787112" prefHeight="35.999993896484376" vgrow="SOMETIMES" />
                 <RowConstraints fillHeight="false" maxHeight="339.2000099182129" minHeight="10.0" prefHeight="333.6000061035156" />
               </rowConstraints>
                <children>
-                  <Label text="Sida" GridPane.valignment="TOP">
+                  <Label text="Typ" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets left="12.0" />
                      </GridPane.margin>
@@ -36,16 +34,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="textFieldPage" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="26.0" prefWidth="50.0" GridPane.columnIndex="1" GridPane.valignment="TOP" />
-                  <Label text="Typ" GridPane.rowIndex="1" GridPane.valignment="TOP">
-                     <GridPane.margin>
-                        <Insets left="12.0" />
-                     </GridPane.margin>
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                  </Label>
-                  <ListView fx:id="listViewType" centerShape="false" prefWidth="130.0" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.valignment="TOP">
+                  <ListView fx:id="listViewType" centerShape="false" prefWidth="130.0" GridPane.columnIndex="1" GridPane.valignment="TOP">
                      <GridPane.margin>
                         <Insets />
                      </GridPane.margin>
@@ -56,8 +45,8 @@
                </HBox.margin>
             </GridPane>
             <VBox>
-              <children>
-                <Label fx:id="labelSeek" text="Söktext från boken">
+               <children>
+                  <Label fx:id="labelSeek" text="Söktext från boken">
                      <VBox.margin>
                         <Insets top="8.0" />
                      </VBox.margin>
@@ -65,7 +54,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TextArea fx:id="textAreaSeek" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+                  <TextArea fx:id="textAreaSeek" wrapText="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin>
@@ -75,7 +64,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TextArea fx:id="textAreaWrong" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+                  <TextArea fx:id="textAreaWrong" wrapText="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin>
@@ -85,7 +74,7 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TextArea fx:id="textAreaRight" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
+                  <TextArea fx:id="textAreaRight" wrapText="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="375.0">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
