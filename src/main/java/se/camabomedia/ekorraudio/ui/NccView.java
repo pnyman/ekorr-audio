@@ -50,7 +50,11 @@ public class NccView {
     /** Klass på NCC-posten för sidan man befinner sig på. */
     private static final String CURRENT_CLASS = "ekorr-ncc-current";
 
-    /** Markerar posten och scrollar dit om den inte syns (utan animering). */
+    /**
+     * Markerar posten och scrollar så att den hamnar mitt i vyn (utan
+     * animering). Överst och nederst i listan går det inte att centrera –
+     * då hamnar den så nära mitten det går.
+     */
     private static final String CURRENT_SCRIPT =
         "(function(id) {"
         + "  var old = document.getElementsByClassName('" + CURRENT_CLASS + "');"
@@ -64,10 +68,12 @@ public class NccView {
         + "    while (item && !item.id) { item = item.parentNode; }"
         + "    if (!item || !item.classList) { return; }"
         + "    item.classList.add('" + CURRENT_CLASS + "');"
-        + "    var r = item.getBoundingClientRect();"
-        + "    if (r.top < 0 || r.bottom > window.innerHeight) {"
+        // Scrolla först när markeringen har ritats om. Scrollas det direkt
+        // flyttar WebView den gamla bilden innan den hunnit rita bort den
+        // tidigare markeringen – den blir då kvar på skärmen.
+        + "    setTimeout(function() {"
         + "      item.scrollIntoView({ behavior: 'auto', block: 'center' });"
-        + "    }"
+        + "    }, 40);"
         + "    return;"
         + "  }"
         + "})";
