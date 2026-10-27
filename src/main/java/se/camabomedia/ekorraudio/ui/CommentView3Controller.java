@@ -176,6 +176,7 @@ public class CommentView3Controller implements Initializable {
         areas.add(textAreaRight);
 
         for (TextArea area : areas) {
+            area.setWrapText(true);
             area.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
                 @Override
                 public void handle(KeyEvent event) {
