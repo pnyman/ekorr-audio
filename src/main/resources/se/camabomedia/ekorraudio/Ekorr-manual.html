@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Ekorr+ – manual</title>
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #1f2328;
+    --muted: #59636e;
+    --line: #d8dee4;
+    --accent: #1a5fb4;
+    --code-bg: #f3f4f6;
+    --kbd-bg: #f6f8fa;
+    --kbd-border: #c7ced6;
+    --note-bg: #eef5ff;
+    --note-line: #9cc2f2;
+    --warn-bg: #fff6e0;
+    --warn-line: #e5b84e;
+    color-scheme: light;   /* alltid ljust, även när datorn har mörkt läge */
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .page {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 4rem;
+  }
+  header { border-bottom: 1px solid var(--line); padding-bottom: 1.25rem; margin-bottom: 2rem; }
+  h1 { font-size: 2rem; margin: 0 0 .25rem; line-height: 1.2; }
+  .lead { color: var(--muted); margin: 0; font-size: 1.05rem; }
+  h2 {
+    font-size: 1.35rem;
+    margin: 2.75rem 0 .75rem;
+    padding-top: .5rem;
+    border-top: 1px solid var(--line);
+    line-height: 1.3;
+  }
+  h3 { font-size: 1.08rem; margin: 1.75rem 0 .5rem; }
+  p, ul, ol, table { margin: 0 0 1rem; }
+  ul, ol { padding-left: 1.4rem; }
+  li { margin: .2rem 0; }
+  a { color: var(--accent); }
+  code {
+    font-family: Consolas, "Cascadia Mono", Menlo, monospace;
+    font-size: .9em;
+    background: var(--code-bg);
+    padding: .1em .35em;
+    border-radius: 4px;
+    word-break: break-word;
+  }
+  kbd {
+    font-family: inherit;
+    font-size: .85em;
+    background: var(--kbd-bg);
+    border: 1px solid var(--kbd-border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    padding: .05em .4em;
+    white-space: nowrap;
+  }
+  .table-wrap { overflow-x: auto; margin: 0 0 1rem; }
+  table { border-collapse: collapse; width: 100%; font-size: .95rem; margin: 0; }
+  th, td { text-align: left; vertical-align: top; padding: .45rem .7rem; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; color: var(--muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .03em; }
+  td:first-child { white-space: nowrap; }
+  .note, .warn {
+    border-left: 4px solid var(--note-line);
+    background: var(--note-bg);
+    padding: .75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 0 0 1rem;
+  }
+  .warn { border-left-color: var(--warn-line); background: var(--warn-bg); }
+  .note p:last-child, .warn p:last-child { margin-bottom: 0; }
+  nav.toc {
+    background: var(--code-bg);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+  }
+  nav.toc h2 { border: 0; margin: 0 0 .5rem; padding: 0; font-size: 1rem; }
+  nav.toc ol { margin: 0; columns: 2; column-gap: 2rem; }
+  nav.toc li { margin: 0 0 .3rem; break-inside: avoid; }
+  @media (max-width: 40rem) { nav.toc ol { columns: 1; } }
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 2.2fr 1fr;
+    grid-template-rows: auto 7rem auto auto;
+    gap: 4px;
+    font-size: .85rem;
+    margin: 0 0 1rem;
+  }
+  .layout div {
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: .4rem .5rem;
+    background: var(--code-bg);
+  }
+  .layout .bar { grid-column: 1 / 4; }
+  pre.report {
+    background: var(--code-bg);
+    border-radius: 6px;
+    padding: .75rem 1rem;
+    overflow-x: auto;
+    font-size: .88rem;
+    line-height: 1.5;
+  }
+  footer { margin-top: 3rem; color: var(--muted); font-size: .9rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+  @media print {
+    body { font-size: 11pt; }
+    .page { max-width: none; padding: 0; }
+    nav.toc { display: none; }
+    h2 { break-after: avoid; }
+    a { color: inherit; text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<header>
+  <h1>Ekorr+</h1>
+  <p class="lead">Korrekturlyssning av DAISY&nbsp;2.02-talböcker – manual</p>
+</header>
+
+<nav class="toc" aria-label="Innehåll">
+  <h2>Innehåll</h2>
+  <ol>
+    <li><a href="#om">Om programmet</a></li>
+    <li><a href="#forsta">Innan du börjar</a></li>
+    <li><a href="#fonstret">Fönstret</a></li>
+    <li><a href="#oppna">Öppna och stänga böcker</a></li>
+    <li><a href="#lyssna">Lyssna och navigera</a></li>
+    <li><a href="#sok">Söka i texten</a></li>
+    <li><a href="#kommentarer">Kommentarer</a></li>
+    <li><a href="#rapport">Rapporten</a></li>
+    <li><a href="#kurva">Ljudkurvan</a></li>
+    <li><a href="#utantext">Talböcker utan text</a></li>
+    <li><a href="#installningar">Inställningar och utseende</a></li>
+    <li><a href="#tangenter">Alla kortkommandon</a></li>
+    <li><a href="#problem">Om något inte fungerar</a></li>
+  </ol>
+</nav>
+
+<!-- ================================================================== -->
+<h2 id="om">1. Om programmet</h2>
+
+<p>Ekorr+ används för att korrekturlyssna talböcker i formatet DAISY&nbsp;2.02. Programmet spelar upp boken och visar samtidigt texten, där den mening som hörs är markerad. När du hör ett fel trycker du <kbd>Enter</kbd> och skriver en kommentar. Kommentarerna samlas i en rapport (en HTML-fil) som följer med boken.</p>
+
+<p>Programmet fungerar både för talböcker <strong>med text</strong> (fulltext, där det finns en textfil) och för talböcker <strong>utan text</strong> (bara NCC och smil-filer), se <a href="#utantext">avsnitt 10</a>.</p>
+
+<!-- ================================================================== -->
+<h2 id="forsta">2. Innan du börjar</h2>
+
+<p>Första gången du skriver en kommentar får du ange ditt namn. Det skrivs i rapporten som korrekturläsare. Namnet kan ändras under <strong>Inställningar → Namn…</strong>.</p>
+<p>Under <strong>Inställningar → Mappar…</strong> anger du</p>
+<ul>
+  <li><strong>Talböcker</strong> – mappen som öppningsdialogen börjar i,</li>
+  <li><strong>Rapporter</strong> – en mapp där en kopia av varje rapport sparas (valfritt).</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2 id="fonstret">3. Fönstret</h2>
+
+<div class="layout" aria-hidden="true">
+  <div class="bar">Verktygsrad</div>
+  <div>Kommentarer</div>
+  <div>Text</div>
+  <div>NCC</div>
+  <div class="bar">Ljudkurva</div>
+  <div class="bar">Statusrad</div>
+</div>
+
+<ul>
+  <li><strong>Verktygsraden</strong> har knappar för det vanligaste. Håll muspekaren över en knapp för att se vad den gör och dess kortkommando.</li>
+  <li><strong>Kommentarer</strong> – bokens kommentarer med nummer, sida, typ och söktext.</li>
+  <li><strong>Texten</strong> – bokens text. Den mening som spelas är markerad och texten rullar med.</li>
+  <li><strong>NCC</strong> – bokens rubriker och sidnummer. Den rubrik du befinner dig under är markerad.</li>
+  <li><strong>Ljudkurvan</strong> – ljudet runt uppspelningen, se <a href="#kurva">avsnitt 9</a>.</li>
+  <li><strong>Statusraden</strong> – sida, tid i boken, bokens längd och hastighet.</li>
+</ul>
+
+<p>Kolumnerna kan göras bredare eller smalare genom att dra i avdelarna. Vänster- och högerkolumnen kan döljas med <kbd>Ctrl</kbd>+<kbd>1</kbd> och <kbd>Ctrl</kbd>+<kbd>2</kbd> (eller knapparna i verktygsraden), och ljudkurvan med <kbd>Ctrl</kbd>+<kbd>K</kbd>. Fönstrets storlek och läge, kolumnernas bredd och vad som visas sparas till nästa gång.</p>
+
+<!-- ================================================================== -->
+<h2 id="oppna">4. Öppna och stänga böcker</h2>
+
+<h3>Öppna en bok</h3>
+<p>Välj <strong>File → Open…</strong>, klicka på mappknappen eller tryck <kbd>Ctrl</kbd>+<kbd>O</kbd>, och välj bokens <code>ncc.html</code>. Medan boken läses in visas ”Öppnar &lt;boktitel&gt;”.</p>
+
+<h3>Senaste böcker</h3>
+<p>Under <strong>File → Open Recent</strong> finns de tio senast öppnade böckerna, med den tid där du slutade. Den senaste öppnas också med klockknappen i verktygsraden eller <kbd>Ctrl</kbd>+<kbd>Skift</kbd>+<kbd>O</kbd>.</p>
+
+<div class="note">
+  <p><strong>Du fortsätter där du slutade.</strong> Positionen i boken sparas när du stänger boken, öppnar en annan eller avslutar programmet. Nästa gång du öppnar boken – på vilket sätt som helst – börjar den där.</p>
+</div>
+
+<h3>Stänga och avsluta</h3>
+<ul>
+  <li><strong>File → Close</strong> eller <kbd>Ctrl</kbd>+<kbd>W</kbd> stänger boken.</li>
+  <li><strong>File → Quit</strong> eller <kbd>Ctrl</kbd>+<kbd>Q</kbd> avslutar programmet (precis som krysset i fönstret).</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2 id="lyssna">5. Lyssna och navigera</h2>
+
+<h3>Uppspelning</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Tangent</th><th>Gör</th></tr></thead>
+  <tbody>
+    <tr><td><kbd>Mellanslag</kbd></td><td>Spela / pausa</td></tr>
+    <tr><td><kbd>,</kbd> och <kbd>.</kbd></td><td>Sänk / höj hastigheten 10&nbsp;% (100–400&nbsp;%)</td></tr>
+    <tr><td><kbd>-</kbd></td><td>Växla mellan 100&nbsp;% och den senast inställda högre hastigheten</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Förflytta sig</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Tangent</th><th>Gör</th></tr></thead>
+  <tbody>
+    <tr><td><kbd>←</kbd> / <kbd>→</kbd></td><td>5 sekunder bakåt / framåt</td></tr>
+    <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Föregående / nästa fras (mening)</td></tr>
+    <tr><td><kbd>Skift</kbd>+<kbd>←</kbd> / <kbd>→</kbd></td><td>Föregående / nästa sida</td></tr>
+    <tr><td><kbd>Skift</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Föregående / nästa rubrik</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td>Gå till sida – skriv sidnumret och tryck <kbd>Enter</kbd></td></tr>
+  </tbody>
+</table></div>
+
+<p>Du kan också</p>
+<ul>
+  <li><strong>klicka i texten</strong> – uppspelningen går till den meningen,</li>
+  <li><strong>klicka på en rubrik eller ett sidnummer</strong> i NCC-kolumnen,</li>
+  <li><strong>klicka i ljudkurvan</strong> – uppspelningen går till den tiden.</li>
+</ul>
+<p>Hopp ändrar inte om boken spelar eller är pausad.</p>
+
+<h3>Text utan inläsning</h3>
+<p>Text som saknar inläst ljud har en <span style="text-decoration: underline wavy #dc322f; text-underline-offset: 3px;">röd vågig understrykning</span>, och i ljudkurvan står ”saknas”. Uppspelningen hoppar förbi sådan text, men markeringen stannar ett ögonblick på den.</p>
+
+<!-- ================================================================== -->
+<h2 id="sok">6. Söka i texten</h2>
+
+<p>Tryck <kbd>Ctrl</kbd>+<kbd>F</kbd> (eller förstoringsglaset) för att visa sökraden ovanför texten. Har du markerat text i boken hamnar den i sökfältet.</p>
+<ul>
+  <li>Sökningen görs medan du skriver, från två tecken, och skiljer inte på stora och små bokstäver.</li>
+  <li>Alla träffar markeras; den aktuella extra tydligt. Bredvid fältet står t.ex. ”3 av 17”.</li>
+  <li><kbd>Enter</kbd> / <kbd>Skift</kbd>+<kbd>Enter</kbd> – nästa / föregående träff. Utanför sökfältet: <kbd>F3</kbd> / <kbd>Skift</kbd>+<kbd>F3</kbd>.</li>
+  <li><kbd>Esc</kbd> stänger sökraden.</li>
+</ul>
+<div class="note">
+  <p>Att gå till en träff flyttar inte ljudet. Klicka på ordet om du vill lyssna därifrån.</p>
+  <p>En sökning hittar inte text som delvis står i en annan stil, t.ex. ett ord där bara några bokstäver är kursiva.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2 id="kommentarer">7. Kommentarer</h2>
+
+<h3>Ny kommentar</h3>
+<p>Tryck <kbd>Enter</kbd> när du hör ett fel. Uppspelningen pausas och kommentarsformuläret öppnas, med sidnumret ifyllt. Formuläret börjar i listan <strong>Typ</strong>.</p>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Fält</th><th>Innehåll</th></tr></thead>
+  <tbody>
+    <tr><td>Sida</td><td>Ifyllt automatiskt. Måste vara en sida som finns i boken (eller tomt).</td></tr>
+    <tr><td>Typ</td><td>Välj med pilarna eller sifferknapparna <kbd>1</kbd>–<kbd>9</kbd> och <kbd>0</kbd>.</td></tr>
+    <tr><td>Söktext från boken</td><td>Text ur boken som visar var felet finns. Obligatoriskt. Finns inte för böcker utan text.</td></tr>
+    <tr><td>Beskrivning av felet</td><td>Vad som är fel. Obligatoriskt.</td></tr>
+    <tr><td>Rättelse</td><td>Hur det ska vara. Bara för typ 1, och då obligatoriskt.</td></tr>
+    <tr><td>Ljud</td><td>En kort inspelning, t.ex. av rätt uttal. Bara för typ 1.</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Typer</h3>
+<ol start="1">
+  <li>Läsfel</li>
+  <li>Talsyntes hörs</li>
+  <li>Inläsning saknas</li>
+  <li>Omtagning</li>
+  <li>Stakning</li>
+  <li>Paus</li>
+  <li>Överflödigt ljud</li>
+  <li>Bakgrundsljud</li>
+  <li>Synkfel</li>
+</ol>
+<p>samt <strong>0. Övrigt</strong>.</p>
+
+<h3>Spara eller avbryta</h3>
+<ul>
+  <li><kbd>Enter</kbd> eller <strong>OK</strong> sparar. Om något saknas eller två fält har samma text visas en förklaring och formuläret står kvar.</li>
+  <li><kbd>Esc</kbd> eller <strong>Avbryt</strong> stänger utan att spara.</li>
+  <li><kbd>Tab</kbd> går till nästa fält.</li>
+</ul>
+
+<h3>Spela in ljud</h3>
+<p>Håll ned inspelningsknappen medan du talar och släpp när du är klar. Håll ned uppspelningsknappen för att lyssna, och använd knappen Radera ljud för att ta bort inspelningen. Mycket korta tryck (under 0,3&nbsp;s) räknas som felklick och sparas inte.</p>
+
+<h3>Ändra, ta bort och flytta</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>I kommentarslistan</th><th>Gör</th></tr></thead>
+  <tbody>
+    <tr><td>Dubbelklick</td><td>Redigera kommentaren</td></tr>
+    <tr><td><kbd>Delete</kbd></td><td>Ta bort markerad kommentar</td></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Flytta kommentaren uppåt / nedåt</td></tr>
+  </tbody>
+</table></div>
+<p>Knapparna för ny, redigera och ta bort finns också i verktygsraden. Kommentarerna numreras om automatiskt.</p>
+
+<!-- ================================================================== -->
+<h2 id="rapport">8. Rapporten</h2>
+
+<p>Rapporten sparas varje gång en kommentar sparas, ändras, tas bort eller flyttas – det finns inget särskilt ”spara”. Den ligger i bokens mapp:</p>
+<p><code>___Korrektur-rapport\&lt;id&gt;_&lt;titel&gt;_KORR.html</code></p>
+<p>Har du angett en rapportmapp under <strong>Inställningar → Mappar…</strong> kopieras rapporten också dit. Med knapparna i verktygsraden kan du öppna rapporten i webbläsaren eller öppna rapportmappen.</p>
+
+<h3>Vad som står i rapporten</h3>
+<p>Överst står bokens titel, id, författare, inläsare, korrekturläsare, antal kommentarer och bokens längd. Varje kommentar har typ, beskrivning, rättelse, ev. ljud och var i boken den gjordes:</p>
+<pre class="report">Sida:   12   Boktid: 01h23m45s678ms   Rubriktid: 00h01m10s250ms
+Sök:    … text ur boken …</pre>
+<ul>
+  <li><strong>Boktid</strong> – tid från bokens början.</li>
+  <li><strong>Rubriktid</strong> – tid från början av den rubrik (smil-fil) du är i.</li>
+</ul>
+<p>För böcker utan text, se <a href="#utantext">avsnitt 10</a>.</p>
+
+<!-- ================================================================== -->
+<h2 id="kurva">9. Ljudkurvan</h2>
+
+<p>Ljudkurvan visar ungefär 20 sekunder ljud. Den hjälper dig att se fel som är svåra att höra:</p>
+<ul>
+  <li><strong>Kurvan</strong> – ljudets styrka. En streckad linje betyder att den delen inte har lästs in än.</li>
+  <li><strong>Den mening som spelas</strong> har en svag bakgrundsfärg, och lodräta streck visar var meningarna börjar.</li>
+  <li><strong>Långa pauser</strong> (minst 5 sekunder) är färgade och visar längden, t.ex. ”5.4 s”.</li>
+  <li><strong>”saknas”</strong> – text utan inläst ljud.</li>
+  <li><strong>Det röda strecket</strong> är uppspelningspositionen, med tiden bredvid.</li>
+</ul>
+<p>Klicka i kurvan för att gå dit. Visa eller dölj kurvan med <kbd>Ctrl</kbd>+<kbd>K</kbd>.</p>
+
+<h3>Rörlig eller fast</h3>
+<p>Under <strong>Inställningar → Ljudkurva</strong> väljer du</p>
+<ul>
+  <li><strong>Rörlig kurva</strong> – strecket står still och kurvan rullar förbi.</li>
+  <li><strong>Fast kurva, rörlig markering</strong> – kurvan står still och strecket rör sig. När det når högerkanten bläddras kurvan fram.</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2 id="utantext">10. Talböcker utan text</h2>
+
+<p>En del talböcker har ingen textfil, bara NCC och smil-filer. Ekorr+ känner igen dem automatiskt. Då gäller följande:</p>
+<ul>
+  <li><strong>Mittkolumnen visar NCC:n</strong> med alla poster – rubriker och sidnummer (”Sida 12”). Rubriken eller sidan du befinner dig vid är markerad.</li>
+  <li><strong><kbd>↑</kbd> / <kbd>↓</kbd> går mellan ljudklipp</strong> i stället för meningar. Är du mer än knappt en sekund in i ett klipp går <kbd>↑</kbd> till klippets början, annars till klippet före.</li>
+  <li><strong>Söktext</strong> finns inte i kommentarsformuläret, och raden ”Sök:” skrivs inte i rapporten.</li>
+  <li>Rapporten får i stället <strong>Event</strong> och <strong>Rubrik</strong>:</li>
+</ul>
+<pre class="report">Sida:   12   Boktid: 01h23m45s678ms   Rubriktid: 00h01m10s250ms   Event: 17
+Rubrik: 2. Elektriska kretsar &gt; 2.1 Ström &gt; Exempel 2.2</pre>
+<ul>
+  <li><strong>Event</strong> räknas från 1 i varje rubrik (smil-fil). Varje <code>par</code> och varje ljudklipp i det räknas – ett par med tre klipp är event 1, 2, 3 och 4.</li>
+  <li><strong>Rubrik</strong> är den aktuella rubriken med de överordnade rubrikerna.</li>
+</ul>
+
+<!-- ================================================================== -->
+<h2 id="installningar">11. Inställningar och utseende</h2>
+
+<div class="table-wrap"><table>
+  <thead><tr><th>Var</th><th>Vad</th></tr></thead>
+  <tbody>
+    <tr><td>Inställningar → Namn…</td><td>Ditt namn i rapporten</td></tr>
+    <tr><td>Inställningar → Mappar…</td><td>Mapp för talböcker och för kopior av rapporter</td></tr>
+    <tr><td>Inställningar → Typsnitt…</td><td>Typsnitt för texten, eller bokens eget</td></tr>
+    <tr><td>Inställningar → Tema</td><td>Standard, Solarized ljus eller Solarized mörk – gäller hela fönstret</td></tr>
+    <tr><td>Inställningar → Ljudkurva</td><td>Rörlig eller fast kurva</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd> / <kbd>Ctrl</kbd>+<kbd>0</kbd></td><td>Större / mindre / normal text</td></tr>
+  </tbody>
+</table></div>
+<p>Alla val sparas och gäller nästa gång du startar programmet. Inställningarna ligger i <code>%LOCALAPPDATA%\CamaboMediaEkorrAudio\settings.json</code>.</p>
+
+<!-- ================================================================== -->
+<h2 id="tangenter">12. Alla kortkommandon</h2>
+
+<h3>Böcker och fönster</h3>
+<div class="table-wrap"><table>
+  <tbody>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>Öppna bok</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Skift</kbd>+<kbd>O</kbd></td><td>Öppna senaste bok</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>W</kbd></td><td>Stäng boken</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Q</kbd></td><td>Avsluta</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>1</kbd> / <kbd>Ctrl</kbd>+<kbd>2</kbd></td><td>Visa/dölj vänster- / högerkolumnen</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Visa/dölj ljudkurvan</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>-</kbd> / <kbd>0</kbd></td><td>Textstorlek</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Uppspelning och navigering</h3>
+<div class="table-wrap"><table>
+  <tbody>
+    <tr><td><kbd>Mellanslag</kbd></td><td>Spela / pausa</td></tr>
+    <tr><td><kbd>←</kbd> / <kbd>→</kbd></td><td>5 s bakåt / framåt</td></tr>
+    <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Föregående / nästa fras (ljudklipp i böcker utan text)</td></tr>
+    <tr><td><kbd>Skift</kbd>+<kbd>←</kbd> / <kbd>→</kbd></td><td>Föregående / nästa sida</td></tr>
+    <tr><td><kbd>Skift</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Föregående / nästa rubrik</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td>Gå till sida</td></tr>
+    <tr><td><kbd>,</kbd> / <kbd>.</kbd></td><td>Långsammare / snabbare</td></tr>
+    <tr><td><kbd>-</kbd></td><td>Växla normal / snabb hastighet</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Sökning</h3>
+<div class="table-wrap"><table>
+  <tbody>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td><td>Sök i texten</td></tr>
+    <tr><td><kbd>Enter</kbd> / <kbd>Skift</kbd>+<kbd>Enter</kbd></td><td>Nästa / föregående träff (i sökfältet)</td></tr>
+    <tr><td><kbd>F3</kbd> / <kbd>Skift</kbd>+<kbd>F3</kbd></td><td>Nästa / föregående träff</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>Stäng sökraden</td></tr>
+  </tbody>
+</table></div>
+
+<h3>Kommentarer</h3>
+<div class="table-wrap"><table>
+  <tbody>
+    <tr><td><kbd>Enter</kbd></td><td>Ny kommentar (pausar uppspelningen)</td></tr>
+    <tr><td>Dubbelklick</td><td>Redigera kommentar</td></tr>
+    <tr><td><kbd>Delete</kbd></td><td>Ta bort kommentar</td></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Flytta kommentar</td></tr>
+    <tr><td><kbd>1</kbd>–<kbd>9</kbd>, <kbd>0</kbd></td><td>Välj typ (i formuläret)</td></tr>
+    <tr><td><kbd>Enter</kbd> / <kbd>Esc</kbd></td><td>Spara / avbryt (i formuläret)</td></tr>
+  </tbody>
+</table></div>
+
+<div class="note">
+  <p>När du skriver i sökfältet gäller tangenterna för texten – mellanslag, pilar och Enter styr då inte uppspelningen.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2 id="problem">13. Om något inte fungerar</h2>
+
+<ul>
+  <li><strong>Inget ljud.</strong> Kontrollera att bokens ljudfiler ligger i samma mapp som <code>ncc.html</code> och att datorns ljud inte är avstängt.</li>
+  <li><strong>”Hittar inte talboken”</strong> när du öppnar en bok från listan med senaste böcker: boken har flyttats eller tagits bort. Den tas då bort ur listan – öppna den på nytt från sin nya plats.</li>
+  <li><strong>”Kan inte spela in”.</strong> Ingen mikrofon hittades, eller den används av ett annat program. Inspelning går bara att göra för typ 1, Läsfel.</li>
+  <li><strong>”Felaktigt sidnummer”.</strong> Sidan i formuläret finns inte i boken. Rätta numret eller lämna fältet tomt.</li>
+  <li><strong>Ljudkurvan är streckad.</strong> Ljudet läses in en bit i taget medan du lyssnar; kurvan fylls i efter en kort stund.</li>
+</ul>
+
+<footer>
+  Ekorr+ · Camabo Media
+</footer>
+
+</div>
+</body>
+</html>

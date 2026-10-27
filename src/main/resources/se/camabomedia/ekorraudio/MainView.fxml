@@ -80,7 +80,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </Menu>
         <Menu mnemonicParsing="false" text="Hjälp">
           <items>
-            <MenuItem mnemonicParsing="false" text="Om Ekorr" />
+            <MenuItem fx:id="menuItemManual" mnemonicParsing="false" onAction="#handleMenuItemManual" text="Manual" />
           </items>
         </Menu>
       </menus>

@@ -10,8 +10,12 @@ import se.camabomedia.ekorraudio.report.Comment;
 import se.camabomedia.ekorraudio.report.Report;
 import se.camabomedia.ekorraudio.report.ReportCopy;
 
+import java.awt.Desktop;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1414,6 +1418,24 @@ public class MainViewController implements Initializable {
         }
     }
 
+    /** Hjälp → Manual: kopierar manualen ur jar-filen och öppnar den i webbläsaren. */
+    private void viewManual() {
+        try (InputStream in = getClass().getResourceAsStream("/se/camabomedia/ekorraudio/Ekorr-manual.html")) {
+            if (in == null) {
+                showError("Hittar inte manualen", "Manual.html saknas i programmet.");
+                return;
+            }
+            // Samma fil varje gång (skrivs över), så att inga kopior blir kvar
+            Path file = Path.of(System.getProperty("java.io.tmpdir"), "Ekorr-manual.html");
+            Files.copy(in, file, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+            openWithSystem(file.toFile());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            showError("Kunde inte öppna manualen", e.getMessage());
+        }
+    }
+
     /**
      * Öppnar en fil eller mapp med det program Windows har kopplat till den.
      * java.awt.Desktop körs i en egen tråd – anropet kan ta en stund och ska
@@ -1901,6 +1923,11 @@ public class MainViewController implements Initializable {
     @FXML
     void handleMenuItemFont(ActionEvent event) {
         chooseFont();
+    }
+
+    @FXML
+    void handleMenuItemManual(ActionEvent event) {
+        viewManual();
     }
 
 }
