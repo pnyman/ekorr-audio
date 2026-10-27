@@ -1355,10 +1355,9 @@ public class MainViewController implements Initializable {
         // Inom det markerade par:et (ett par utan ljud har samma start som nästa)
         ms = Math.max(timeline.startOf(currentIndex), Math.min(ms, timeline.endOf(currentIndex)));
 
-        String event = "";
+        String event = Integer.toString(timeline.eventAt(currentIndex, ms));
         String heading = "";
         if (ncc.isAudioOnly()) {
-            event = Integer.toString(timeline.eventAt(currentIndex, ms));
             List<String> names = new java.util.ArrayList<>();
             List<String> crumbs = timeline.get(currentIndex).getBreadCrumbs();
             if (crumbs != null) {
