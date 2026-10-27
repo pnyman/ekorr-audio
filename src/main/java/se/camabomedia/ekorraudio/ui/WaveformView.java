@@ -48,7 +48,7 @@ public class WaveformView extends Pane {
     /** Nivå (0–32767) under vilken ljudet räknas som tyst. */
     public static final int SILENCE_THRESHOLD = 600;
     /** Tystnad minst så här lång (ms) markeras som lång paus. */
-    public static final long LONG_PAUSE_MS = 2_000;
+    public static final long LONG_PAUSE_MS = 5_000;
 
     private final Canvas canvas = new Canvas();
     private Waveform waveform;
