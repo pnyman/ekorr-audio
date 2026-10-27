@@ -1252,7 +1252,8 @@ public class MainViewController implements Initializable {
         String page = timeline.get(currentIndex).getPage();
         labelStatus.setText((page != null ? "Sida " + page + "   " : "")
                             + Timeline.format(ms) + " / " + Timeline.format(timeline.duration())
-                            + "   " + speed + " %");
+                            + "   Hastighet " + speed + " %"
+                            + "   Volym " + mpv.getVolume() + " %");
     }
 
     /**
