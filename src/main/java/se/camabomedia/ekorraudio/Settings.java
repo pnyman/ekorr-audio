@@ -209,6 +209,19 @@ public class Settings {
         return !Boolean.FALSE.equals(settings.get("showRightPane"));
     }
 
+    /** Uppspelningens volym i procent. */
+    @SuppressWarnings("unchecked")
+    public void addVolume(int percent) {
+        settings.put("volume", percent);
+        writeJSON();
+    }
+
+    /** Sparad volym i procent, eller -1 om ingen finns. */
+    public int getVolume() {
+        Object value = settings.get("volume");
+        return value instanceof Number ? ((Number) value).intValue() : -1;
+    }
+
     /** Ljudkurvan: true = fast kurva med rörlig markering, false = rörlig kurva. */
     @SuppressWarnings("unchecked")
     public void addWaveformFixed(boolean fixed) {

@@ -79,6 +79,16 @@
     -fx-opacity: 0.3;
 }
 
+/* Volymikonen framför reglaget (ingen knapp, bara en visning) */
+.toolbar .volume-icon {
+    -fx-padding: 0 2 0 4;
+}
+
+.toolbar .volume-icon .ikonli-font-icon {
+    -fx-icon-size: 20px;
+    -fx-icon-color: -ekorr-icon;
+}
+
 /* ---------------------------------------------------------------- "Öppnar …" */
 
 /* Lager över textvyn medan en bok öppnas. Färgerna följer temat. */

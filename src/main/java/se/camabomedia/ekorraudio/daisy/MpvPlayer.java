@@ -141,6 +141,12 @@ public class MpvPlayer implements AutoCloseable {
         cmd.add("--speed=" + String.format(java.util.Locale.ROOT, "%.2f", speed));
         // Tonhöjden behålls vid ändrad hastighet (mpv:s standard, men uttryckligt)
         cmd.add("--audio-pitch-correction=yes");
+        // Tidsskalningsfiltret ligger med från start, även vid 100 %. Annars
+        // lägger mpv in det först när hastigheten ändras från 100 %, ljudkedjan
+        // startas om och den buffrade biten spelas igen – vid hög hastighet
+        // syns det som att tiden hoppar tillbaka ungefär en sekund.
+        cmd.add("--af=scaletempo2");
+        cmd.add("--volume=" + volume);
         cmd.add("--input-ipc-server=" + pipeName);
         cmd.add("--start=" + Timeline.seconds(Math.max(0, startMs)));
         cmd.add("--");
@@ -255,6 +261,22 @@ public class MpvPlayer implements AutoCloseable {
 
     public double getSpeed() {
         return speed;
+    }
+
+    /** Volym i procent (0–MAX_VOLUME). */
+    public static final int MAX_VOLUME = 130;   // mpv:s standardgräns (volume-max)
+    private volatile int volume = 100;
+
+    /** Volym i procent, 0–130 (över 100 förstärks ljudet). Gäller direkt. */
+    public void setVolume(int percent) {
+        volume = Math.max(0, Math.min(MAX_VOLUME, percent));
+        if (isOpen()) {
+            command("[\"set_property\",\"volume\"," + volume + "]");
+        }
+    }
+
+    public int getVolume() {
+        return volume;
     }
 
     /** Söker till absolut position (ms). Pausläget behålls. */

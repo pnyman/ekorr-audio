@@ -82,6 +82,8 @@ public class MainViewController implements Initializable {
     private Button btnSlower;
     private Button btnFaster;
     private Label speedLabel;
+    private Label volumeIcon;
+    private javafx.scene.control.Slider volumeSlider;
     private Button btnNewComment;
     private Button btnEditComment;
     private Button btnDeleteComment;
@@ -198,6 +200,25 @@ public class MainViewController implements Initializable {
         speedLabel.getStyleClass().add("speed-label");
         btnFaster = IconButton.create("mdi2p-plus-circle-outline", "Snabbare (punkt)",
                                       () -> changeSpeed(+SPEED_STEP));
+        // Volym: en ikon som visar nivån och ett reglage
+        volumeIcon = new Label();
+        volumeIcon.getStyleClass().add("volume-icon");
+        volumeSlider = new javafx.scene.control.Slider(0, MpvPlayer.MAX_VOLUME, 100);
+        volumeSlider.getStyleClass().add("volume-slider");
+        volumeSlider.setPrefWidth(90);
+        volumeSlider.setFocusTraversable(false);   // piltangenterna styr uppspelningen
+        volumeSlider.setTooltip(new javafx.scene.control.Tooltip("Volym (Ctrl+↑ / Ctrl+↓)"));
+        volumeSlider.valueProperty().addListener((obs, old, value) -> {
+                if (!updatingVolume) {
+                    applyVolume((int) Math.round(value.doubleValue()), true);
+                }
+        });
+        // Spara när man släpper reglaget (inte för varje steg under dragningen)
+        volumeSlider.valueChangingProperty().addListener((obs, was, changing) -> {
+            if (!changing) {
+                settings.addVolume(mpv.getVolume());
+            }
+        });
         btnGoToPage = IconButton.create("mdi2b-book-open-page-variant", "Gå till sida (Ctrl+G)",
                                         this::goToPage);
         btnSearch = IconButton.create("mdi2m-magnify", "Sök i texten (Ctrl+F)",
@@ -234,6 +255,8 @@ public class MainViewController implements Initializable {
             btnBack, btnPlay, btnPause, btnForward,
             separator(),
             btnSlower, speedLabel, btnFaster,
+            separator(),
+            volumeIcon, volumeSlider,
             separator(),
             btnNewComment, btnEditComment, btnDeleteComment,
             separator(),
@@ -311,6 +334,10 @@ public class MainViewController implements Initializable {
 
         contentView.setFontFamily(settings.getFontFamily());
         contentView.setFontScale(clampScale(settings.getFontScale()));
+
+        // Sparad volym
+        int savedVolume = settings.getVolume();
+        applyVolume(savedVolume >= 0 ? savedVolume : 100, false);
 
         // Ljudkurvan, längst ned – mellan kolumnerna och statusraden
         waveformView = new WaveformView();
@@ -772,6 +799,14 @@ public class MainViewController implements Initializable {
             return;
         }
 
+        // Volym: Ctrl+↑ / Ctrl+↓ (5 % per steg)
+        if (event.isShortcutDown() && !event.isShiftDown()
+                && (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN)) {
+            applyVolume(mpv.getVolume() + (event.getCode() == KeyCode.UP ? VOLUME_STEP : -VOLUME_STEP), true);
+            event.consume();
+            return;
+        }
+
         // Textstorlek fungerar även utan öppnad bok
         if (event.isShortcutDown() && handleZoomKey(event)) {
             event.consume();
@@ -1138,6 +1173,44 @@ public class MainViewController implements Initializable {
             mpv.seek(timeline.startOf(currentIndex));
         }
         mpv.play();
+    }
+
+    // ------------------------------------------------------------ volym
+    private static final int VOLUME_STEP = 5;
+    /** Sant medan reglaget sätts från koden – då ska lyssnaren inte reagera. */
+    private boolean updatingVolume = false;
+
+    /**
+     * Sätter volymen i mpv, reglaget och knappens ikon. fromUser: ändrad av
+     * användaren – då slås ett avstängt ljud på igen, och volymen sparas
+     * (under dragning i reglaget först när man släpper).
+     */
+    private void applyVolume(int percent, boolean fromUser) {
+        int v = Math.max(0, Math.min(MpvPlayer.MAX_VOLUME, percent));
+        mpv.setVolume(v);
+        if (volumeSlider != null && (int) Math.round(volumeSlider.getValue()) != v) {
+            updatingVolume = true;
+            volumeSlider.setValue(v);
+            updatingVolume = false;
+        }
+        if (fromUser && (volumeSlider == null || !volumeSlider.isValueChanging())) {
+            settings.addVolume(v);
+        }
+        updateVolumeIcon();
+        updateStatus(seekTarget >= 0 ? seekTarget : mpv.getPosition());
+    }
+
+    /** Ikonen framför reglaget visar ungefärlig nivå. */
+    private void updateVolumeIcon() {
+        if (volumeIcon == null) {
+            return;
+        }
+        int v = mpv.getVolume();
+        String icon = v == 0 ? "mdi2v-volume-off"
+            : v < 40 ? "mdi2v-volume-low"
+            : v < 80 ? "mdi2v-volume-medium"
+            : "mdi2v-volume-high";
+        volumeIcon.setGraphic(new org.kordamp.ikonli.javafx.FontIcon(icon));
     }
 
     // ------------------------------------------------------------ visning
