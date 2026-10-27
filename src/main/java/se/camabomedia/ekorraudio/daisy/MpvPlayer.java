@@ -74,12 +74,44 @@ public class MpvPlayer implements AutoCloseable {
         this.mpvPath = mpvPath;
     }
 
+    /**
+     * Var mpv finns, i den här ordningen:
+     *  1. miljövariabeln EKORR_MPV
+     *  2. mpv som följer med programmet (installerat med msi-filen):
+     *     <installationsmapp>\app\mpv\mpv.exe
+     *  3. Scoop-installation
+     *  4. "mpv" i PATH
+     */
     public static String defaultMpvPath() {
         String env = System.getenv("EKORR_MPV");
         if (env != null && !env.isBlank()) {
             return env;
         }
+        File bundled = bundledMpv();
+        if (bundled != null) {
+            return bundled.getPath();
+        }
         return new File(SCOOP_MPV).isFile() ? SCOOP_MPV : "mpv";
+    }
+
+    /**
+     * mpv.exe i installationen, eller null. jpackage-startprogrammet sätter
+     * jpackage.app-path till sin egen sökväg (…\Ekorr+\Ekorr+.exe); filerna
+     * från --input hamnar i undermappen app.
+     */
+    private static File bundledMpv() {
+        String launcher = System.getProperty("jpackage.app-path");
+        if (launcher == null) {
+            return null;   // körs inte från en installation (t.ex. mvn javafx:run)
+        }
+        File dir = new File(launcher).getAbsoluteFile().getParentFile();
+        for (File f : new File[] { new File(dir, "app\\mpv\\mpv.exe"),
+                                   new File(dir, "mpv\\mpv.exe") }) {
+            if (f.isFile()) {
+                return f;
+            }
+        }
+        return null;
     }
 
     public void setListener(Listener listener) {
@@ -97,6 +129,8 @@ public class MpvPlayer implements AutoCloseable {
 
         List<String> cmd = new ArrayList<>();
         cmd.add(mpvPath);
+        // Läs inte användarens mpv.conf – den kan ändra uppspelningen
+        cmd.add("--no-config");
         cmd.add("--no-video");
         cmd.add("--input-terminal=no");
         cmd.add("--msg-level=all=error");
