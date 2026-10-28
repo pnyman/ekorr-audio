@@ -51,30 +51,33 @@ public class NccView {
     private static final String CURRENT_CLASS = "ekorr-ncc-current";
 
     /**
-     * Markerar posten och scrollar så att den hamnar mitt i vyn (utan
-     * animering). Överst och nederst i listan går det inte att centrera –
-     * då hamnar den så nära mitten det går.
+     * Markerar NCC-posterna med de givna id:na (rubrik och sida) och scrollar
+     * så att den av dem som står längst ned i listan hamnar mitt i vyn – den
+     * anger var man är mest precist. Överst och nederst i listan går det inte
+     * att centrera; då hamnar den så nära mitten det går.
      */
     private static final String CURRENT_SCRIPT =
-        "(function(id) {"
+        "(function(ids) {"
         + "  var old = document.getElementsByClassName('" + CURRENT_CLASS + "');"
         + "  for (var i = old.length - 1; i >= 0; i--) { old[i].classList.remove('" + CURRENT_CLASS + "'); }"
-        + "  if (!id) { return; }"
+        + "  var target = null;"
         + "  var links = document.getElementsByTagName('a');"
         + "  for (var j = 0; j < links.length; j++) {"
         + "    var href = links[j].getAttribute('href') || '';"
-        + "    if (href.substring(href.indexOf('#') + 1) !== id) { continue; }"
+        + "    if (ids.indexOf(href.substring(href.indexOf('#') + 1)) < 0) { continue; }"
         + "    var item = links[j];"
         + "    while (item && !item.id) { item = item.parentNode; }"
-        + "    if (!item || !item.classList) { return; }"
+        + "    if (!item || !item.classList) { continue; }"
         + "    item.classList.add('" + CURRENT_CLASS + "');"
+        + "    target = item;"   // länkarna gås igenom uppifrån – sista träffen står längst ned
+        + "  }"
+        + "  if (target) {"
         // Scrolla först när markeringen har ritats om. Scrollas det direkt
         // flyttar WebView den gamla bilden innan den hunnit rita bort den
         // tidigare markeringen – den blir då kvar på skärmen.
         + "    setTimeout(function() {"
-        + "      item.scrollIntoView({ behavior: 'auto', block: 'center' });"
+        + "      target.scrollIntoView({ behavior: 'auto', block: 'center' });"
         + "    }, 40);"
-        + "    return;"
         + "  }"
         + "})";
 
@@ -89,8 +92,9 @@ public class NccView {
     /** Färgtema och dess style-element i det laddade dokumentet. */
     private Theme theme = Theme.STANDARD;
     private Element styleNode = null;
-    /** Par-id för sidan som ska vara markerad, eller null. */
-    private String currentParID = null;
+    /** Par-id:n för rubriken och sidan som ska vara markerade (eller null). */
+    private String currentHeadingID = null;
+    private String currentPageID = null;
 
     public NccView() {
         webView = new WebView();
@@ -118,7 +122,8 @@ public class NccView {
     /** Tömmer vyn (när talboken stängs). */
     public void clear() {
         styleNode = null;
-        currentParID = null;
+        currentHeadingID = null;
+        currentPageID = null;
         webEngine.loadContent("");
     }
 
@@ -144,11 +149,12 @@ public class NccView {
     }
 
     /**
-     * Markerar NCC-posten (sidnumret) med detta par-id, eller ingen om null.
-     * Listan scrollas bara om posten inte syns.
+     * Markerar aktuell rubrik och aktuellt sidnummer (par-id:n från NCC:ns
+     * länkar). null = ingen. Båda får samma färg.
      */
-    public void setCurrentPage(String parID) {
-        currentParID = parID;
+    public void setCurrent(String headingID, String pageID) {
+        currentHeadingID = headingID;
+        currentPageID = pageID;
         applyCurrent();
     }
 
@@ -156,8 +162,13 @@ public class NccView {
         if (webEngine.getDocument() == null) {
             return;
         }
-        String id = currentParID == null ? "" : currentParID.replace("\\", "").replace("'", "");
-        webEngine.executeScript(CURRENT_SCRIPT + "('" + id + "')");
+        webEngine.executeScript(CURRENT_SCRIPT + "([" + jsId(currentHeadingID) + ", "
+                                + jsId(currentPageID) + "])");
+    }
+
+    /** Id som JavaScript-sträng ('…'), eller '' för null. */
+    private static String jsId(String id) {
+        return "'" + (id == null ? "" : id.replace("\\", "").replace("'", "")) + "'";
     }
 
     /** Lägger temats style-element sist i dokumentet. */

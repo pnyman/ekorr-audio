@@ -98,8 +98,9 @@ public class MainViewController implements Initializable {
     private se.camabomedia.ekorraudio.daisy.Waveform waveform;
 
     // Sidorna i NCC:n: tidslinjeindex (sorterat) och par-id, för markering i NCC-vyn
-    private int[] pageIndices = new int[0];
-    private String[] pageParIDs = new String[0];
+    private NccIndex nccHeadings = NccIndex.EMPTY;
+    private NccIndex nccPages = NccIndex.EMPTY;
+    private String currentHeadingParID = null;
     private String currentPageParID = null;
     @FXML private MenuItem menuItemOpen;
     @FXML private javafx.scene.control.Menu menuTheme;
@@ -535,7 +536,7 @@ public class MainViewController implements Initializable {
         updateWindowTitle();
         openWaveform();
         contentView.setMissingAudio(missingAudioIDs());
-        buildPageIndex();
+        buildNccIndex();
         loadReport();
 
         // Texten och NCC:n laddas redan i vyerna (startat i openProject)
@@ -957,48 +958,71 @@ public class MainViewController implements Initializable {
         });
     }
 
-    // ------------------------------------------------------------ ljudkurva
-
     // ------------------------------------------------------------ NCC-sida
 
-    /** Sidnumren i NCC:n, sorterade efter var de ligger i tidslinjen. */
-    private void buildPageIndex() {
-        List<int[]> pages = new java.util.ArrayList<>();   // {index, plats i NCC-listan}
-        List<se.camabomedia.ekorraudio.daisy.NccItem> items = ncc.getNccItems();
-        for (int k = 0; k < items.size(); k++) {
-            se.camabomedia.ekorraudio.daisy.NccItem item = items.get(k);
-            if (!item.getName().matches("h[1-6]")) {
-                continue;
-            }
-            int index = timeline.indexOf(smil.getParFromParID(item.getParID()));
-            if (index >= 0) {
-                pages.add(new int[] { index, k });
-            }
-        }
-        pages.sort((a, b) -> Integer.compare(a[0], b[0]));
-        pageIndices = new int[pages.size()];
-        pageParIDs = new String[pages.size()];
-        for (int k = 0; k < pages.size(); k++) {
-            pageIndices[k] = pages.get(k)[0];
-            pageParIDs[k] = items.get(pages.get(k)[1]).getParID();
-        }
-        currentPageParID = null;
-    }
+    /** NCC-poster av ett slag (rubriker eller sidor), sorterade efter plats i tidslinjen. */
+    private static final class NccIndex {
+        static final NccIndex EMPTY = new NccIndex(new int[0], new String[0]);
+        final int[] indices;      // index i tidslinjen, stigande
+        final String[] parIDs;    // NCC-länkens id för samma post
 
-    /** Markerar i NCC-vyn den sida som den aktuella meningen ligger på. */
-    private void syncNccPage() {
-        String parID = null;
-        if (currentIndex >= 0 && pageIndices.length > 0) {
-            // Sista sidan som börjar på eller före den aktuella meningen
-            int k = java.util.Arrays.binarySearch(pageIndices, currentIndex);
+        NccIndex(int[] indices, String[] parIDs) {
+            this.indices = indices;
+            this.parIDs = parIDs;
+        }
+
+        /** Sista posten som börjar på eller före index, eller null. */
+        String at(int index) {
+            if (index < 0 || indices.length == 0) {
+                return null;
+            }
+            int k = java.util.Arrays.binarySearch(indices, index);
             if (k < 0) {
                 k = -k - 2;
             }
-            parID = k >= 0 ? pageParIDs[k] : null;
+            return k >= 0 ? parIDs[k] : null;
         }
-        if (!java.util.Objects.equals(parID, currentPageParID)) {
-            currentPageParID = parID;
-            nccView.setCurrentPage(parID);
+    }
+
+    /** Rubrikerna och sidnumren i NCC:n, för markeringen i NCC-vyn. */
+    private void buildNccIndex() {
+        nccHeadings = nccIndex(item -> item.getName().matches("h[1-6]"));
+        nccPages = nccIndex(item -> item.getCssClass().startsWith("page-"));
+        currentHeadingParID = null;
+        currentPageParID = null;
+    }
+
+    private NccIndex nccIndex(java.util.function.Predicate<se.camabomedia.ekorraudio.daisy.NccItem> kind) {
+        List<int[]> found = new java.util.ArrayList<>();   // {index, plats i NCC-listan}
+        List<se.camabomedia.ekorraudio.daisy.NccItem> items = ncc.getNccItems();
+        for (int k = 0; k < items.size(); k++) {
+            if (!kind.test(items.get(k))) {
+                continue;
+            }
+            int index = timeline.indexOf(smil.getParFromParID(items.get(k).getParID()));
+            if (index >= 0) {
+                found.add(new int[] { index, k });
+            }
+        }
+        found.sort((a, b) -> Integer.compare(a[0], b[0]));
+        int[] indices = new int[found.size()];
+        String[] parIDs = new String[found.size()];
+        for (int k = 0; k < found.size(); k++) {
+            indices[k] = found.get(k)[0];
+            parIDs[k] = items.get(found.get(k)[1]).getParID();
+        }
+        return new NccIndex(indices, parIDs);
+    }
+
+    /** Markerar i NCC-vyn rubriken och sidan som den aktuella meningen ligger under. */
+    private void syncNccPage() {
+        String heading = nccHeadings.at(currentIndex);
+        String page = nccPages.at(currentIndex);
+        if (!java.util.Objects.equals(heading, currentHeadingParID)
+            || !java.util.Objects.equals(page, currentPageParID)) {
+            currentHeadingParID = heading;
+            currentPageParID = page;
+            nccView.setCurrent(heading, page);
         }
     }
 
@@ -1460,10 +1484,11 @@ public class MainViewController implements Initializable {
         mpv.close();
         closeWaveform();
         contentView.setMissingAudio(null);
-        pageIndices = new int[0];
-        pageParIDs = new String[0];
+        nccHeadings = NccIndex.EMPTY;
+        nccPages = NccIndex.EMPTY;
+        currentHeadingParID = null;
         currentPageParID = null;
-        nccView.setCurrentPage(null);
+        nccView.setCurrent(null, null);
         timeline = null;
         smil = null;
         ncc = null;
