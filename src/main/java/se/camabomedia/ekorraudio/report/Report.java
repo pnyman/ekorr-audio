@@ -256,6 +256,39 @@ public class Report {
         }
     }
 
+    /**
+     * Lägger in en ny kommentar på rätt plats efter boktid: efter alla som
+     * gjorts tidigare i boken (eller på samma ställe) och före den första som
+     * gjorts senare. Ordningen bland de befintliga ändras inte, så en
+     * ordning som gjorts för hand (Alt+pil) behålls.
+     *
+     * Kommentarer utan boktid (från äldre rapporter) räknas som om de låg
+     * där kommentaren före dem ligger. En ny kommentar utan boktid hamnar sist.
+     */
+    public void insertInOrder(Comment comment) {
+        long key = comment.getBookTimeMs();
+        if (key < 0) {
+            comments.add(comment);
+            return;
+        }
+        int insertAt = comments.size();
+        long previous = -1;
+        for (int i = 0; i < comments.size(); i++) {
+            long k = comments.get(i).getBookTimeMs();
+            if (k < 0) {
+                k = previous;
+            }
+            else {
+                previous = k;
+            }
+            if (k > key) {
+                insertAt = i;
+                break;
+            }
+        }
+        comments.add(insertAt, comment);
+    }
+
     public void removeComment(Comment comment) {
         comments.remove(comment);
     }

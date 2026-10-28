@@ -95,6 +95,11 @@ public class Comment {
         return base64EncodedAudio;
     }
 
+    /** Boktiden i ms (för sortering), eller -1 om den saknas (äldre kommentarer). */
+    public long getBookTimeMs() {
+        return position == null ? -1 : Position.parse(position.bookTime);
+    }
+
     public Position getPosition() {
         return position;
     }

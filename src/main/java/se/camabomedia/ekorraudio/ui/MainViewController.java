@@ -1322,8 +1322,7 @@ public class MainViewController implements Initializable {
         mpv.pause();
         String page = currentIndex >= 0 ? timeline.get(currentIndex).getPage() : null;
         if (openCommentDialog(null, page, currentPosition())) {
-            List<Comment> comments = report.getComments();
-            afterChange(comments.isEmpty() ? null : comments.get(comments.size() - 1));
+            afterChange(savedComment);   // markera den nya, var den än hamnade
         }
     }
 
@@ -1334,13 +1333,12 @@ public class MainViewController implements Initializable {
         }
         mpv.pause();
         if (openCommentDialog(comment, null, null)) {
-            // Redigeringen ersätter objektet i listan – markera det nya på samma plats
-            int index = Math.min(report.getComments().size() - 1,
-                                 Math.max(0, commentIndexBefore));
-            afterChange(report.getComments().isEmpty() ? null : report.getComments().get(index));
+            afterChange(savedComment);   // redigeringen ersätter objektet i listan
         }
     }
 
+    /** Kommentaren som sparades i formuläret senast. */
+    private Comment savedComment = null;
     private int commentIndexBefore = -1;
 
     /**
@@ -1348,18 +1346,21 @@ public class MainViewController implements Initializable {
      * också event och rubrik med överordnade rubriker (nivå1 > nivå2 > …).
      */
     private se.camabomedia.ekorraudio.report.Position currentPosition() {
-        if (timeline == null || currentIndex < 0) {
+        if (timeline == null || timeline.size() == 0) {
             return null;
         }
-        long ms = seekTarget >= 0 ? seekTarget : mpv.getPosition();
+        // Inget markerat än (uppspelningen har inte börjat): bokens början,
+        // boktid 0 – kommentaren hamnar då först
+        int index = Math.max(currentIndex, 0);
+        long ms = currentIndex < 0 ? 0 : (seekTarget >= 0 ? seekTarget : mpv.getPosition());
         // Inom det markerade par:et (ett par utan ljud har samma start som nästa)
-        ms = Math.max(timeline.startOf(currentIndex), Math.min(ms, timeline.endOf(currentIndex)));
+        ms = Math.max(timeline.startOf(index), Math.min(ms, timeline.endOf(index)));
 
-        String event = Integer.toString(timeline.eventAt(currentIndex, ms));
+        String event = Integer.toString(timeline.eventAt(index, ms));
         String heading = "";
         if (ncc.isAudioOnly()) {
             List<String> names = new java.util.ArrayList<>();
-            List<String> crumbs = timeline.get(currentIndex).getBreadCrumbs();
+            List<String> crumbs = timeline.get(index).getBreadCrumbs();
             if (crumbs != null) {
                 for (String parID : crumbs) {
                     se.camabomedia.ekorraudio.daisy.NccItem item = ncc.getNccItem(parID);
@@ -1372,7 +1373,7 @@ public class MainViewController implements Initializable {
         }
         return new se.camabomedia.ekorraudio.report.Position(
             se.camabomedia.ekorraudio.report.Position.format(ms),
-            se.camabomedia.ekorraudio.report.Position.format(timeline.headingTime(currentIndex, ms)),
+            se.camabomedia.ekorraudio.report.Position.format(timeline.headingTime(index, ms)),
             event, heading);
     }
 
@@ -1410,6 +1411,7 @@ public class MainViewController implements Initializable {
                 ctrl.initData(commentStage, report, comment, ncc);
             }
             commentStage.showAndWait();
+            savedComment = ctrl.getSavedComment();
             return ctrl.isSaved();
         }
         catch (IOException e) {

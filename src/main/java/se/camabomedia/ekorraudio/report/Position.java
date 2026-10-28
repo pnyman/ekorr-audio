@@ -37,6 +37,20 @@ public final class Position {
                              t / 3_600_000, (t / 60_000) % 60, (t / 1000) % 60, t % 1000);
     }
 
+    /** "01h23m45s678ms" -> ms, eller -1 om texten saknas eller har annat format. */
+    public static long parse(String s) {
+        if (s == null) {
+            return -1;
+        }
+        java.util.regex.Matcher m = java.util.regex.Pattern
+            .compile("(\\d+)h(\\d+)m(\\d+)s(\\d+)ms").matcher(s.strip());
+        if (!m.matches()) {
+            return -1;
+        }
+        return Long.parseLong(m.group(1)) * 3_600_000 + Long.parseLong(m.group(2)) * 60_000
+            + Long.parseLong(m.group(3)) * 1000 + Long.parseLong(m.group(4));
+    }
+
     private static String clean(String s) {
         return s == null ? "" : s.strip();
     }

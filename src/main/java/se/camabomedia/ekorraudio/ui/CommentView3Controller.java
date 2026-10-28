@@ -337,6 +337,13 @@ public class CommentView3Controller implements Initializable {
         return saved;
     }
 
+    private Comment savedComment = null;
+
+    /** Den sparade kommentaren (ny eller redigerad), eller null. */
+    public Comment getSavedComment() {
+        return savedComment;
+    }
+
     /**
      * Edits a comment
      */
@@ -472,7 +479,7 @@ public class CommentView3Controller implements Initializable {
                 report.replaceComment(comment, newComment);
             }
             else {
-                report.getComments().add(newComment);
+                report.insertInOrder(newComment);   // på rätt plats efter boktid
             }
             report.createAndWriteReport();
         }
@@ -491,6 +498,7 @@ public class CommentView3Controller implements Initializable {
         }
 
         saved = true;
+        savedComment = newComment;
         Stage stage = (Stage) btnOk.getScene().getWindow();
         stage.fireEvent(new WindowEvent(stage, WindowEvent.WINDOW_CLOSE_REQUEST));
     }
