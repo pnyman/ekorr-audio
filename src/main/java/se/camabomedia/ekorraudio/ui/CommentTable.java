@@ -18,6 +18,7 @@ import javafx.scene.input.KeyEvent;
  * Rapportens kommentarer som tabell: Nr, Sida, Typ, Söktext.
  *
  *   Dubbelklick      redigera
+ *   Ctrl+klick       gå till stället i boken där kommentaren gjordes
  *   Delete           ta bort
  *   Alt+Upp/Ned      flytta kommentaren uppåt/nedåt
  */
@@ -27,13 +28,14 @@ public class CommentTable {
 
     private Consumer<Comment> onEdit = c -> {};
     private Consumer<Comment> onDelete = c -> {};
+    private Consumer<Comment> onGoTo = c -> {};
     private Consumer<List<Comment>> onReordered = list -> {};
 
     public CommentTable() {
         table.getStyleClass().add("comments-table");   // egen markeringsfärg, se main.css
         TableColumn<Comment, String> nr = column("Nr", 40, Comment::getNr);
         TableColumn<Comment, String> page = column("Sida", 50, Comment::getPage);
-        TableColumn<Comment, String> type = column("Typ", 80, Comment::getType);
+        TableColumn<Comment, String> type = column("Typ", 110, Comment::getType);
         TableColumn<Comment, String> seek = column("Söktext", 200, Comment::getSeek);
 
         // Nr och Sida har fast bredd. Utan minsta bredd trycker
@@ -41,10 +43,9 @@ public class CommentTable {
         // (då är den 0 px bred), och då syns varken rubrik eller innehåll.
         fixedWidth(nr, 40);
         fixedWidth(page, 50);
-        fixedWidth(type, 70);
         // Siffror högerjusteras (rubrikerna behåller standardjusteringen)
         nr.setStyle("-fx-alignment: CENTER-RIGHT;");
-        page.setStyle("-fx-alignment: CENTER-RIGHT; -fx-padding: 0 8 0 0;");
+        page.setStyle("-fx-alignment: CENTER-RIGHT;");
         type.setMinWidth(80);
         seek.setMinWidth(80);
 
@@ -58,7 +59,14 @@ public class CommentTable {
         table.setRowFactory(tv -> {
             TableRow<Comment> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                if (row.isEmpty()) {
+                    return;
+                }
+                if (event.isShortcutDown() && event.getClickCount() == 1) {
+                    onGoTo.accept(row.getItem());
+                    event.consume();
+                }
+                else if (event.getClickCount() == 2 && !event.isShortcutDown()) {
                     onEdit.accept(row.getItem());
                 }
             });
@@ -127,6 +135,11 @@ public class CommentTable {
         table.getSelectionModel().clearAndSelect(to);
         table.scrollTo(Math.max(0, to - 3));
         onReordered.accept(new ArrayList<>(items));
+    }
+
+    /** Ctrl+klick på en kommentar. */
+    public void setOnGoTo(Consumer<Comment> handler) {
+        onGoTo = handler == null ? c -> {} : handler;
     }
 
     public TableView<Comment> getNode() {

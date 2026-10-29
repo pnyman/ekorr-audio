@@ -320,6 +320,7 @@ public class MainViewController implements Initializable {
         anchorToAllSides(commentTable.getNode());
         commentTable.setOnEdit(this::editComment);
         commentTable.setOnDelete(this::deleteComment);
+        commentTable.setOnGoTo(this::goToComment);
         commentTable.setOnReordered(this::reorderComments);
         // Redigera/Ta bort-knapparna gäller markerad kommentar
         commentTable.getNode().getSelectionModel().selectedItemProperty()
@@ -1071,7 +1072,7 @@ public class MainViewController implements Initializable {
         }
         javafx.scene.control.ToggleGroup group = new javafx.scene.control.ToggleGroup();
         javafx.scene.control.RadioMenuItem moving =
-            new javafx.scene.control.RadioMenuItem("Rörlig kurva");
+            new javafx.scene.control.RadioMenuItem("Rörlig kurva, fast markering");
         javafx.scene.control.RadioMenuItem fixed =
             new javafx.scene.control.RadioMenuItem("Fast kurva, rörlig markering");
         moving.setToggleGroup(group);
@@ -1442,6 +1443,26 @@ public class MainViewController implements Initializable {
             e.printStackTrace();
             showError("Kunde inte öppna kommentarsformuläret", e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Ctrl+klick i kommentarstabellen: gå till stället i boken där
+     * kommentaren gjordes (boktiden). Äldre kommentarer utan boktid: början
+     * av kommentarens sida. Pausläget behålls.
+     */
+    private void goToComment(Comment comment) {
+        if (timeline == null || comment == null) {
+            return;
+        }
+        long ms = comment.getBookTimeMs();
+        if (ms >= 0) {
+            seekToTime(ms);
+            return;
+        }
+        int index = timeline.indexOfPage(comment.getPage());
+        if (index >= 0) {
+            goTo(index, true);
         }
     }
 
