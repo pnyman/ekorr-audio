@@ -906,28 +906,28 @@ public class MainViewController implements Initializable {
             return;   // menyn saknas i FXML
         }
         menuNavigation.getItems().setAll(
-                                         navItem("Spela / pausa", KeyCode.SPACE, false, this::togglePlayIfOpen),
-                                         new javafx.scene.control.SeparatorMenuItem(),
-                                         navItem("5 sekunder bakåt", KeyCode.LEFT, false, () -> skip(-SKIP_MS)),
-                                         navItem("5 sekunder framåt", KeyCode.RIGHT, false, () -> skip(SKIP_MS)),
-                                         new javafx.scene.control.SeparatorMenuItem(),
-                                         navItem("Föregående fras", KeyCode.UP, false, () -> step(false, Timeline.Level.PHRASE)),
-                                         navItem("Nästa fras", KeyCode.DOWN, false, () -> step(true, Timeline.Level.PHRASE)),
-                                         navItem("Föregående rubrik", KeyCode.UP, true, () -> step(false, Timeline.Level.HEADING)),
-                                         navItem("Nästa rubrik", KeyCode.DOWN, true, () -> step(true, Timeline.Level.HEADING)),
-                                         navItem("Föregående sida", KeyCode.LEFT, true, () -> step(false, Timeline.Level.PAGE)),
-                                         navItem("Nästa sida", KeyCode.RIGHT, true, () -> step(true, Timeline.Level.PAGE)),
-                                         new javafx.scene.control.SeparatorMenuItem(),
-                                         navItem("Bokens början", KeyCode.HOME, false, this::goToStart),
-                                         navItem("Bokens slut", KeyCode.END, false, this::goToEnd),
-                                         navItem("Gå till sida …", KeyCode.G, true, this::goToPage, true),
-                                         navItem("Sök i texten …", KeyCode.F, true, contentView::showSearch, true),
-                                         new javafx.scene.control.SeparatorMenuItem(),
-                                         navItem("Gå till markerad kommentar (Ctrl+klick)", null, false, () -> {
-                                                 if (commentTable != null) {
-                                                     goToComment(commentTable.getSelected());
-                                                 }
-                                         }));
+            navItem("Spela / pausa", KeyCode.SPACE, false, this::togglePlayIfOpen),
+            new javafx.scene.control.SeparatorMenuItem(),
+            navItem("5 sekunder bakåt", KeyCode.LEFT, false, () -> skip(-SKIP_MS)),
+            navItem("5 sekunder framåt", KeyCode.RIGHT, false, () -> skip(SKIP_MS)),
+            new javafx.scene.control.SeparatorMenuItem(),
+            navItem("Föregående fras", KeyCode.UP, false, () -> step(false, Timeline.Level.PHRASE)),
+            navItem("Nästa fras", KeyCode.DOWN, false, () -> step(true, Timeline.Level.PHRASE)),
+            navItem("Föregående rubrik", KeyCode.UP, true, () -> step(false, Timeline.Level.HEADING)),
+            navItem("Nästa rubrik", KeyCode.DOWN, true, () -> step(true, Timeline.Level.HEADING)),
+            navItem("Föregående sida", KeyCode.LEFT, true, () -> step(false, Timeline.Level.PAGE)),
+            navItem("Nästa sida", KeyCode.RIGHT, true, () -> step(true, Timeline.Level.PAGE)),
+            new javafx.scene.control.SeparatorMenuItem(),
+            navItem("Bokens början", KeyCode.HOME, false, this::goToStart),
+            navItem("Bokens slut", KeyCode.END, false, this::goToEnd),
+            navItem("Gå till sida …", KeyCode.G, true, this::goToPage, true),
+            navItem("Sök i texten …", KeyCode.F, true, contentView::showSearch, true),
+            new javafx.scene.control.SeparatorMenuItem(),
+            navItem("Gå till markerad kommentar (Ctrl+klick)", null, false, () -> {
+                    if (commentTable != null) {
+                        goToComment(commentTable.getSelected());
+                    }
+            }));
     }
 
     private MenuItem navItem(String text, KeyCode key, boolean shift, Runnable action) {
