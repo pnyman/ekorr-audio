@@ -34,7 +34,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
-public class CommentView3Controller implements Initializable {
+public class CommentViewController implements Initializable {
 
     @FXML private Button btnDeleteSound;
     @FXML private Button btnPlaySound;

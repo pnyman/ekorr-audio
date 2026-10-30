@@ -1513,7 +1513,7 @@ public class MainViewController implements Initializable {
     }
 
     /**
-     * Visar kommentarsformuläret (CommentView3). comment == null betyder ny.
+     * Visar kommentarsformuläret (CommentView). comment == null betyder ny.
      * @return true om kommentaren sparades
      */
     private boolean openCommentDialog(Comment comment, String page,
@@ -1526,7 +1526,7 @@ public class MainViewController implements Initializable {
 
         try {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/se/camabomedia/ekorraudio/CommentView3.fxml"));
+                getClass().getResource("/se/camabomedia/ekorraudio/CommentView.fxml"));
             Stage commentStage = new Stage();
             commentStage.initModality(Modality.APPLICATION_MODAL);
             commentStage.initOwner(stage);
@@ -1538,7 +1538,7 @@ public class MainViewController implements Initializable {
                 new Image(getClass().getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
             commentStage.setResizable(false);
 
-            CommentView3Controller ctrl = loader.getController();
+            CommentViewController ctrl = loader.getController();
             if (comment == null) {
                 ctrl.initData(commentStage, report, ncc, page, position);
             }
@@ -1651,13 +1651,13 @@ public class MainViewController implements Initializable {
 
     /** Hjälp → Manual: kopierar manualen ur jar-filen och öppnar den i webbläsaren. */
     private void viewManual() {
-        try (InputStream in = getClass().getResourceAsStream("/se/camabomedia/ekorraudio/Ekorr-manual.html")) {
+        try (InputStream in = getClass().getResourceAsStream("/se/camabomedia/ekorraudio/Manual.html")) {
             if (in == null) {
                 showError("Hittar inte manualen", "Manual.html saknas i programmet.");
                 return;
             }
             // Samma fil varje gång (skrivs över), så att inga kopior blir kvar
-            Path file = Path.of(System.getProperty("java.io.tmpdir"), "Ekorr-manual.html");
+            Path file = Path.of(System.getProperty("java.io.tmpdir"), "Manual.html");
             Files.copy(in, file, java.nio.file.StandardCopyOption.REPLACE_EXISTING);
             openWithSystem(file.toFile());
         }

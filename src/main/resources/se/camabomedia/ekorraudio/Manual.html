@@ -139,7 +139,7 @@
   <ol>
     <li><a href="#om">Om programmet</a></li>
     <li><a href="#forsta">Innan du börjar</a></li>
-    <li><a href="#fonstret">Fönstret</a></li>
+    <li><a href="#fonstret">Fönstret och menyerna</a></li>
     <li><a href="#oppna">Öppna och stänga böcker</a></li>
     <li><a href="#lyssna">Lyssna och navigera</a></li>
     <li><a href="#sok">Söka i texten</a></li>
@@ -147,7 +147,7 @@
     <li><a href="#rapport">Rapporten</a></li>
     <li><a href="#kurva">Ljudkurvan</a></li>
     <li><a href="#utantext">Talböcker utan text</a></li>
-    <li><a href="#installningar">Inställningar och utseende</a></li>
+    <li><a href="#installningar">Anpassning och inställningar</a></li>
     <li><a href="#tangenter">Alla kortkommandon</a></li>
     <li><a href="#problem">Om något inte fungerar</a></li>
   </ol>
@@ -171,7 +171,7 @@
 </ul>
 
 <!-- ================================================================== -->
-<h2 id="fonstret">3. Fönstret</h2>
+<h2 id="fonstret">3. Fönstret och menyerna</h2>
 
 <div class="layout" aria-hidden="true">
   <div class="bar">Verktygsrad</div>
@@ -183,15 +183,26 @@
 </div>
 
 <ul>
-  <li><strong>Verktygsraden</strong> har knappar för det vanligaste. Håll muspekaren över en knapp för att se vad den gör och dess kortkommando.</li>
+  <li><strong>Verktygsraden</strong> har knappar för det vanligaste och ett reglage för volymen. Håll muspekaren över en knapp för att se vad den gör och dess kortkommando.</li>
   <li><strong>Kommentarer</strong> – bokens kommentarer med nummer, sida, typ och söktext.</li>
   <li><strong>Texten</strong> – bokens text. Den mening som spelas är markerad och texten rullar med.</li>
-  <li><strong>NCC</strong> – bokens rubriker och sidnummer. Den rubrik du befinner dig under är markerad.</li>
+  <li><strong>NCC</strong> – bokens rubriker och sidnummer. Den rubrik och den sida du befinner dig vid är markerade, och listan rullar så att markeringen hålls mitt i kolumnen.</li>
   <li><strong>Ljudkurvan</strong> – ljudet runt uppspelningen, se <a href="#kurva">avsnitt 9</a>.</li>
-  <li><strong>Statusraden</strong> – sida, tid i boken, bokens längd och hastighet.</li>
+  <li><strong>Statusraden</strong> – sida, tid i boken, bokens längd, hastighet och volym.</li>
 </ul>
 
-<p>Kolumnerna kan göras bredare eller smalare genom att dra i avdelarna. Vänster- och högerkolumnen kan döljas med <kbd>Ctrl</kbd>+<kbd>1</kbd> och <kbd>Ctrl</kbd>+<kbd>2</kbd> (eller knapparna i verktygsraden), och ljudkurvan med <kbd>Ctrl</kbd>+<kbd>K</kbd>. Fönstrets storlek och läge, kolumnernas bredd och vad som visas sparas till nästa gång.</p>
+<p>Kolumnerna kan göras bredare eller smalare genom att dra i avdelarna. Vänster- och högerkolumnen kan döljas med <kbd>Ctrl</kbd>+<kbd>1</kbd> och <kbd>Ctrl</kbd>+<kbd>2</kbd>, och ljudkurvan med <kbd>Ctrl</kbd>+<kbd>K</kbd> – eller med knapparna i verktygsraden eller menyn <strong>Anpassning</strong>. Fönstrets storlek och läge, kolumnernas bredd och vad som visas sparas till nästa gång.</p>
+
+<h3>Menyerna</h3>
+<div class="table-wrap"><table>
+  <thead><tr><th>Meny</th><th>Innehåll</th></tr></thead>
+  <tbody>
+    <tr><td>File</td><td>Öppna, senaste böcker, stäng, avsluta</td></tr>
+    <tr><td>Navigering</td><td>Alla sätt att förflytta sig i boken, med kortkommandon – se <a href="#lyssna">avsnitt 5</a></td></tr>
+    <tr><td>Anpassning</td><td>Typsnitt, tema, ljudkurvans läge och vad som visas – se <a href="#installningar">avsnitt 11</a></td></tr>
+    <tr><td>Inställningar</td><td>Ditt namn och mapparna för böcker och rapporter</td></tr>
+  </tbody>
+</table></div>
 
 <!-- ================================================================== -->
 <h2 id="oppna">4. Öppna och stänga böcker</h2>
@@ -215,6 +226,8 @@
 <!-- ================================================================== -->
 <h2 id="lyssna">5. Lyssna och navigera</h2>
 
+<p>Alla kommandon nedan finns också i menyn <strong>Navigering</strong>, där kortkommandot står bredvid varje val.</p>
+
 <h3>Uppspelning</h3>
 <div class="table-wrap"><table>
   <thead><tr><th>Tangent</th><th>Gör</th></tr></thead>
@@ -222,8 +235,10 @@
     <tr><td><kbd>Mellanslag</kbd></td><td>Spela / pausa</td></tr>
     <tr><td><kbd>,</kbd> och <kbd>.</kbd></td><td>Sänk / höj hastigheten 10&nbsp;% (100–400&nbsp;%)</td></tr>
     <tr><td><kbd>-</kbd></td><td>Växla mellan 100&nbsp;% och den senast inställda högre hastigheten</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Höj / sänk volymen 5&nbsp;% (0–130&nbsp;%)</td></tr>
   </tbody>
 </table></div>
+<p>Volymen kan också ställas med reglaget i verktygsraden. Över 100&nbsp;% förstärks ljudet, vilket kan vara bra för svaga inspelningar. Hastighet och volym sparas till nästa gång.</p>
 
 <h3>Förflytta sig</h3>
 <div class="table-wrap"><table>
@@ -233,6 +248,7 @@
     <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Föregående / nästa fras (mening)</td></tr>
     <tr><td><kbd>Skift</kbd>+<kbd>←</kbd> / <kbd>→</kbd></td><td>Föregående / nästa sida</td></tr>
     <tr><td><kbd>Skift</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Föregående / nästa rubrik</td></tr>
+    <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>Bokens början / bokens sista fras</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td>Gå till sida – skriv sidnumret och tryck <kbd>Enter</kbd></td></tr>
   </tbody>
 </table></div>
@@ -241,7 +257,8 @@
 <ul>
   <li><strong>klicka i texten</strong> – uppspelningen går till den meningen,</li>
   <li><strong>klicka på en rubrik eller ett sidnummer</strong> i NCC-kolumnen,</li>
-  <li><strong>klicka i ljudkurvan</strong> – uppspelningen går till den tiden.</li>
+  <li><strong>klicka i ljudkurvan</strong> – uppspelningen går till den tiden,</li>
+  <li><strong>Ctrl+klicka på en kommentar</strong> – uppspelningen går till det ställe där kommentaren gjordes, se <a href="#kommentarer">avsnitt 7</a>.</li>
 </ul>
 <p>Hopp ändrar inte om boken spelar eller är pausad.</p>
 
@@ -251,15 +268,16 @@
 <!-- ================================================================== -->
 <h2 id="sok">6. Söka i texten</h2>
 
-<p>Tryck <kbd>Ctrl</kbd>+<kbd>F</kbd> (eller förstoringsglaset) för att visa sökraden ovanför texten. Har du markerat text i boken hamnar den i sökfältet.</p>
+<p>Tryck <kbd>Ctrl</kbd>+<kbd>F</kbd> (eller klicka på förstoringsglaset, eller välj <strong>Navigering → Sök i texten …</strong>) för att visa sökraden ovanför texten. Har du markerat text i boken hamnar den i sökfältet.</p>
 <ul>
   <li>Sökningen görs medan du skriver, från två tecken, och skiljer inte på stora och små bokstäver.</li>
-  <li>Alla träffar markeras; den aktuella extra tydligt. Bredvid fältet står t.ex. ”3 av 17”.</li>
-  <li><kbd>Enter</kbd> / <kbd>Skift</kbd>+<kbd>Enter</kbd> – nästa / föregående träff. Utanför sökfältet: <kbd>F3</kbd> / <kbd>Skift</kbd>+<kbd>F3</kbd>.</li>
-  <li><kbd>Esc</kbd> stänger sökraden.</li>
+  <li>Sökningen <strong>börjar där du är i boken</strong>: den första träffen är den första i eller efter den markerade meningen.</li>
+  <li>Alla träffar markeras; den aktuella extra tydligt. Bredvid fältet står t.ex. ”3 av 17”, räknat från bokens början.</li>
+  <li><kbd>Enter</kbd> / <kbd>Skift</kbd>+<kbd>Enter</kbd> – nästa / föregående träff. Utanför sökfältet: <kbd>F3</kbd> / <kbd>Skift</kbd>+<kbd>F3</kbd>. Efter sista träffen fortsätter sökningen från bokens början.</li>
+  <li><kbd>Esc</kbd>, eller ett klick i texten, stänger sökraden.</li>
 </ul>
 <div class="note">
-  <p>Att gå till en träff flyttar inte ljudet. Klicka på ordet om du vill lyssna därifrån.</p>
+  <p>Att gå till en träff flyttar inte ljudet. Klicka på ordet om du vill lyssna därifrån – det stänger också sökraden.</p>
   <p>En sökning hittar inte text som delvis står i en annan stil, t.ex. ett ord där bara några bokstäver är kursiva.</p>
 </div>
 
@@ -267,12 +285,11 @@
 <h2 id="kommentarer">7. Kommentarer</h2>
 
 <h3>Ny kommentar</h3>
-<p>Tryck <kbd>Enter</kbd> när du hör ett fel. Uppspelningen pausas och kommentarsformuläret öppnas, med sidnumret ifyllt. Formuläret börjar i listan <strong>Typ</strong>.</p>
+<p>Tryck <kbd>Enter</kbd> när du hör ett fel. Uppspelningen pausas och kommentarsformuläret öppnas, med fokus i listan <strong>Typ</strong>. Sidnumret och var i boken du är (boktid m.m.) tas automatiskt och skrivs i rapporten.</p>
 
 <div class="table-wrap"><table>
   <thead><tr><th>Fält</th><th>Innehåll</th></tr></thead>
   <tbody>
-    <tr><td>Sida</td><td>Ifyllt automatiskt. Måste vara en sida som finns i boken (eller tomt).</td></tr>
     <tr><td>Typ</td><td>Välj med pilarna eller sifferknapparna <kbd>1</kbd>–<kbd>9</kbd> och <kbd>0</kbd>.</td></tr>
     <tr><td>Söktext från boken</td><td>Text ur boken som visar var felet finns. Obligatoriskt. Finns inte för böcker utan text.</td></tr>
     <tr><td>Beskrivning av felet</td><td>Vad som är fel. Obligatoriskt.</td></tr>
@@ -305,16 +322,20 @@
 <h3>Spela in ljud</h3>
 <p>Håll ned inspelningsknappen medan du talar och släpp när du är klar. Håll ned uppspelningsknappen för att lyssna, och använd knappen Radera ljud för att ta bort inspelningen. Mycket korta tryck (under 0,3&nbsp;s) räknas som felklick och sparas inte.</p>
 
-<h3>Ändra, ta bort och flytta</h3>
+<h3>Ordningen i listan</h3>
+<p>En ny kommentar läggs automatiskt <strong>på rätt plats efter var i boken den gjordes</strong> – går du tillbaka i boken och kommenterar hamnar kommentaren före de som gjorts längre fram. Kommentarer som gjorts innan något spelats räknas från bokens början och hamnar först. Den nya kommentaren markeras i listan.</p>
+
+<h3>Gå till, ändra, ta bort och flytta</h3>
 <div class="table-wrap"><table>
   <thead><tr><th>I kommentarslistan</th><th>Gör</th></tr></thead>
   <tbody>
+    <tr><td><kbd>Ctrl</kbd>+klick</td><td>Gå till stället i boken där kommentaren gjordes (också <strong>Navigering → Gå till markerad kommentar</strong>)</td></tr>
     <tr><td>Dubbelklick</td><td>Redigera kommentaren</td></tr>
     <tr><td><kbd>Delete</kbd></td><td>Ta bort markerad kommentar</td></tr>
     <tr><td><kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Flytta kommentaren uppåt / nedåt</td></tr>
   </tbody>
 </table></div>
-<p>Knapparna för ny, redigera och ta bort finns också i verktygsraden. Kommentarerna numreras om automatiskt.</p>
+<p>Knapparna för ny, redigera och ta bort finns också i verktygsraden. Kommentarerna numreras om automatiskt. En kommentar som redigeras behåller sitt sidnummer och sin plats i boken. Kommentarer från äldre rapporter saknar boktid; för dem går <kbd>Ctrl</kbd>+klick till början av kommentarens sida.</p>
 
 <!-- ================================================================== -->
 <h2 id="rapport">8. Rapporten</h2>
@@ -325,11 +346,12 @@
 
 <h3>Vad som står i rapporten</h3>
 <p>Överst står bokens titel, id, författare, inläsare, korrekturläsare, antal kommentarer och bokens längd. Varje kommentar har typ, beskrivning, rättelse, ev. ljud och var i boken den gjordes:</p>
-<pre class="report">Sida:   12   Boktid: 01h23m45s678ms   Rubriktid: 00h01m10s250ms
+<pre class="report">Sida:   12   Boktid: 01h23m45s678ms   Rubriktid: 00h01m10s250ms   Event: 17
 Sök:    … text ur boken …</pre>
 <ul>
   <li><strong>Boktid</strong> – tid från bokens början.</li>
   <li><strong>Rubriktid</strong> – tid från början av den rubrik (smil-fil) du är i.</li>
+  <li><strong>Event</strong> – räknas från 1 i varje rubrik (smil-fil). Varje <code>par</code> och varje ljudklipp i det räknas – ett par med tre klipp är event 1, 2, 3 och 4.</li>
 </ul>
 <p>För böcker utan text, se <a href="#utantext">avsnitt 10</a>.</p>
 
@@ -340,14 +362,14 @@ Sök:    … text ur boken …</pre>
 <ul>
   <li><strong>Kurvan</strong> – ljudets styrka. En streckad linje betyder att den delen inte har lästs in än.</li>
   <li><strong>Den mening som spelas</strong> har en svag bakgrundsfärg, och lodräta streck visar var meningarna börjar.</li>
-  <li><strong>Långa pauser</strong> (minst 5 sekunder) är färgade och visar längden, t.ex. ”5.4 s”.</li>
+  <li><strong>Långa pauser</strong> (minst 2 sekunder) är färgade och visar längden, t.ex. ”2.4 s”.</li>
   <li><strong>”saknas”</strong> – text utan inläst ljud.</li>
   <li><strong>Det röda strecket</strong> är uppspelningspositionen, med tiden bredvid.</li>
 </ul>
-<p>Klicka i kurvan för att gå dit. Visa eller dölj kurvan med <kbd>Ctrl</kbd>+<kbd>K</kbd>.</p>
+<p>Klicka i kurvan för att gå dit. Visa eller dölj kurvan med <kbd>Ctrl</kbd>+<kbd>K</kbd> eller <strong>Anpassning → Visa ljudkurvan</strong>.</p>
 
 <h3>Rörlig eller fast</h3>
-<p>Under <strong>Inställningar → Ljudkurva</strong> väljer du</p>
+<p>Under <strong>Anpassning → Ljudkurvans läge</strong> väljer du</p>
 <ul>
   <li><strong>Rörlig kurva</strong> – strecket står still och kurvan rullar förbi.</li>
   <li><strong>Fast kurva, rörlig markering</strong> – kurvan står still och strecket rör sig. När det når högerkanten bläddras kurvan fram.</li>
@@ -361,27 +383,24 @@ Sök:    … text ur boken …</pre>
   <li><strong>Mittkolumnen visar NCC:n</strong> med alla poster – rubriker och sidnummer (”Sida 12”). Rubriken eller sidan du befinner dig vid är markerad.</li>
   <li><strong><kbd>↑</kbd> / <kbd>↓</kbd> går mellan ljudklipp</strong> i stället för meningar. Är du mer än knappt en sekund in i ett klipp går <kbd>↑</kbd> till klippets början, annars till klippet före.</li>
   <li><strong>Söktext</strong> finns inte i kommentarsformuläret, och raden ”Sök:” skrivs inte i rapporten.</li>
-  <li>Rapporten får i stället <strong>Event</strong> och <strong>Rubrik</strong>:</li>
+  <li>Rapporten får i stället raden <strong>Rubrik</strong> – den aktuella rubriken med de överordnade rubrikerna:</li>
 </ul>
 <pre class="report">Sida:   12   Boktid: 01h23m45s678ms   Rubriktid: 00h01m10s250ms   Event: 17
 Rubrik: 2. Elektriska kretsar &gt; 2.1 Ström &gt; Exempel 2.2</pre>
-<ul>
-  <li><strong>Event</strong> räknas från 1 i varje rubrik (smil-fil). Varje <code>par</code> och varje ljudklipp i det räknas – ett par med tre klipp är event 1, 2, 3 och 4.</li>
-  <li><strong>Rubrik</strong> är den aktuella rubriken med de överordnade rubrikerna.</li>
-</ul>
 
 <!-- ================================================================== -->
-<h2 id="installningar">11. Inställningar och utseende</h2>
+<h2 id="installningar">11. Anpassning och inställningar</h2>
 
 <div class="table-wrap"><table>
   <thead><tr><th>Var</th><th>Vad</th></tr></thead>
   <tbody>
+    <tr><td>Anpassning → Typsnitt…</td><td>Typsnitt för texten, eller bokens eget</td></tr>
+    <tr><td>Anpassning → Tema</td><td>Standard, Solarized ljus eller Solarized mörk – gäller hela fönstret</td></tr>
+    <tr><td>Anpassning → Ljudkurvans läge</td><td>Rörlig eller fast kurva</td></tr>
+    <tr><td>Anpassning → Visa ljudkurvan / vänsterkolumnen / högerkolumnen</td><td>Visa eller dölj (<kbd>Ctrl</kbd>+<kbd>K</kbd>, <kbd>Ctrl</kbd>+<kbd>1</kbd>, <kbd>Ctrl</kbd>+<kbd>2</kbd>). En bock visar vad som syns.</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd> / <kbd>Ctrl</kbd>+<kbd>0</kbd></td><td>Större / mindre / normal text</td></tr>
     <tr><td>Inställningar → Namn…</td><td>Ditt namn i rapporten</td></tr>
     <tr><td>Inställningar → Mappar…</td><td>Mapp för talböcker och för kopior av rapporter</td></tr>
-    <tr><td>Inställningar → Typsnitt…</td><td>Typsnitt för texten, eller bokens eget</td></tr>
-    <tr><td>Inställningar → Tema</td><td>Standard, Solarized ljus eller Solarized mörk – gäller hela fönstret</td></tr>
-    <tr><td>Inställningar → Ljudkurva</td><td>Rörlig eller fast kurva</td></tr>
-    <tr><td><kbd>Ctrl</kbd>+<kbd>+</kbd> / <kbd>Ctrl</kbd>+<kbd>-</kbd> / <kbd>Ctrl</kbd>+<kbd>0</kbd></td><td>Större / mindre / normal text</td></tr>
   </tbody>
 </table></div>
 <p>Alla val sparas och gäller nästa gång du startar programmet. Inställningarna ligger i <code>%LOCALAPPDATA%\CamaboMediaEkorrAudio\settings.json</code>.</p>
@@ -410,9 +429,11 @@ Rubrik: 2. Elektriska kretsar &gt; 2.1 Ström &gt; Exempel 2.2</pre>
     <tr><td><kbd>↑</kbd> / <kbd>↓</kbd></td><td>Föregående / nästa fras (ljudklipp i böcker utan text)</td></tr>
     <tr><td><kbd>Skift</kbd>+<kbd>←</kbd> / <kbd>→</kbd></td><td>Föregående / nästa sida</td></tr>
     <tr><td><kbd>Skift</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Föregående / nästa rubrik</td></tr>
+    <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>Bokens början / slut</td></tr>
     <tr><td><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td>Gå till sida</td></tr>
     <tr><td><kbd>,</kbd> / <kbd>.</kbd></td><td>Långsammare / snabbare</td></tr>
     <tr><td><kbd>-</kbd></td><td>Växla normal / snabb hastighet</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Högre / lägre volym</td></tr>
   </tbody>
 </table></div>
 
@@ -430,6 +451,7 @@ Rubrik: 2. Elektriska kretsar &gt; 2.1 Ström &gt; Exempel 2.2</pre>
 <div class="table-wrap"><table>
   <tbody>
     <tr><td><kbd>Enter</kbd></td><td>Ny kommentar (pausar uppspelningen)</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+klick</td><td>Gå till kommentarens ställe i boken</td></tr>
     <tr><td>Dubbelklick</td><td>Redigera kommentar</td></tr>
     <tr><td><kbd>Delete</kbd></td><td>Ta bort kommentar</td></tr>
     <tr><td><kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Flytta kommentar</td></tr>
@@ -439,17 +461,16 @@ Rubrik: 2. Elektriska kretsar &gt; 2.1 Ström &gt; Exempel 2.2</pre>
 </table></div>
 
 <div class="note">
-  <p>När du skriver i sökfältet gäller tangenterna för texten – mellanslag, pilar och Enter styr då inte uppspelningen.</p>
+  <p>När du skriver i sökfältet gäller tangenterna för texten – mellanslag, pilar, Home, End och Enter styr då inte uppspelningen.</p>
 </div>
 
 <!-- ================================================================== -->
 <h2 id="problem">13. Om något inte fungerar</h2>
 
 <ul>
-  <li><strong>Inget ljud.</strong> Kontrollera att bokens ljudfiler ligger i samma mapp som <code>ncc.html</code> och att datorns ljud inte är avstängt.</li>
+  <li><strong>Inget ljud.</strong> Kontrollera att bokens ljudfiler ligger i samma mapp som <code>ncc.html</code>, att volymreglaget i verktygsraden inte står på 0 och att datorns ljud inte är avstängt.</li>
   <li><strong>”Hittar inte talboken”</strong> när du öppnar en bok från listan med senaste böcker: boken har flyttats eller tagits bort. Den tas då bort ur listan – öppna den på nytt från sin nya plats.</li>
   <li><strong>”Kan inte spela in”.</strong> Ingen mikrofon hittades, eller den används av ett annat program. Inspelning går bara att göra för typ 1, Läsfel.</li>
-  <li><strong>”Felaktigt sidnummer”.</strong> Sidan i formuläret finns inte i boken. Rätta numret eller lämna fältet tomt.</li>
   <li><strong>Ljudkurvan är streckad.</strong> Ljudet läses in en bit i taget medan du lyssnar; kurvan fylls i efter en kort stund.</li>
 </ul>
 
