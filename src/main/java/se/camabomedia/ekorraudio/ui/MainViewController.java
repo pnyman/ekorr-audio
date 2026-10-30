@@ -921,6 +921,7 @@ public class MainViewController implements Initializable {
                                          navItem("Bokens början", KeyCode.HOME, false, this::goToStart),
                                          navItem("Bokens slut", KeyCode.END, false, this::goToEnd),
                                          navItem("Gå till sida …", KeyCode.G, true, this::goToPage, true),
+                                         navItem("Sök i texten …", KeyCode.F, true, contentView::showSearch, true),
                                          new javafx.scene.control.SeparatorMenuItem(),
                                          navItem("Gå till markerad kommentar (Ctrl+klick)", null, false, () -> {
                                                  if (commentTable != null) {
