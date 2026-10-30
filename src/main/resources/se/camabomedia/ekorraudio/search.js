@@ -94,8 +94,32 @@ window.ekorrSearch = (function () {
         return current;
     }
 
+    /**
+     * Gör den första träffen vid eller efter elementet med klassen
+     * currentClass (det som spelas/är markerat) till aktuell. Finns ingen
+     * sådan, eller inga träffar efter den, börjar den från början (runt).
+     */
+    function goFrom(currentClass) {
+        if (marks.length === 0) {
+            return -1;
+        }
+        var here = currentClass ? document.querySelector('.' + currentClass) : null;
+        if (here) {
+            for (var i = 0; i < marks.length; i++) {
+                var m = marks[i];
+                // Inne i det aktuella elementet, eller efter det i dokumentet
+                if (here.contains(m)
+                    || (here.compareDocumentPosition(m) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+                    return go(i);
+                }
+            }
+        }
+        return go(0);
+    }
+
     return {
         run: run,
+        goFrom: goFrom,
         clear: clear,
         go: go,
         next: function () { return go(current + 1); },

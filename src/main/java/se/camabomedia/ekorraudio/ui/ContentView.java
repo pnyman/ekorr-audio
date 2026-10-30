@@ -126,7 +126,8 @@ public class ContentView {
 
     /**
      * Klick: leta upp närmaste element med id (uppåt i trädet) och skicka
-     * det till Java. preventDefault så att länkar inte navigerar bort.
+     * det till Java (tom sträng om inget finns). Ett klick stänger också
+     * sökraden. preventDefault så att länkar inte navigerar bort.
      * Om man har markerat text (t.ex. för att kopiera till en kommentar)
      * räknas det inte som ett klick.
      */
@@ -136,7 +137,9 @@ public class ContentView {
         + "    if (String(window.getSelection()).length > 0) { return; }"
         + "    var el = event.target;"
         + "    while (el && !(el.id)) { el = el.parentNode; }"
-        + "    if (el && el.id) { java.handleClick(el.id); }"
+        // Även klick utanför synkpunkter går till Java ('' = inget id) –
+        // de stänger sökraden
+        + "    java.handleClick(el && el.id ? el.id : '');"
         + "});";
 
     /**
@@ -456,7 +459,8 @@ public class ContentView {
         Object n = webEngine.executeScript("ekorrSearch.run('" + jsString(query) + "')");
         int count = n instanceof Number ? ((Number) n).intValue() : 0;
         if (count > 0) {
-            webEngine.executeScript("ekorrSearch.go(0)");
+            // Från stället man är i boken; går runt till början efter sista träffen
+            webEngine.executeScript("ekorrSearch.goFrom('" + CURRENT_CLASS + "')");
         }
         updateSearchCount();
     }
@@ -757,7 +761,13 @@ public class ContentView {
     /** JavaScript -> Java. Måste vara public för att WebView ska se den. */
     public class JavaBridge {
         public void handleClick(String elementID) {
-            onSyncPointClicked.accept(elementID);
+            // Ett klick i texten avslutar sökningen
+            if (searchBar.isVisible()) {
+                hideSearch();
+            }
+            if (elementID != null && !elementID.isEmpty()) {
+                onSyncPointClicked.accept(elementID);
+            }
         }
 
         /** Från SCROLL_SCRIPT. JavaScript-tal kommer som Integer eller Double. */
