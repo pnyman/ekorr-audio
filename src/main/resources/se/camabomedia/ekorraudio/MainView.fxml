@@ -54,7 +54,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           <items>
             <MenuItem fx:id="menuItemOpen" mnemonicParsing="false" onAction="#handleMenuItemOpen" text="Öppna…" accelerator="Shortcut+O" />
             <Menu fx:id="menuRecent" mnemonicParsing="false" text="Öppna senaste" />
-            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemClose" text="Stäng Boken" accelerator="Shortcut+W" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemClose" text="Stäng boken" accelerator="Shortcut+W" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemShowReport" text="Se rapport" accelerator="Shortcut+R" />
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemOpenReportFolder" text="Öppna rapportmappen" Accelerator="Shortcut+Shift+R" />
@@ -62,13 +62,14 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemQuit" text="Avsluta" accelerator="Shortcut+Q" />
           </items>
         </Menu>
-        <Menu mnemonicParsing="false" text="Redigera">
+        <Menu mnemonicParsing="false" text="Kommentarer">
           <items>
             <MenuItem mnemonicParsing="false" text="Skapa kommentar (Enter)" />
             <MenuItem mnemonicParsing="false" text="Redigera kommenter (dubbelklick)" />
             <MenuItem mnemonicParsing="false" text="Ta bort kommentar (Delete)" />
           </items>
         </Menu>
+        <Menu fx:id="menuNavigation" mnemonicParsing="false" text="Navigering" />
         <Menu mnemonicParsing="false" text="Inställningar">
           <items>
             <MenuItem fx:id="menuItemName" mnemonicParsing="false" onAction="#handleMenuItemName" text="Namn..." />

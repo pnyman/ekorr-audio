@@ -106,6 +106,7 @@ public class MainViewController implements Initializable {
     @FXML private javafx.scene.control.Menu menuTheme;
     @FXML private javafx.scene.control.Menu menuRecent;
     @FXML private javafx.scene.control.Menu menuWaveform;
+    @FXML private javafx.scene.control.Menu menuNavigation;
     @FXML private Label labelStatus;
 
     private Stage stage;
@@ -348,6 +349,7 @@ public class MainViewController implements Initializable {
         waveformView.setVisible(settings.getShowWaveform());
         waveformView.setFixed(settings.getWaveformFixed());
         buildWaveformMenu();
+        buildNavigationMenu();
         VBox root = (VBox) splitPane.getParent();
         root.getChildren().add(root.getChildren().indexOf(splitPane) + 1, waveformView);
 
@@ -798,12 +800,15 @@ public class MainViewController implements Initializable {
         }
         // I ett textfält (sökfältet) är tangenterna till för texten
         if (isTyping()) {
+            // Menyernas kortkommandon ska inte heller gälla (se navAction)
+            keyWhileTyping = true;
+            Platform.runLater(() -> keyWhileTyping = false);
             return;
         }
 
         // Volym: Ctrl+↑ / Ctrl+↓ (5 % per steg)
         if (event.isShortcutDown() && !event.isShiftDown()
-                && (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN)) {
+            && (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.DOWN)) {
             applyVolume(mpv.getVolume() + (event.getCode() == KeyCode.UP ? VOLUME_STEP : -VOLUME_STEP), true);
             event.consume();
             return;
@@ -853,11 +858,108 @@ public class MainViewController implements Initializable {
         case DOWN:
             step(true, shift ? Timeline.Level.HEADING : Timeline.Level.PHRASE);
             break;
+        case HOME:
+            goToStart();
+            break;
+        case END:
+            goToEnd();
+            break;
         default:
             handled = false;
         }
         if (handled) {
             event.consume();
+        }
+    }
+
+    /** Home: bokens början. */
+    private void goToStart() {
+        if (timeline != null && timeline.size() > 0) {
+            goTo(0, true);
+        }
+    }
+
+    /** End: början av bokens sista fras. */
+    private void goToEnd() {
+        if (timeline != null && timeline.size() > 0) {
+            goTo(timeline.size() - 1, true);
+        }
+    }
+
+    // ------------------------------------------------------------ menyn Navigering
+
+    /**
+     * Sant medan en tangent behandlas som hör till sökfältet. Menyernas
+     * kortkommandon körs annars när fältet inte själv använder tangenten
+     * (t.ex. mellanslag) – då ska de inte göra något.
+     */
+    private boolean keyWhileTyping = false;
+
+    /**
+     * Navigering: alla navigeringskommandon med sina kortkommandon. Tangenterna
+     * hanteras i onKeyPressed (som tar hand om dem först); acceleratorerna här
+     * visar kortkommandot i menyn och används bara om tangenten inte redan
+     * hanterats.
+     */
+    private void buildNavigationMenu() {
+        if (menuNavigation == null) {
+            return;   // menyn saknas i FXML
+        }
+        menuNavigation.getItems().setAll(
+                                         navItem("Spela / pausa", KeyCode.SPACE, false, this::togglePlayIfOpen),
+                                         new javafx.scene.control.SeparatorMenuItem(),
+                                         navItem("5 sekunder bakåt", KeyCode.LEFT, false, () -> skip(-SKIP_MS)),
+                                         navItem("5 sekunder framåt", KeyCode.RIGHT, false, () -> skip(SKIP_MS)),
+                                         new javafx.scene.control.SeparatorMenuItem(),
+                                         navItem("Föregående fras", KeyCode.UP, false, () -> step(false, Timeline.Level.PHRASE)),
+                                         navItem("Nästa fras", KeyCode.DOWN, false, () -> step(true, Timeline.Level.PHRASE)),
+                                         navItem("Föregående rubrik", KeyCode.UP, true, () -> step(false, Timeline.Level.HEADING)),
+                                         navItem("Nästa rubrik", KeyCode.DOWN, true, () -> step(true, Timeline.Level.HEADING)),
+                                         navItem("Föregående sida", KeyCode.LEFT, true, () -> step(false, Timeline.Level.PAGE)),
+                                         navItem("Nästa sida", KeyCode.RIGHT, true, () -> step(true, Timeline.Level.PAGE)),
+                                         new javafx.scene.control.SeparatorMenuItem(),
+                                         navItem("Bokens början", KeyCode.HOME, false, this::goToStart),
+                                         navItem("Bokens slut", KeyCode.END, false, this::goToEnd),
+                                         navItem("Gå till sida …", KeyCode.G, true, this::goToPage, true),
+                                         new javafx.scene.control.SeparatorMenuItem(),
+                                         navItem("Gå till markerad kommentar (Ctrl+klick)", null, false, () -> {
+                                                 if (commentTable != null) {
+                                                     goToComment(commentTable.getSelected());
+                                                 }
+                                         }));
+    }
+
+    private MenuItem navItem(String text, KeyCode key, boolean shift, Runnable action) {
+        return navItem(text, key, shift, action, false);
+    }
+
+    /**
+     * Menyval med kortkommando. modifier = Skift i kortkommandot; med
+     * shortcut = true används Ctrl i stället. key = null: inget kortkommando.
+     * Valet gör inget när ingen bok är öppen.
+     */
+    private MenuItem navItem(String text, KeyCode key, boolean modifier, Runnable action,
+                             boolean shortcut) {
+        MenuItem item = new MenuItem(text);
+        item.setMnemonicParsing(false);
+        if (key != null) {
+            item.setAccelerator(shortcut
+                                ? new javafx.scene.input.KeyCodeCombination(key, javafx.scene.input.KeyCombination.SHORTCUT_DOWN)
+                                : modifier
+                                ? new javafx.scene.input.KeyCodeCombination(key, javafx.scene.input.KeyCombination.SHIFT_DOWN)
+                                : new javafx.scene.input.KeyCodeCombination(key));
+        }
+        item.setOnAction(e -> {
+                if (!keyWhileTyping && timeline != null) {
+                    action.run();
+                }
+            });
+        return item;
+    }
+
+    private void togglePlayIfOpen() {
+        if (timeline != null && mpv.isOpen()) {
+            togglePlay();
         }
     }
 
@@ -872,6 +974,8 @@ public class MainViewController implements Initializable {
         case RIGHT:
         case UP:
         case DOWN:
+        case HOME:
+        case END:
             return true;
         default:
             return false;
