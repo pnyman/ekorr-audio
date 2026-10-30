@@ -55,3 +55,16 @@
 .comments-table .table-row-cell:filled:selected:odd {
     -fx-background: #073642;
 }
+
+/* Dialogrutor och kommentarsformuläret: en nyans ljusare än fönstret, så
+   att de syns tydligt ovanpå det. Fälten behåller den mörka bakgrunden. */
+.dialog-pane,
+.dialog-window {
+    -fx-background: #073642;
+    -fx-background-color: #073642;
+    -fx-base: #0e4b5a;
+}
+
+.dialog-pane > .header-panel {
+    -fx-background-color: #0a3f4c;
+}

@@ -1532,6 +1532,8 @@ public class MainViewController implements Initializable {
             commentStage.initOwner(stage);
             commentStage.setScene(new Scene(loader.load()));
             commentStage.getScene().getStylesheets().setAll(stage.getScene().getStylesheets());
+            // Egen bakgrund i temana, så att formuläret syns mot huvudfönstret
+            commentStage.getScene().getRoot().getStyleClass().add("dialog-window");
             TitleBar.applyWhenShown(commentStage, theme);
             commentStage.setTitle(comment == null ? "Ekorr – Skapa kommentar" : "Ekorr – Redigera kommentar");
             commentStage.getIcons().add(
@@ -2204,6 +2206,8 @@ public class MainViewController implements Initializable {
     @FXML
     void handleMenuItemAbout(ActionEvent event) {
         Alert alert = new Alert(AlertType.INFORMATION);
+        alert.initOwner(stage);
+        styleDialog(alert.getDialogPane());
         alert.setTitle("Om Ekorr");
         alert.setHeaderText(null);
         alert.setContentText("Ekorr v. 1.0");
