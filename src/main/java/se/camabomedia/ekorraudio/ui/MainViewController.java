@@ -107,6 +107,9 @@ public class MainViewController implements Initializable {
     @FXML private javafx.scene.control.Menu menuRecent;
     @FXML private javafx.scene.control.Menu menuWaveform;
     @FXML private javafx.scene.control.Menu menuNavigation;
+    @FXML private javafx.scene.control.CheckMenuItem menuItemShowWaveform;
+    @FXML private javafx.scene.control.CheckMenuItem menuItemShowLeft;
+    @FXML private javafx.scene.control.CheckMenuItem menuItemShowRight;
     @FXML private Label labelStatus;
 
     private Stage stage;
@@ -367,6 +370,7 @@ public class MainViewController implements Initializable {
                 rememberBook();   // position i boken till nästa gång
             });
         buildRecentMenu();
+        setUpViewMenu();
 
         // Filter (inte handler) så att tangenterna fungerar även när en WebView
         // eller knapp har fokus
@@ -1164,6 +1168,7 @@ public class MainViewController implements Initializable {
         boolean show = !waveformView.isVisible();
         waveformView.setVisible(show);
         settings.addShowWaveform(show);
+        updateViewMenu();
         if (show && timeline != null && currentIndex >= 0) {
             long ms = seekTarget >= 0 ? seekTarget : mpv.getPosition();
             waveformView.setPosition(ms, currentIndex);
@@ -1910,6 +1915,45 @@ public class MainViewController implements Initializable {
         settings.addLayout(dividers, bounds, stage.isMaximized());
     }
 
+    // ------------------------------------------------------------ menyn Anpassning
+
+    /**
+     * Anpassning → Visa ljudkurvan / vänsterkolumnen / högerkolumnen.
+     * Kortkommandona hanteras i onKeyPressed (som tar dem först);
+     * acceleratorerna visar dem i menyn.
+     */
+    private void setUpViewMenu() {
+        if (menuItemShowWaveform != null) {
+            menuItemShowWaveform.setAccelerator(new javafx.scene.input.KeyCodeCombination(
+                KeyCode.K, javafx.scene.input.KeyCombination.SHORTCUT_DOWN));
+            menuItemShowWaveform.setOnAction(e -> toggleWaveform());
+        }
+        if (menuItemShowLeft != null) {
+            menuItemShowLeft.setAccelerator(new javafx.scene.input.KeyCodeCombination(
+                KeyCode.DIGIT1, javafx.scene.input.KeyCombination.SHORTCUT_DOWN));
+            menuItemShowLeft.setOnAction(e -> toggleSidePane(true));
+        }
+        if (menuItemShowRight != null) {
+            menuItemShowRight.setAccelerator(new javafx.scene.input.KeyCodeCombination(
+                KeyCode.DIGIT2, javafx.scene.input.KeyCombination.SHORTCUT_DOWN));
+            menuItemShowRight.setOnAction(e -> toggleSidePane(false));
+        }
+        updateViewMenu();
+    }
+
+    /** Bockarna i menyn visar vad som syns (också efter kortkommando eller knapp). */
+    private void updateViewMenu() {
+        if (menuItemShowWaveform != null && waveformView != null) {
+            menuItemShowWaveform.setSelected(waveformView.isVisible());
+        }
+        if (menuItemShowLeft != null) {
+            menuItemShowLeft.setSelected(showLeft);
+        }
+        if (menuItemShowRight != null) {
+            menuItemShowRight.setSelected(showRight);
+        }
+    }
+
     // ------------------------------------------------------------ kolumner
 
     /** Vänster- och högerkolumnen (de yttre i splitPane). */
@@ -1965,6 +2009,7 @@ public class MainViewController implements Initializable {
         if (showRight) {
             items.add(rightPane);
         }
+        updateViewMenu();
         // Efter layouten, annars skriver SplitPane över lägena
         Platform.runLater(() -> {
             if (showLeft && showRight) {

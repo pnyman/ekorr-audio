@@ -33,6 +33,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 -->
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
@@ -70,13 +71,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
           </items>
         </Menu>
         <Menu fx:id="menuNavigation" mnemonicParsing="false" text="Navigering" />
+        <Menu mnemonicParsing="false" text="Anpassning">
+          <items>
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemFont" text="Typsnitt …" />
+            <Menu fx:id="menuTheme" mnemonicParsing="false" text="Tema" />
+            <Menu fx:id="menuWaveform" mnemonicParsing="false" text="Ljudkurvans läge" />
+            <SeparatorMenuItem mnemonicParsing="false" />
+            <CheckMenuItem fx:id="menuItemShowWaveform" mnemonicParsing="false" text="Visa ljudkurvan" />
+            <CheckMenuItem fx:id="menuItemShowLeft" mnemonicParsing="false" text="Visa vänsterkolumnen" />
+            <CheckMenuItem fx:id="menuItemShowRight" mnemonicParsing="false" text="Visa högerkolumnen" />
+          </items>
+        </Menu>
         <Menu mnemonicParsing="false" text="Inställningar">
           <items>
             <MenuItem fx:id="menuItemName" mnemonicParsing="false" onAction="#handleMenuItemName" text="Namn..." />
             <MenuItem fx:id="menuItemLocations" mnemonicParsing="false" onAction="#handleMenuItemLocations" text="Mappar..." />
-            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemFont" text="Typsnitt …" />
-            <Menu fx:id="menuWaveform" mnemonicParsing="false" text="Ljudkurva" />
-            <Menu fx:id="menuTheme" mnemonicParsing="false" text="Tema" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Hjälp">
