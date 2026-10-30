@@ -2201,4 +2201,13 @@ public class MainViewController implements Initializable {
         viewManual();
     }
 
+    @FXML
+    void handleMenuItemAbout(ActionEvent event) {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle("Om Ekorr");
+        alert.setHeaderText(null);
+        alert.setContentText("Ekorr v. 1.0");
+        alert.showAndWait();
+    }
+
 }

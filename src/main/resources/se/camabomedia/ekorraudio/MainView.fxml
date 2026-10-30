@@ -90,14 +90,15 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </Menu>
         <Menu mnemonicParsing="false" text="Hjälp">
           <items>
-            <MenuItem fx:id="menuItemManual" mnemonicParsing="false" onAction="#handleMenuItemManual" text="Manual" />
+            <MenuItem fx:id="menuItemAbout" mnemonicParsing="false" onAction="#handleMenuItemAbout" text="Om Ekorr+" />
+            <MenuItem fx:id="menuItemManual" mnemonicParsing="false" onAction="#handleMenuItemManual" text="Läs Manual" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
     <!-- Verktygsraden byggs i MainViewController.buildToolbar() -->
     <HBox fx:id="toolbar" />
-    <SplitPane fx:id="splitPane" blendMode="SRC_ATOP" dividerPositions="0.15, 0.85" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane fx:id="splitPane" blendMode="SRC_ATOP" dividerPositions="0.25, 0.85" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
         <AnchorPane fx:id="commentPane" />
         <AnchorPane fx:id="contentPane" />
