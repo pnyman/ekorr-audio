@@ -143,7 +143,7 @@ public class Settings {
     }
 
     public boolean getWindowMaximized() {
-        return Boolean.TRUE.equals(settings.get("windowMaximized"));
+        return !Boolean.FALSE.equals(settings.get("windowMaximized"));
     }
 
     /** Avdelarnas positioner (0–1) – eller null. */
