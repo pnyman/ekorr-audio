@@ -1,9 +1,9 @@
 *#
 target/
 src/test/resources/
-src/main/resources/se/camabomedia/ekorr/Manual.html
 .settings/
 sparade/
+packaging/mpv/mpv.exe
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
