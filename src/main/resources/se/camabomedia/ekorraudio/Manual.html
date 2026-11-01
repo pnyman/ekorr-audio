@@ -197,7 +197,8 @@
 <div class="table-wrap"><table>
   <thead><tr><th>Meny</th><th>Innehåll</th></tr></thead>
   <tbody>
-    <tr><td>File</td><td>Öppna, senaste böcker, stäng, avsluta</td></tr>
+    <tr><td>Arkiv</td><td>Öppna, senaste böcker, stäng, avsluta</td></tr>
+    <tr><td>Kommentarer</td><td>Skapa, redigera, ta bort kommenter</td></tr>
     <tr><td>Navigering</td><td>Alla sätt att förflytta sig i boken, med kortkommandon – se <a href="#lyssna">avsnitt 5</a></td></tr>
     <tr><td>Anpassning</td><td>Typsnitt, tema, ljudkurvans läge och vad som visas – se <a href="#installningar">avsnitt 11</a></td></tr>
     <tr><td>Inställningar</td><td>Ditt namn och mapparna för böcker och rapporter</td></tr>
@@ -208,10 +209,10 @@
 <h2 id="oppna">4. Öppna och stänga böcker</h2>
 
 <h3>Öppna en bok</h3>
-<p>Välj <strong>File → Open…</strong>, klicka på mappknappen eller tryck <kbd>Ctrl</kbd>+<kbd>O</kbd>, och välj bokens <code>ncc.html</code>. Medan boken läses in visas ”Öppnar &lt;boktitel&gt;”.</p>
+<p>Välj <strong>Arkiv → Öppna…</strong>, klicka på mappknappen eller tryck <kbd>Ctrl</kbd>+<kbd>O</kbd>, och välj bokens <code>ncc.html</code>. Medan boken läses in visas ”Öppnar &lt;boktitel&gt;”.</p>
 
 <h3>Senaste böcker</h3>
-<p>Under <strong>File → Open Recent</strong> finns de tio senast öppnade böckerna, med den tid där du slutade. Den senaste öppnas också med klockknappen i verktygsraden eller <kbd>Ctrl</kbd>+<kbd>Skift</kbd>+<kbd>O</kbd>.</p>
+<p>Under <strong>Arkiv → Öppna senaste</strong> finns de tio senast öppnade böckerna, med den tid där du slutade. Den senaste öppnas också med klockknappen i verktygsraden eller <kbd>Ctrl</kbd>+<kbd>Skift</kbd>+<kbd>O</kbd>.</p>
 
 <div class="note">
   <p><strong>Du fortsätter där du slutade.</strong> Positionen i boken sparas när du stänger boken, öppnar en annan eller avslutar programmet. Nästa gång du öppnar boken – på vilket sätt som helst – börjar den där.</p>
@@ -219,8 +220,8 @@
 
 <h3>Stänga och avsluta</h3>
 <ul>
-  <li><strong>File → Close</strong> eller <kbd>Ctrl</kbd>+<kbd>W</kbd> stänger boken.</li>
-  <li><strong>File → Quit</strong> eller <kbd>Ctrl</kbd>+<kbd>Q</kbd> avslutar programmet (precis som krysset i fönstret).</li>
+  <li><strong>Arkiv → Stäng boken</strong> eller <kbd>Ctrl</kbd>+<kbd>W</kbd> stänger boken.</li>
+  <li><strong>Arkiv → Avsluta</strong> eller <kbd>Ctrl</kbd>+<kbd>Q</kbd> avslutar programmet (precis som krysset i fönstret).</li>
 </ul>
 
 <!-- ================================================================== -->
@@ -310,7 +311,7 @@
   <li>Bakgrundsljud</li>
   <li>Synkfel</li>
 </ol>
-<p>samt <strong>0. Övrigt</strong>.</p>
+<p>samt 0. Övrigt.</p>
 
 <h3>Spara eller avbryta</h3>
 <ul>
@@ -332,17 +333,17 @@
     <tr><td><kbd>Ctrl</kbd>+klick</td><td>Gå till stället i boken där kommentaren gjordes (också <strong>Navigering → Gå till markerad kommentar</strong>)</td></tr>
     <tr><td>Dubbelklick</td><td>Redigera kommentaren</td></tr>
     <tr><td><kbd>Delete</kbd></td><td>Ta bort markerad kommentar</td></tr>
-    <tr><td><kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>↓</kbd></td><td>Flytta kommentaren uppåt / nedåt</td></tr>
   </tbody>
 </table></div>
-<p>Knapparna för ny, redigera och ta bort finns också i verktygsraden. Kommentarerna numreras om automatiskt. En kommentar som redigeras behåller sitt sidnummer och sin plats i boken. Kommentarer från äldre rapporter saknar boktid; för dem går <kbd>Ctrl</kbd>+klick till början av kommentarens sida.</p>
+<p>Knapparna för ny, redigera och ta bort finns också i verktygsraden. Kommentarerna numreras om automatiskt. En kommentar som redigeras behåller sitt sidnummer och sin plats i boken.</p>
 
 <!-- ================================================================== -->
 <h2 id="rapport">8. Rapporten</h2>
 
 <p>Rapporten sparas varje gång en kommentar sparas, ändras, tas bort eller flyttas – det finns inget särskilt ”spara”. Den ligger i bokens mapp:</p>
 <p><code>___Korrektur-rapport\&lt;id&gt;_&lt;titel&gt;_KORR.html</code></p>
-<p>Har du angett en rapportmapp under <strong>Inställningar → Mappar…</strong> kopieras rapporten också dit. Med knapparna i verktygsraden kan du öppna rapporten i webbläsaren eller öppna rapportmappen.</p>
+<p>Har du angett en rapportmapp under <strong>Inställningar → Mappar…</strong> kopieras rapporten också dit.
+  Med knapparna i verktygsraden, eller under menyn Arkiv, kan du öppna rapporten i webbläsaren eller öppna rapportmappen.</p>
 
 <h3>Vad som står i rapporten</h3>
 <p>Överst står bokens titel, id, författare, inläsare, korrekturläsare, antal kommentarer och bokens längd. Varje kommentar har typ, beskrivning, rättelse, ev. ljud och var i boken den gjordes:</p>
@@ -462,6 +463,14 @@ Rubrik: 2. Elektriska kretsar &gt; 2.1 Ström &gt; Exempel 2.2</pre>
   <p>När du skriver i sökfältet gäller tangenterna för texten – mellanslag, pilar, Home, End och Enter styr då inte uppspelningen.</p>
 </div>
 
+<h3>Rapporten</h3>
+<div class="table-wrap"><table>
+  <tbody>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>R</kbd></td><td>Se rapporten i webbläsaren</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Skift</kbd>+<kbd>R</kbd></td><td>Öppna mappen rapporten ligger i</td></tr>
+  </tbody>
+</table></div>
+
 <!-- ================================================================== -->
 <h2 id="problem">13. Om något inte fungerar</h2>
 
@@ -473,7 +482,7 @@ Rubrik: 2. Elektriska kretsar &gt; 2.1 Ström &gt; Exempel 2.2</pre>
 </ul>
 
 <footer>
-  Ekorr+ · Camabo Media
+  Ekorr+
 </footer>
 
 </div>
