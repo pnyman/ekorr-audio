@@ -325,7 +325,6 @@ public class MainViewController implements Initializable {
         commentTable.setOnEdit(this::editComment);
         commentTable.setOnDelete(this::deleteComment);
         commentTable.setOnGoTo(this::goToComment);
-        commentTable.setOnReordered(this::reorderComments);
         // Redigera/Ta bort-knapparna gäller markerad kommentar
         commentTable.getNode().getSelectionModel().selectedItemProperty()
             .addListener((obs, old, selected) -> updateButtons());
@@ -827,7 +826,7 @@ public class MainViewController implements Initializable {
             return;
         }
         if (event.isAltDown()) {
-            return;   // Alt+pil flyttar kommentarer i tabellen
+            return;
         }
         boolean shift = event.isShiftDown();
         boolean handled = true;
@@ -1618,15 +1617,6 @@ public class MainViewController implements Initializable {
                                 ? "" : ", sidan " + comment.getPage())
                              + (wrong.isEmpty() ? "" : "\n\n" + wrong));
         return alert.showAndWait().filter(b -> b == delete).isPresent();
-    }
-
-    /** Alt+pil: ny ordning från tabellen. */
-    private void reorderComments(List<Comment> newOrder) {
-        Comment selected = commentTable.getSelected();
-        report.setComments(new java.util.ArrayList<>(newOrder));
-        if (writeReport()) {
-            afterChange(selected);
-        }
     }
 
     /** Efter sparad ändring: kopiera rapporten och visa tabellen (med nya nummer). */

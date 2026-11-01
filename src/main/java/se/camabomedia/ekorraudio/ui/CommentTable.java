@@ -1,17 +1,16 @@
 package se.camabomedia.ekorraudio.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 import se.camabomedia.ekorraudio.report.Comment;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
 /**
@@ -20,7 +19,8 @@ import javafx.scene.input.KeyEvent;
  *   Dubbelklick      redigera
  *   Ctrl+klick       gå till stället i boken där kommentaren gjordes
  *   Delete           ta bort
- *   Alt+Upp/Ned      flytta kommentaren uppåt/nedåt
+ *
+ * Ordningen bestäms av var i boken kommentarerna gjordes (se Report.insertInOrder).
  */
 public class CommentTable {
 
@@ -29,7 +29,6 @@ public class CommentTable {
     private Consumer<Comment> onEdit = c -> {};
     private Consumer<Comment> onDelete = c -> {};
     private Consumer<Comment> onGoTo = c -> {};
-    private Consumer<List<Comment>> onReordered = list -> {};
 
     public CommentTable() {
         table.getStyleClass().add("comments-table");   // egen markeringsfärg, se main.css
@@ -80,7 +79,7 @@ public class CommentTable {
                                                        java.util.function.Function<Comment, String> value) {
         TableColumn<Comment, String> c = new TableColumn<>(title);
         c.setPrefWidth(width);
-        c.setSortable(false);   // ordningen bestäms av användaren (Alt+pil)
+        c.setSortable(false);   // ordningen bestäms av var i boken kommentaren gjordes
         c.setCellValueFactory(cell -> new ReadOnlyStringWrapper(value.apply(cell.getValue())));
         return c;
     }
@@ -94,47 +93,10 @@ public class CommentTable {
 
     private void onKeyPressed(KeyEvent event) {
         Comment selected = table.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            return;
+        if (selected != null && !event.isAltDown() && event.getCode() == KeyCode.DELETE) {
+            onDelete.accept(selected);
+            event.consume();
         }
-        if (event.isAltDown()) {
-            switch (event.getCode()) {
-            case UP:
-                move(selected, -1);
-                event.consume();
-                break;
-            case DOWN:
-                move(selected, +1);
-                event.consume();
-                break;
-            default:
-                break;
-            }
-        }
-        else {
-            switch (event.getCode()) {
-            case DELETE:
-                onDelete.accept(selected);
-                event.consume();
-                break;
-            default:
-                break;
-            }
-        }
-    }
-
-    private void move(Comment comment, int direction) {
-        ObservableList<Comment> items = table.getItems();
-        int from = items.indexOf(comment);
-        int to = from + direction;
-        if (from < 0 || to < 0 || to >= items.size()) {
-            return;
-        }
-        items.remove(from);
-        items.add(to, comment);
-        table.getSelectionModel().clearAndSelect(to);
-        table.scrollTo(Math.max(0, to - 3));
-        onReordered.accept(new ArrayList<>(items));
     }
 
     /** Ctrl+klick på en kommentar. */
@@ -172,7 +134,4 @@ public class CommentTable {
         onDelete = handler;
     }
 
-    public void setOnReordered(Consumer<List<Comment>> handler) {
-        onReordered = handler;
-    }
 }
