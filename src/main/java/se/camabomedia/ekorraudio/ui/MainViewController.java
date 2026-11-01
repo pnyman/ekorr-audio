@@ -1580,6 +1580,9 @@ public class MainViewController implements Initializable {
 
     /** Delete: ta bort markerad kommentar. */
     private void deleteComment(Comment comment) {
+        if (report == null || comment == null || !confirmDelete(comment)) {
+            return;
+        }
         int index = report.getComments().indexOf(comment);
         report.removeComment(comment);
         if (writeReport()) {
@@ -1590,6 +1593,31 @@ public class MainViewController implements Initializable {
             report.getComments().add(Math.max(0, index), comment);   // ångra
             commentTable.setComments(report.getComments(), comment);
         }
+    }
+
+    /**
+     * Frågar om kommentaren verkligen ska tas bort. Visar nummer, typ och
+     * början av beskrivningen, så att man ser vilken det gäller.
+     * Enter = ta bort, Esc = avbryt.
+     */
+    private boolean confirmDelete(Comment comment) {
+        ButtonType delete = new ButtonType("Ta bort", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Avbryt", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert alert = new Alert(AlertType.CONFIRMATION, null, delete, cancel);
+        alert.initOwner(stage);
+        styleDialog(alert.getDialogPane());
+        alert.setTitle("Ta bort kommentar");
+        alert.setHeaderText("Ta bort kommentar " + comment.getNr() + "?");
+
+        String wrong = comment.getWrong();
+        if (wrong.length() > 80) {
+            wrong = wrong.substring(0, 80).strip() + " …";
+        }
+        alert.setContentText(comment.getType()
+                             + (comment.getPage().isBlank() || comment.getPage().equals("–")
+                                ? "" : ", sidan " + comment.getPage())
+                             + (wrong.isEmpty() ? "" : "\n\n" + wrong));
+        return alert.showAndWait().filter(b -> b == delete).isPresent();
     }
 
     /** Alt+pil: ny ordning från tabellen. */
