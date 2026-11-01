@@ -403,17 +403,124 @@ public class MainViewController implements Initializable {
                 break;
             }
         });
+
+        // stage.getScene().addEventFilter(KeyEvent.KEY_RELEASED, e -> {
+        //         if (timeline != null &&!isTyping() && isPlayerKey(e)) {
+        //             e.consume();
+        //     }
+        // });
+
         stage.getScene().addEventFilter(KeyEvent.KEY_RELEASED, e -> {
+                trackMenuKeys(e);
                 if (timeline != null &&!isTyping() && isPlayerKey(e)) {
                     e.consume();
-            }
-        });
+                }
+            });
+        setUpMenuKeysTracking();
+
+
         stage.setOnHidden(e -> mpv.close());
     }
 
-    /** Sant när ett textfält har fokus – då gäller inte spelartangenterna. */
+    /**
+     * Sant när tangenterna hör till något annat än uppspelningen: ett
+     * textfält (sökfältet) har fokus, eller menyraden används med
+     * tangentbordet (Alt, sedan pilar). Då gäller inte spelartangenterna.
+     */
     private boolean isTyping() {
-        return stage.getScene().getFocusOwner() instanceof javafx.scene.control.TextInputControl;
+        Node focus = stage.getScene().getFocusOwner();
+        if (focus instanceof javafx.scene.control.TextInputControl) {
+            return true;
+        }
+        // Menyraden styrs med tangentbordet (efter Alt eller F10)
+        if (menuKeysMode) {
+            return true;
+        }
+        // Efter Alt har en meny i menyraden fokus
+        for (Node n = focus; n != null; n = n.getParent()) {
+            if (n instanceof javafx.scene.control.MenuBar) {
+                return true;
+            }
+        }
+        // En utfälld meny
+        return anyMenuShowing();
+    }
+
+    // ------------------------------------------------------------ menyraden och tangenterna
+
+    /**
+     * Sant när menyraden styrs med tangentbordet: efter ett tryck på bara Alt
+     * (eller F10) markeras första menyn och pilarna flyttar mellan menyerna.
+     * JavaFX ger då inte menyraden fokus, så det syns inte på något annat sätt.
+     */
+    private boolean menuKeysMode = false;
+    /** Alt är nedtryckt utan att någon annan tangent tryckts sedan dess. */
+    private boolean altAlone = false;
+
+    /** Anropas för varje tangenttryck och -släpp (från filtren). */
+    private void trackMenuKeys(KeyEvent e) {
+        if (e.getEventType() == KeyEvent.KEY_PRESSED) {
+            if (e.getCode() == KeyCode.ALT) {
+                altAlone = true;
+                return;
+            }
+            altAlone = false;
+            if (e.getCode() == KeyCode.F10) {
+                menuKeysMode = !menuKeysMode;
+            }
+            else if (e.getCode() == KeyCode.ESCAPE && !anyMenuShowing()) {
+                menuKeysMode = false;   // Esc lämnar menyraden
+            }
+        }
+        else if (e.getEventType() == KeyEvent.KEY_RELEASED && e.getCode() == KeyCode.ALT) {
+            if (altAlone) {
+                // Bara Alt: menyraden aktiveras – eller lämnas, om den var aktiv
+                altAlone = false;
+                menuKeysMode = !menuKeysMode;
+            }
+            else {
+                // Ett Alt-släpp utan eget Alt-tryck före, t.ex. efter Alt+Tab
+                // till programmet. Stoppa det, annars aktiverar JavaFX
+                // menyraden utan att vi vet om det.
+                e.consume();
+            }
+        }
+    }
+
+    /** Menyläget avslutas av ett menyval, ett musklick eller när fönstret tappar fokus. */
+    private void setUpMenuKeysTracking() {
+        stage.getScene().addEventFilter(javafx.scene.input.MouseEvent.MOUSE_PRESSED,
+                                        e -> menuKeysMode = false);
+        stage.focusedProperty().addListener((obs, was, focused) -> {
+            if (!focused) {
+                menuKeysMode = false;
+                altAlone = false;   // t.ex. Alt+Tab – släppet kommer aldrig hit
+            }
+        });
+        javafx.scene.control.MenuBar bar = menuBar();
+        if (bar != null) {
+            for (javafx.scene.control.Menu menu : bar.getMenus()) {
+                // Ett val i menyn (eller undermenyerna) bubblar upp hit
+                menu.addEventHandler(ActionEvent.ACTION, e -> menuKeysMode = false);
+            }
+        }
+    }
+
+    private javafx.scene.control.MenuBar menuBar() {
+        Node bar = stage.getScene().getRoot().lookup(".menu-bar");
+        return bar instanceof javafx.scene.control.MenuBar ? (javafx.scene.control.MenuBar) bar : null;
+    }
+
+    private boolean anyMenuShowing() {
+        javafx.scene.control.MenuBar bar = menuBar();
+        if (bar != null) {
+            for (javafx.scene.control.Menu menu : bar.getMenus()) {
+                if (menu.isShowing()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static void anchorToAllSides(javafx.scene.Node node) {
@@ -767,6 +874,7 @@ public class MainViewController implements Initializable {
      * (hastighetstangenterna hanteras som tecken, se initData)
      */
     private void onKeyPressed(KeyEvent event) {
+        trackMenuKeys(event);
         // Ctrl+F: sök i texten. F3 / Skift+F3: nästa/föregående träff.
         if (event.isShortcutDown() && event.getCode() == KeyCode.F) {
             contentView.showSearch();
