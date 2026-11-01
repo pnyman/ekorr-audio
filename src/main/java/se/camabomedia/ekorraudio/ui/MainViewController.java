@@ -2212,6 +2212,27 @@ public class MainViewController implements Initializable {
     }
 
     @FXML
+    void handleMenuItemCreateComment(ActionEvent event) {
+        createComment();
+    }
+
+    @FXML
+    void handleMenuItemEditComment(ActionEvent event) {
+        Comment c = commentTable.getSelected();
+        if (c != null) {
+            editComment(c);
+        }
+    }
+
+    @FXML
+    void handleMenuItemDeleteComment(ActionEvent event) {
+        Comment c = commentTable.getSelected();
+        if (c != null) {
+            deleteComment(c);
+        }
+    }
+
+    @FXML
     void handleMenuItemName(ActionEvent event) {
         setProofReaderName();
     }

@@ -65,9 +65,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         </Menu>
         <Menu mnemonicParsing="false" text="Kommentarer">
           <items>
-            <MenuItem mnemonicParsing="false" text="Skapa kommentar (Enter)" />
-            <MenuItem mnemonicParsing="false" text="Redigera kommenter (dubbelklick)" />
-            <MenuItem mnemonicParsing="false" text="Ta bort kommentar (Delete)" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemCreateComment" text="Skapa kommentar (Enter)" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemEditComment" text="Redigera kommenter (Dubbelklick)" />
+            <MenuItem mnemonicParsing="false" onAction="#handleMenuItemDeleteComment" text="Ta bort kommentar (Delete)" />
           </items>
         </Menu>
         <Menu fx:id="menuNavigation" mnemonicParsing="false" text="Navigering" />
