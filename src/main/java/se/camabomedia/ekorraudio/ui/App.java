@@ -23,25 +23,12 @@ public class App extends Application {
 
         stage.setTitle("Ekorr+");
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("/se/camabomedia/ekorraudio/MainView.fxml"));
-        // FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/se/camabomedia/ekorraudio/SimpleView.fxml"));
         scene = new Scene(fxmlLoader.load());
         MainViewController ctrl = fxmlLoader.getController();
-        // SimpleViewController ctrl = fxmlLoader.getController();
         stage.setScene(scene);
         stage.getIcons().add(new Image(App.class.getResourceAsStream("/se/camabomedia/ekorraudio/icon.png")));
-        // stage.setMaximized(true);
         ctrl.initData(stage, settings);
 
-
-        // scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-        //         @Override
-        //         public void handle(KeyEvent event) {
-        //             System.out.println(event.getCode());
-        //         }
-        //     });
-
-        // stage.setWidth(1200);
-        // stage.setHeight(750);
         stage.show();
         stage.setResizable(true);
 
@@ -49,18 +36,7 @@ public class App extends Application {
                 Platform.exit();
                 System.exit(0);
             });
-
-        // ctrl.openProject(new File("C:/Users/qwfwq/programmering/ekorr/src/test/resources/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html"));
-
-
-        // ctrl.openProject(new File("C:/Users/qwfwq/filfixaren/workspace/leverans/CA54896_Industrial_PUBLISHER_fixgen/CA_Daisy_202_audioFullText/ncc.html"));
-
-        // ctrl.openProject(new File("C:/Users/qwfwq/programmering/ekorr/src/test/resources/CA60564_Box_PUBLISHER_fixgen/Daisy_202/ncc.html"));
-
-        // ctrl.setFirstElement();
-
     }
-
 
     public static void main( String[] args ) {
         launch();
