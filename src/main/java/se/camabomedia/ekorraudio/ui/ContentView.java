@@ -233,6 +233,16 @@ public class ContentView {
 
         setUpScrollBar();
 
+        // När vyn blir bredare eller smalare (avdelarna dras, en kolumn döljs
+        // eller visas, fönstrets storlek ändras) flödar texten om. Räkna då om
+        // markeringen och scrolla tillbaka till den när storleken slutat
+        // ändras, inte för varje pixel under en dragning.
+        javafx.animation.PauseTransition resized =
+            new javafx.animation.PauseTransition(javafx.util.Duration.millis(150));
+        resized.setOnFinished(e -> refitHighlight(true));
+        webView.widthProperty().addListener((obs, old, w) -> resized.playFromStart());
+        webView.heightProperty().addListener((obs, old, h) -> resized.playFromStart());
+
         webEngine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.FAILED || newValue == Worker.State.CANCELLED) {
                 loading = false;
