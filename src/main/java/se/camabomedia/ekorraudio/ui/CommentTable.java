@@ -25,6 +25,13 @@ import javafx.scene.input.KeyEvent;
 public class CommentTable {
 
     private final TableView<Comment> table = new TableView<>();
+    /** Minsta och största bredd för kolumnen Typ, px. */
+    private static final double TYPE_MIN_WIDTH = 70;
+    private static final double TYPE_MAX_WIDTH = 110;
+    /** Typ:s andel av bredden som delas mellan Typ och Söktext (inom min/max). */
+    private static final double TYPE_SHARE = 0.3;
+    /** Sant medan Typ justeras – då ska justeringen inte startas igen. */
+    private boolean adjustingType = false;
 
     private Consumer<Comment> onEdit = c -> {};
     private Consumer<Comment> onDelete = c -> {};
@@ -34,8 +41,8 @@ public class CommentTable {
         table.getStyleClass().add("comments-table");   // egen markeringsfärg, se main.css
         TableColumn<Comment, String> nr = column("Nr", 40, Comment::getNr);
         TableColumn<Comment, String> page = column("Sida", 50, Comment::getPage);
-        TableColumn<Comment, String> type = column("Typ", 110, Comment::getType);
-        TableColumn<Comment, String> seek = column("Söktext", 200, Comment::getSeek);
+        TableColumn<Comment, String> type = column("Typ", 50, Comment::getType);
+        TableColumn<Comment, String> seek = column("Söktext", 100, Comment::getSeek);
 
         // Nr och Sida har fast bredd. Utan minsta bredd trycker
         // CONSTRAINED_RESIZE_POLICY ihop dem till 10 px när tabellen skapas
@@ -45,14 +52,22 @@ public class CommentTable {
         // Siffror högerjusteras (rubrikerna behåller standardjusteringen)
         nr.setStyle("-fx-alignment: CENTER-RIGHT;");
         page.setStyle("-fx-alignment: CENTER-RIGHT;");
-        type.setMinWidth(80);
+        type.setMinWidth(TYPE_MIN_WIDTH);
+        type.setMaxWidth(TYPE_MAX_WIDTH);
         seek.setMinWidth(80);
 
         table.getColumns().add(nr);
         table.getColumns().add(page);
         table.getColumns().add(type);
         table.getColumns().add(seek);
-        table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        table.setColumnResizePolicy(features -> {
+                Boolean result = TableView.CONSTRAINED_RESIZE_POLICY.call(features);
+                if (features.getColumn() == null && !adjustingType) {
+                    // Tabellen har ändrat bredd (inte en kolumngräns som dras)
+                    javafx.application.Platform.runLater(() -> fitTypeColumn(type, seek));
+                }
+                return result;
+            });
         table.setPlaceholder(new Label("Inga kommentarer"));
 
         table.setRowFactory(tv -> {
@@ -73,6 +88,21 @@ public class CommentTable {
         });
 
         table.addEventHandler(KeyEvent.KEY_PRESSED, this::onKeyPressed);
+    }
+
+    private void fitTypeColumn(TableColumn<Comment, String> type, TableColumn<Comment, String> seek) {
+        double shared = type.getWidth() + seek.getWidth();
+        if (shared <= 0) {
+            return;
+        }
+        double wanted = Math.round(Math.max(TYPE_MIN_WIDTH,
+                                            Math.min(TYPE_MAX_WIDTH, shared * TYPE_SHARE)));
+        double delta = wanted - type.getWidth();
+        if (Math.abs(delta) >= 1) {
+            adjustingType = true;
+            table.resizeColumn(type, delta);
+            adjustingType = false;
+        }
     }
 
     private static TableColumn<Comment, String> column(String title, double width,
