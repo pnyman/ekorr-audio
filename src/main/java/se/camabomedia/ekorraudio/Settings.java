@@ -142,6 +142,7 @@ public class Settings {
         return split((String) settings.get("windowBounds"));
     }
 
+    /** Om fönstret ska vara maximerat. Första gången (inget sparat): ja. */
     public boolean getWindowMaximized() {
         return !Boolean.FALSE.equals(settings.get("windowMaximized"));
     }
@@ -425,10 +426,59 @@ public class Settings {
 
     private void writeJSON() {
         try (FileWriter file = new FileWriter(settingsFile)) {
-            file.write(settings.toJSONString());
+            StringBuilder out = new StringBuilder();
+            prettyPrint(settings, out, "");
+            file.write(out.append(System.lineSeparator()).toString());
             file.flush();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Skriver JSON med en post per rad och indrag, nycklarna i bokstavsordning,
+     * så att filen går att läsa och ändra för hand. (json-simple kan bara
+     * skriva allt på en rad.) Strängar escapas av json-simple.
+     */
+    private static void prettyPrint(Object value, StringBuilder out, String indent) {
+        String inner = indent + "  ";
+        String nl = System.lineSeparator();
+        if (value instanceof java.util.Map) {
+            java.util.Map<?, ?> map = (java.util.Map<?, ?>) value;
+            if (map.isEmpty()) {
+                out.append("{}");
+                return;
+            }
+            java.util.List<String> keys = new java.util.ArrayList<>();
+            for (Object k : map.keySet()) {
+                keys.add(String.valueOf(k));
+            }
+            java.util.Collections.sort(keys);
+            out.append('{').append(nl);
+            for (int i = 0; i < keys.size(); i++) {
+                out.append(inner).append(org.json.simple.JSONValue.toJSONString(keys.get(i))).append(": ");
+                prettyPrint(map.get(keys.get(i)), out, inner);
+                out.append(i < keys.size() - 1 ? "," : "").append(nl);
+            }
+            out.append(indent).append('}');
+        }
+        else if (value instanceof java.util.List) {
+            java.util.List<?> list = (java.util.List<?>) value;
+            if (list.isEmpty()) {
+                out.append("[]");
+                return;
+            }
+            out.append('[').append(nl);
+            for (int i = 0; i < list.size(); i++) {
+                out.append(inner);
+                prettyPrint(list.get(i), out, inner);
+                out.append(i < list.size() - 1 ? "," : "").append(nl);
+            }
+            out.append(indent).append(']');
+        }
+        else {
+            // Strängar, tal, true/false och null – som json-simple skriver dem
+            out.append(org.json.simple.JSONValue.toJSONString(value));
         }
     }
 
