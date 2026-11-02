@@ -684,17 +684,29 @@ public class ContentView {
         refitHighlight();   // ny färg
     }
 
-    /**
-     * Räknar om markeringens skugga, efter byte av typsnitt, textstorlek
-     * eller tema. Lite senare, så att den nya layouten hunnit göras.
-     */
     private void refitHighlight() {
+        refitHighlight(false);
+    }
+
+    /**
+     * Som ovan. keepInView: scrolla också tillbaka till markeringen (en
+     * fjärdedel ned, direkt utan animering) – när texten blir större eller
+     * mindre hamnar den annars utanför det synliga.
+     */
+    private void refitHighlight(boolean keepInView) {
         if (loading || webEngine.getDocument() == null) {
             return;
         }
         webEngine.executeScript(
             "setTimeout(function() {"
-            + "  if (window.ekorrFit) { ekorrFit(document.querySelector('." + CURRENT_CLASS + "')); }"
+            + "  var el = document.querySelector('." + CURRENT_CLASS + "');"
+            + "  if (!el) { return; }"
+            + "  if (window.ekorrFit) { ekorrFit(el); }"
+            + (keepInView
+               ? "  var r = el.getBoundingClientRect();"
+                 + "  window.scrollTo(0, Math.max(0, window.pageYOffset + r.top - window.innerHeight * 0.25));"
+                 + "  if (window.ekorrReportScroll) { ekorrReportScroll(); }"
+               : "")
             + "}, 80);");
     }
 
@@ -712,7 +724,7 @@ public class ContentView {
         fontFamily = family;
         updateCss();   // vid laddning läggs det in av applyCSS
         refreshScrollBar();
-        refitHighlight();
+        refitHighlight(true);
     }
 
     public String getFontFamily() {
@@ -723,7 +735,7 @@ public class ContentView {
     public void setFontScale(double scale) {
         webView.setFontScale(scale);
         refreshScrollBar();
-        refitHighlight();
+        refitHighlight(true);
     }
 
     public double getFontScale() {
