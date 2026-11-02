@@ -69,7 +69,7 @@ public class MainViewController implements Initializable {
     @FXML private AnchorPane commentPane;
     @FXML private HBox toolbar;
 
-    // Verktygsradens knappar – skapas i buildToolbar()
+    // Verktygsradens knappar, skapas i buildToolbar()
     private Button btnOpen;
     private Button btnOpenRecent;
     private Button btnClose;
@@ -157,7 +157,7 @@ public class MainViewController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // mpv rapporterar från en bakgrundstråd – flytta till JavaFX-tråden
+        // mpv rapporterar från en bakgrundstråd, flytta till JavaFX-tråden
         mpv.setListener(new MpvPlayer.Listener() {
             @Override
             public void positionChanged(long ms) {
@@ -300,6 +300,8 @@ public class MainViewController implements Initializable {
             fastSpeed = saved;
         }
 
+        // Typsnitt installerade bara för användaren
+        UserFonts.load();
         contentView = new ContentView();
         contentPane.getChildren().add(contentView.getContentView());
         buildLoadingOverlay();
@@ -317,7 +319,7 @@ public class MainViewController implements Initializable {
         nccView.setOnItemClicked(this::onNccClicked);
 
         // Högerkolumnen: kommentarstabellen. Kolumnerna i FXML har fast bredd
-        // (min = max = 250) – lås upp dem så att avdelarna går att dra.
+        // (min = max = 250), lås upp dem så att avdelarna går att dra.
         commentPane.getChildren().clear();   // etiketten "Comments" från FXML
         commentTable = new CommentTable();
         commentPane.getChildren().add(commentTable.getNode());
@@ -344,7 +346,7 @@ public class MainViewController implements Initializable {
         int savedVolume = settings.getVolume();
         applyVolume(savedVolume >= 0 ? savedVolume : 100, false);
 
-        // Ljudkurvan, längst ned – mellan kolumnerna och statusraden
+        // Ljudkurvan, längst ned, mellan kolumnerna och statusraden
         waveformView = new WaveformView();
         waveformView.setOnSeek(this::seekToTime);
         waveformView.managedProperty().bind(waveformView.visibleProperty());
@@ -375,9 +377,9 @@ public class MainViewController implements Initializable {
         // eller knapp har fokus
         stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, this::onKeyPressed);
         // WebView scrollar på tecknet " " (KEY_TYPED), inte på själva
-        // tangenttrycket – stoppa det också, liksom släppet av våra tangenter
+        // tangenttrycket, stoppa det också, liksom släppet av våra tangenter
         // Hastighetstangenterna läses som tecken (",", ".", "-"), så att de
-        // fungerar oberoende av tangentbordslayout – även minus på numeriska
+        // fungerar oberoende av tangentbordslayout, även minus på numeriska
         // tangentbordet
         stage.getScene().addEventFilter(KeyEvent.KEY_TYPED, e -> {
                 if (timeline == null || e.isShortcutDown() || isTyping()) {
@@ -474,7 +476,7 @@ public class MainViewController implements Initializable {
         }
         else if (e.getEventType() == KeyEvent.KEY_RELEASED && e.getCode() == KeyCode.ALT) {
             if (altAlone) {
-                // Bara Alt: menyraden aktiveras – eller lämnas, om den var aktiv
+                // Bara Alt: menyraden aktiveras, eller lämnas, om den var aktiv
                 altAlone = false;
                 menuKeysMode = !menuKeysMode;
             }
@@ -494,7 +496,7 @@ public class MainViewController implements Initializable {
         stage.focusedProperty().addListener((obs, was, focused) -> {
             if (!focused) {
                 menuKeysMode = false;
-                altAlone = false;   // t.ex. Alt+Tab – släppet kommer aldrig hit
+                altAlone = false;   // t.ex. Alt+Tab, släppet kommer aldrig hit
             }
         });
         javafx.scene.control.MenuBar bar = menuBar();
@@ -569,7 +571,7 @@ public class MainViewController implements Initializable {
         closeProject();   // sparar positionen i den bok som var öppen
         opening = true;
 
-        // Läsningen av ncc, textfil och alla smil-filer tar tid – gör den i
+        // Läsningen av ncc, textfil och alla smil-filer tar tid, gör den i
         // en bakgrundstråd och visa "Öppnar …" under tiden. Fälten (ncc,
         // smil, timeline) sätts först på JavaFX-tråden när allt är klart.
         String guess = recentTitleFor(nccFile);
@@ -580,7 +582,7 @@ public class MainViewController implements Initializable {
                 long t0 = System.nanoTime();
                 Ncc n = new Ncc(nccFile);
                 long t1 = System.nanoTime();
-                // Börja ladda texten i vyn direkt – WebView arbetar på
+                // Börja ladda texten i vyn direkt, WebView arbetar på
                 // JavaFX-tråden samtidigt som smil-filerna läses här
                 File contentFile = n.getContentFilePath();
                 boolean audioOnly = n.isAudioOnly();
@@ -740,7 +742,7 @@ public class MainViewController implements Initializable {
         if (timeline == null) {
             return;
         }
-        // Under ett pågående hopp är mpv:s position inaktuell – utgå från målet,
+        // Under ett pågående hopp är mpv:s position inaktuell, utgå från målet,
         // så att flera snabba tryck läggs ihop
         long from = seekTarget >= 0 ? seekTarget : mpv.getPosition();
         seekToTime(from + deltaMs);
@@ -792,7 +794,7 @@ public class MainViewController implements Initializable {
         }
     }
 
-    /** Positionen från mpv – flytta markeringen när ett nytt par börjar. */
+    /** Positionen från mpv, flytta markeringen när ett nytt par börjar. */
     private void onPosition(long ms) {
         if (timeline == null || isStaleAfterSeek(ms)) {
             return;
@@ -811,7 +813,7 @@ public class MainViewController implements Initializable {
     /**
      * Ett par utan ljud (inläsning saknas) har samma starttid som nästa par.
      * Utan det här skulle positionen genast flytta markeringen till nästa
-     * par – och "föregående fras" skulle aldrig komma förbi. Markeringen får
+     * par, och "föregående fras" skulle aldrig komma förbi. Markeringen får
      * stå kvar tills uppspelningen gått förbi parets starttid.
      */
     private boolean keepSilentParHighlighted(long ms) {
@@ -1002,7 +1004,7 @@ public class MainViewController implements Initializable {
     /**
      * Sant medan en tangent behandlas som hör till sökfältet. Menyernas
      * kortkommandon körs annars när fältet inte själv använder tangenten
-     * (t.ex. mellanslag) – då ska de inte göra något.
+     * (t.ex. mellanslag), då ska de inte göra något.
      */
     private boolean keyWhileTyping = false;
 
@@ -1258,7 +1260,7 @@ public class MainViewController implements Initializable {
     private void openWaveform() {
         closeWaveform();
         waveform = new se.camabomedia.ekorraudio.daisy.Waveform(timeline, MpvPlayer.defaultMpvPath());
-        // En avkodad bit kommer från en bakgrundstråd – rita om på JavaFX-tråden
+        // En avkodad bit kommer från en bakgrundstråd, rita om på JavaFX-tråden
         waveform.setOnChunkLoaded(() -> Platform.runLater(waveformView::redraw));
         waveformView.setSource(timeline, waveform);
     }
@@ -1354,7 +1356,7 @@ public class MainViewController implements Initializable {
         }
     }
 
-    /** Dialogrutor har en egen scen – ge dem samma stilark som huvudfönstret. */
+    /** Dialogrutor har en egen scen, ge dem samma stilark som huvudfönstret. */
     private void styleDialog(javafx.scene.control.DialogPane pane) {
         if (stage != null && stage.getScene() != null) {
             pane.getStylesheets().setAll(stage.getScene().getStylesheets());
@@ -1419,12 +1421,12 @@ public class MainViewController implements Initializable {
 
     // ------------------------------------------------------------ volym
     private static final int VOLUME_STEP = 5;
-    /** Sant medan reglaget sätts från koden – då ska lyssnaren inte reagera. */
+    /** Sant medan reglaget sätts från koden, då ska lyssnaren inte reagera. */
     private boolean updatingVolume = false;
 
     /**
      * Sätter volymen i mpv, reglaget och knappens ikon. fromUser: ändrad av
-     * användaren – då slås ett avstängt ljud på igen, och volymen sparas
+     * användaren, då slås ett avstängt ljud på igen, och volymen sparas
      * (under dragning i reglaget först när man släpper).
      */
     private void applyVolume(int percent, boolean fromUser) {
@@ -1592,7 +1594,7 @@ public class MainViewController implements Initializable {
             return null;
         }
         // Inget markerat än (uppspelningen har inte börjat): bokens början,
-        // boktid 0 – kommentaren hamnar då först
+        // boktid 0, kommentaren hamnar då först
         int index = Math.max(currentIndex, 0);
         long ms = currentIndex < 0 ? 0 : (seekTarget >= 0 ? seekTarget : mpv.getPosition());
         // Inom det markerade par:et (ett par utan ljud har samma start som nästa)
@@ -1797,7 +1799,7 @@ public class MainViewController implements Initializable {
 
     /**
      * Öppnar en fil eller mapp med det program Windows har kopplat till den.
-     * java.awt.Desktop körs i en egen tråd – anropet kan ta en stund och ska
+     * java.awt.Desktop körs i en egen tråd, anropet kan ta en stund och ska
      * inte låsa JavaFX-tråden.
      */
     private void openWithSystem(File file) {
@@ -1914,7 +1916,7 @@ public class MainViewController implements Initializable {
         anchorToAllSides(loadingOverlay);
     }
 
-    /** Texten har laddats i vyn / boken är inläst – "Öppnar …" döljs när båda är klara. */
+    /** Texten har laddats i vyn / boken är inläst, "Öppnar …" döljs när båda är klara. */
     private boolean textReady = false;
     private boolean dataReady = false;
 
@@ -1944,7 +1946,7 @@ public class MainViewController implements Initializable {
         loadingLabel.textProperty().unbind();
     }
 
-    /** Titeln ur listan "Senaste" (eller mappens namn) – innan ncc:n är läst. */
+    /** Titeln ur listan "Senaste" (eller mappens namn), innan ncc:n är läst. */
     private String recentTitleFor(File nccFile) {
         for (Settings.RecentBook book : settings.getRecentBooks()) {
             if (book.ncc.equalsIgnoreCase(nccFile.getAbsolutePath())) {
@@ -2110,7 +2112,7 @@ public class MainViewController implements Initializable {
 
     /**
      * Läser av avdelarna och för in dem i dividers. Med en dold kolumn finns
-     * bara en avdelare – den motsvarar textens vänster- eller högerkant.
+     * bara en avdelare, den motsvarar textens vänster- eller högerkant.
      */
     private void captureDividers() {
         double[] now = splitPane.getDividerPositions();
