@@ -53,7 +53,7 @@ public class ContentView {
      * Programmets grund-CSS för texten. Därefter läggs temats färger, ev.
      * typsnitt och sist markeringen (buildCss). Markeringen görs med en klass
      * och !important och gäller även barnelementen (em, strong …), annars kan
-     * bokens egen CSS – t.ex. en bakgrund på blockquote, em eller p – dölja den.
+     * bokens egen CSS, t.ex. en bakgrund på blockquote, em eller p, dölja den.
      */
     private static final String CSS =
         // WebView:s egen rullningslist döljs (den tonades bort vid inaktivitet).
@@ -75,7 +75,7 @@ public class ContentView {
     /**
      * När NCC:n visas som innehåll (talbok utan text): länkarna ska se ut
      * som vanlig text, och varje sidnummer får en egen rad med "Sida"
-     * framför – i NCC:n är de inline-element som annars hamnar på rad.
+     * framför, i NCC:n är de inline-element som annars hamnar på rad.
      */
     private static final String NCC_CONTENT_CSS =
         "a, a:link, a:visited {"
@@ -90,7 +90,7 @@ public class ContentView {
         + ".page-normal::before, .page-front::before, .page-special::before {"
         + "    content: 'Sida '; "
         + "}"
-        // Rubrikerna är hela NCC:n – webbläsarens standardstorlekar (h1 = 2em)
+        // Rubrikerna är hela NCC:n, webbläsarens standardstorlekar (h1 = 2em)
         // blir för stora. Fortfarande fetstil och något större per nivå.
         + "h1 { font-size: 1.3em !important; } "
         + "h2 { font-size: 1.2em !important; } "
@@ -106,10 +106,11 @@ public class ContentView {
      * efter temats CSS, så att den alltid syns.
      *
      * Bakgrunden på ett inline-element täcker bara texthöjden, inte hela
-     * radhöjden. En skugga 0.3em uppåt och nedåt fyller glappen mellan
-     * raderna. OBS: inte padding – på element som är block (t.ex. sidnummer
-     * med display:block) ändrar padding layouten, texten nedanför flyttas och
-     * WebView lämnar kvar gamla bilder (dubbla rader, kvarglömd markering).
+     * radhöjden. Glappen mellan raderna fylls med en skugga uppåt och nedåt,
+     * som räknas ut för det typsnitt som används (FIT_SCRIPT). OBS: inte
+     * padding, på element som är block (t.ex. sidnummer med display:block)
+     * ändrar padding layouten, texten nedanför flyttas och WebView lämnar
+     * kvar gamla bilder (dubbla rader, kvarglömd markering).
      */
     private static String highlightCss(Theme theme) {
         String color = theme.getHighlight();
@@ -117,9 +118,6 @@ public class ContentView {
             + "    background-color: " + color + " !important; "
             + (theme.getHighlightText() != null
                ? "    color: " + theme.getHighlightText() + " !important; " : "")
-            + "}"
-            + "." + CURRENT_CLASS + " {"
-            + "    box-shadow: 0 0.3em 0 " + color + ", 0 -0.3em 0 " + color + " !important; "
             + "}";
         return css;
     }
@@ -137,7 +135,7 @@ public class ContentView {
         + "    if (String(window.getSelection()).length > 0) { return; }"
         + "    var el = event.target;"
         + "    while (el && !(el.id)) { el = el.parentNode; }"
-        // Även klick utanför synkpunkter går till Java ('' = inget id) –
+        // Även klick utanför synkpunkter går till Java ('' = inget id),
         // de stänger sökraden
         + "    java.handleClick(el && el.id ? el.id : '');"
         + "});";
@@ -146,6 +144,33 @@ public class ContentView {
      * Rapporterar scrollposition, dokumenthöjd och fönsterhöjd till Java
      * när sidan scrollas, ändrar storlek eller (bilder) laddats klart.
      */
+    /**
+     * Skuggan som fyller glappen mellan raderna i markeringen. Hur stort
+     * glappet är beror på typsnittet: radavståndet minus texthöjden (som
+     * WebView räknar från typsnittets över- och underlängder), delat på två.
+     * En fast skugga (t.ex. 0.3em) blir med vissa typsnitt för stor och täcker
+     * då underlängderna (g, j, p …) på raden ovanför, nästa rads markering
+     * ritas efter den raden. Block-element (t.ex. stycken) behöver ingen
+     * skugga, deras bakgrund täcker redan hela raderna.
+     */
+    private static final String FIT_SCRIPT =
+        "window.ekorrFit = function(el) {"
+        + "  if (!el) { return; }"
+        + "  el.style.removeProperty('box-shadow');"
+        + "  var cs = window.getComputedStyle(el);"
+        + "  if (cs.display !== 'inline') { return; }"
+        + "  var rects = el.getClientRects();"
+        + "  if (!rects.length) { return; }"
+        + "  var h = rects[0].height;"
+        + "  var lh = parseFloat(cs.lineHeight);"
+        + "  var step = rects.length > 1 ? rects[1].top - rects[0].top : (isNaN(lh) ? h : lh);"
+        + "  var gap = Math.floor(Math.max(0, (step - h) / 2));"
+        + "  if (gap < 1) { return; }"
+        + "  var c = cs.backgroundColor;"
+        + "  el.style.setProperty('box-shadow',"
+        + "      '0 ' + gap + 'px 0 ' + c + ', 0 -' + gap + 'px 0 ' + c, 'important');"
+        + "};";
+
     private static final String SCROLL_SCRIPT =
         "(function() {"
         + "  function report() {"
@@ -166,7 +191,7 @@ public class ContentView {
     /** Egen rullningslist (alltid synlig) och behållaren med WebView + list. */
     private final ScrollBar scrollBar = new ScrollBar();
     private final BorderPane container = new BorderPane();
-    /** Sant medan listen uppdateras från sidan – då ska den inte scrolla sidan. */
+    /** Sant medan listen uppdateras från sidan, då ska den inte scrolla sidan. */
     private boolean updatingScrollBar = false;
 
     // Måste hållas som fält: WebView har bara en svag referens till bryggan
@@ -196,7 +221,7 @@ public class ContentView {
     private String searchScript;
     /** Sant när innehållet är NCC:n (talbok utan text). */
     private boolean nccAsContent = false;
-    /** id:n för synkpunkter som saknar ljud – markeras vid varje laddning. */
+    /** id:n för synkpunkter som saknar ljud, markeras vid varje laddning. */
     private java.util.Set<String> missingIDs = java.util.Collections.emptySet();
 
     private Consumer<String> onSyncPointClicked = id -> {};
@@ -217,7 +242,7 @@ public class ContentView {
             if (newValue != Worker.State.SUCCEEDED) {
                 return;
             }
-            // Körs för varje ny laddning – det nya dokumentet saknar allt från det förra
+            // Körs för varje ny laddning, det nya dokumentet saknar allt från det förra
             loading = false;
             currentElement = null;
             applyCSS();
@@ -225,9 +250,10 @@ public class ContentView {
             window.setMember("java", javaBridge);
             webEngine.executeScript(CLICK_SCRIPT);
             webEngine.executeScript(SCROLL_SCRIPT);
+            webEngine.executeScript(FIT_SCRIPT);
             webEngine.executeScript(searchScript());
             if (searchBar.isVisible()) {
-                runSearch();   // ny laddning – sök igen med samma text
+                runSearch();   // ny laddning, sök igen med samma text
             }
             applyMissing();
 
@@ -284,7 +310,7 @@ public class ContentView {
         });
 
         // Tangenterna för sidvis scrollning fungerar inte längre av sig själva
-        // (overflow: hidden) – gör dem här. Pilar och mellanslag hanteras av
+        // (overflow: hidden), gör dem här. Pilar och mellanslag hanteras av
         // huvudfönstrets uppspelningstangenter.
         webView.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             if (webEngine.getDocument() == null || e.isControlDown() || e.isAltDown()) {
@@ -532,7 +558,7 @@ public class ContentView {
     }
 
     /**
-     * @param nccAsContent sant när filen är NCC:n i en talbok utan text –
+     * @param nccAsContent sant när filen är NCC:n i en talbok utan text,
      *                     då läggs NCC_CONTENT_CSS till
      */
     public void openContent(File contentFile, boolean nccAsContent) {
@@ -576,7 +602,7 @@ public class ContentView {
             if (!first) {
                 js.append(',');
             }
-            // id:n i DAISY innehåller bara bokstäver, siffror, - och _ – men var försiktig
+            // id:n i DAISY innehåller bara bokstäver, siffror, - och _, men var försiktig
             js.append('\'').append(id.replace("\\", "").replace("'", "")).append('\'');
             first = false;
         }
@@ -596,7 +622,7 @@ public class ContentView {
         styleNode = null;
         loading = false;
         notifyOnLoad = false;
-        // Stäng sökraden – den hör till boken som stängs
+        // Stäng sökraden, den hör till boken som stängs
         searchDelay.stop();
         searchBar.setVisible(false);
         lastQuery = null;
@@ -655,6 +681,21 @@ public class ContentView {
     public void setTheme(Theme newTheme) {
         theme = newTheme == null ? Theme.STANDARD : newTheme;
         updateCss();   // vid laddning läggs det in av applyCSS
+        refitHighlight();   // ny färg
+    }
+
+    /**
+     * Räknar om markeringens skugga, efter byte av typsnitt, textstorlek
+     * eller tema. Lite senare, så att den nya layouten hunnit göras.
+     */
+    private void refitHighlight() {
+        if (loading || webEngine.getDocument() == null) {
+            return;
+        }
+        webEngine.executeScript(
+            "setTimeout(function() {"
+            + "  if (window.ekorrFit) { ekorrFit(document.querySelector('." + CURRENT_CLASS + "')); }"
+            + "}, 80);");
     }
 
     private void updateCss() {
@@ -665,12 +706,13 @@ public class ContentView {
 
     /**
      * Typsnitt för texten, eller null för bokens eget. Måste vara installerat
-     * i systemet – annars väljer WebView ett standardtypsnitt.
+     * i systemet, annars väljer WebView ett standardtypsnitt.
      */
     public void setFontFamily(String family) {
         fontFamily = family;
         updateCss();   // vid laddning läggs det in av applyCSS
         refreshScrollBar();
+        refitHighlight();
     }
 
     public String getFontFamily() {
@@ -681,6 +723,7 @@ public class ContentView {
     public void setFontScale(double scale) {
         webView.setFontScale(scale);
         refreshScrollBar();
+        refitHighlight();
     }
 
     public double getFontScale() {
@@ -690,13 +733,13 @@ public class ContentView {
     /** Markerar elementet och scrollar dit. */
     public void highlight(String elementID) {
         if (loading || webEngine.getLoadWorker().getState() != Worker.State.SUCCEEDED) {
-            pendingElementID = elementID;   // ersätter ev. tidigare – bara det senaste gäller
+            pendingElementID = elementID;   // ersätter ev. tidigare, bara det senaste gäller
             return;
         }
         Object element = webEngine.getDocument() == null ? null
             : ((JSObject) webEngine.executeScript("document")).call("getElementById", elementID);
         if (!(element instanceof JSObject)) {
-            // Låt inte förra meningen stå kvar som markerad – det ser ut som fel ställe
+            // Låt inte förra meningen stå kvar som markerad, det ser ut som fel ställe
             System.err.println("Hittar inte synkpunkten i innehållsfilen: " + elementID);
             clearCurrentElement();
             currentElementID = elementID;
@@ -734,13 +777,14 @@ public class ContentView {
     private void setCurrentElement(JSObject element, String elementID) {
         clearCurrentElement();
         ((JSObject) element.getMember("classList")).call("add", CURRENT_CLASS);
+        ((JSObject) webEngine.executeScript("window")).call("ekorrFit", element);
         currentElement = element;
         currentElementID = elementID;
     }
 
     /**
-     * Tar bort markeringen från alla element i dokumentet – inte bara från
-     * det vi senast markerade – så att en gammal markering aldrig kan bli
+     * Tar bort markeringen från alla element i dokumentet, inte bara från
+     * det vi senast markerade, så att en gammal markering aldrig kan bli
      * kvar (t.ex. vid sidbrytningar).
      */
     private void clearCurrentElement() {
@@ -753,6 +797,7 @@ public class ContentView {
             + "  var marked = document.getElementsByClassName('" + CURRENT_CLASS + "');"
             // live-lista: ta bort bakifrån tills den är tom
             + "  for (var i = marked.length - 1; i >= 0; i--) {"
+            + "    marked[i].style.removeProperty('box-shadow');"
             + "    marked[i].classList.remove('" + CURRENT_CLASS + "');"
             + "  }"
             + "})()");
@@ -780,7 +825,7 @@ public class ContentView {
         }
     }
 
-    /** WebView med rullningslist – det som ska läggas in i fönstret. */
+    /** WebView med rullningslist, det som ska läggas in i fönstret. */
     public Region getContentView() {
         return container;
     }
