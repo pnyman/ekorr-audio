@@ -35,8 +35,8 @@ import javafx.scene.text.TextAlignment;
 public class WaveformView extends Pane {
 
     /** Synligt fönster: så här långt före och efter positionen, ms. */
-    private static final long BEFORE_MS = 5_000;
-    private static final long AFTER_MS = 15_000;
+    private static final long BEFORE_MS = 10_000;
+    private static final long AFTER_MS = 10_000;
     private static final long WINDOW_MS = BEFORE_MS + AFTER_MS;
     /**
      * Fast läge: när strecket kommer så här nära högerkanten bläddras kurvan,
