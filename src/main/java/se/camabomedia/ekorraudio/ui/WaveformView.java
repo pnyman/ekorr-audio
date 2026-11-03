@@ -44,6 +44,15 @@ public class WaveformView extends Pane {
     private static final long PAGE_MARGIN_MS = 500;
     private static final long PAGE_LEAD_MS = 1_000;
 
+    /** Kurvans höjd i px. */
+    private static final double HEIGHT = 60;
+    /**
+     * Förstärkning av kurvan. Tal når sällan full nivå, så utan förstärkning
+     * blir det mycket tom yta över och under kurvan. Toppar som skulle gå
+     * utanför ritas ända ut till kanten.
+     */
+    private static final double GAIN = 1.4;
+
     /** Nivå (0–32767) under vilken ljudet räknas som tyst. */
     public static final int SILENCE_THRESHOLD = 600;
     /** Tystnad minst så här lång (ms) markeras som lång paus. */
@@ -102,7 +111,7 @@ public class WaveformView extends Pane {
         // Utanför layouten, annars hindrar canvas:ens bredd panelen från att krympa
         canvas.setManaged(false);
         setMinHeight(40);
-        setPrefHeight(80);
+        setPrefHeight(HEIGHT);
         // Canvas följer panelens storlek
         canvas.widthProperty().bind(widthProperty());
         canvas.heightProperty().bind(heightProperty());
@@ -239,7 +248,7 @@ public class WaveformView extends Pane {
                 continue;
             }
             // Roten ur ger en mer läsbar kurva för tal (svaga ljud syns)
-            double amp = Math.sqrt(v / 32767.0) * (mid - 2);
+            double amp = Math.min(1.0, Math.sqrt(v / 32767.0) * GAIN) * (mid - 2);
             g.fillRect(x, mid - amp, 1, Math.max(1, 2 * amp));
         }
 
