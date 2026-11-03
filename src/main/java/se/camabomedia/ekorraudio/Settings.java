@@ -210,6 +210,23 @@ public class Settings {
         return !Boolean.FALSE.equals(settings.get("showRightPane"));
     }
 
+    /** Markeringsfärg för standardtemat (#rrggbb), eller null för temats egen. */
+    @SuppressWarnings("unchecked")
+    public void addHighlightColor(String color) {
+        if (color == null) {
+            settings.remove("highlightColor");
+        }
+        else {
+            settings.put("highlightColor", color);
+        }
+        writeJSON();
+    }
+
+    public String getHighlightColor() {
+        Object value = settings.get("highlightColor");
+        return value instanceof String ? (String) value : null;
+    }
+
     /** Uppspelningens volym i procent. */
     @SuppressWarnings("unchecked")
     public void addVolume(int percent) {

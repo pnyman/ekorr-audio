@@ -108,6 +108,7 @@ public class MainViewController implements Initializable {
     @FXML private javafx.scene.control.Menu menuWaveform;
     @FXML private javafx.scene.control.Menu menuNavigation;
     @FXML private javafx.scene.control.Menu menuTextSize;
+    @FXML private MenuItem menuItemHighlightColor;
     @FXML private javafx.scene.control.CheckMenuItem menuItemShowWaveform;
     @FXML private javafx.scene.control.CheckMenuItem menuItemShowLeft;
     @FXML private javafx.scene.control.CheckMenuItem menuItemShowRight;
@@ -359,6 +360,7 @@ public class MainViewController implements Initializable {
         root.getChildren().add(root.getChildren().indexOf(splitPane) + 1, waveformView);
 
         buildThemeMenu();
+        Theme.setStandardHighlight(settings.getHighlightColor());
         applyTheme(Theme.fromName(settings.getTheme()));
         // Tomma dokument i vyerna, så att temats bakgrund syns innan en bok öppnas
         contentView.clear();
@@ -1348,6 +1350,10 @@ public class MainViewController implements Initializable {
             waveformView.setTheme(theme);
         }
         TitleBar.applyWhenShown(stage, theme);   // namnlisten ritas av Windows
+        if (menuItemHighlightColor != null) {
+            // Egen markeringsfärg finns bara för standardtemat
+            menuItemHighlightColor.setDisable(theme != Theme.STANDARD);
+        }
 
         if (menuTheme != null) {
             for (MenuItem item : menuTheme.getItems()) {
@@ -1356,6 +1362,56 @@ public class MainViewController implements Initializable {
                 }
             }
         }
+    }
+
+    /**
+     * Anpassning → Markeringsfärg …: färgväljare för standardtemats
+     * markering (texten och NCC-listan). Färgen syns direkt medan man väljer;
+     * Avbryt går tillbaka till den förra, Standard till gult.
+     */
+    private void chooseHighlightColor() {
+        if (theme != Theme.STANDARD) {
+            return;
+        }
+        String before = settings.getHighlightColor();
+        javafx.scene.control.ColorPicker picker = new javafx.scene.control.ColorPicker(
+            javafx.scene.paint.Color.web(Theme.STANDARD.getHighlight()));
+        picker.valueProperty().addListener((obs, old, color) -> {
+            Theme.setStandardHighlight(toHex(color));
+            applyTheme(theme);   // visa direkt
+        });
+
+        ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+        ButtonType reset = new ButtonType("Standard (gul)", ButtonBar.ButtonData.LEFT);
+        ButtonType cancel = new ButtonType("Avbryt", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.initOwner(stage);
+        styleDialog(dialog.getDialogPane());
+        dialog.setTitle("Markeringsfärg");
+        dialog.setHeaderText("Färg för den mening som spelas");
+        dialog.getDialogPane().setContent(picker);
+        dialog.getDialogPane().getButtonTypes().addAll(ok, reset, cancel);
+
+        ButtonType answer = dialog.showAndWait().orElse(cancel);
+        if (answer == ok) {
+            settings.addHighlightColor(toHex(picker.getValue()));
+        }
+        else if (answer == reset) {
+            Theme.setStandardHighlight(null);
+            settings.addHighlightColor(null);
+        }
+        else {
+            Theme.setStandardHighlight(before);   // tillbaka till den förra
+        }
+        applyTheme(theme);
+    }
+
+    /** Color -> "#rrggbb". */
+    private static String toHex(javafx.scene.paint.Color c) {
+        return String.format("#%02x%02x%02x",
+                             (int) Math.round(c.getRed() * 255),
+                             (int) Math.round(c.getGreen() * 255),
+                             (int) Math.round(c.getBlue() * 255));
     }
 
     /** Dialogrutor har en egen scen, ge dem samma stilark som huvudfönstret. */
@@ -2374,6 +2430,11 @@ public class MainViewController implements Initializable {
     @FXML
     void handleMenuItemFont(ActionEvent event) {
         chooseFont();
+    }
+
+    @FXML
+    void handleMenuItemHighlightColor(ActionEvent event) {
+        chooseHighlightColor();
     }
 
     @FXML

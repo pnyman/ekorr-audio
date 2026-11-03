@@ -79,8 +79,19 @@ public enum Theme {
         return nccCss;
     }
 
+    /** Egen markeringsfärg för standardtemat (#rrggbb), eller null för gult. */
+    private static String standardHighlight = null;
+
+    /** Sätter standardtemats markeringsfärg; null = temats egen (gul). */
+    public static void setStandardHighlight(String color) {
+        standardHighlight = color == null || color.isBlank() ? null : color;
+    }
+
     /** Bakgrundsfärg för den mening som spelas. */
     public String getHighlight() {
+        if (this == STANDARD && standardHighlight != null) {
+            return standardHighlight;
+        }
         return highlight;
     }
 

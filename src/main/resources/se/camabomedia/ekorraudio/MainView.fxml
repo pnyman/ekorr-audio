@@ -76,6 +76,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemFont" text="Typsnitt …" />
             <Menu fx:id="menuTextSize" mnemonicParsing="false" text="Textstorlek" />
             <Menu fx:id="menuTheme" mnemonicParsing="false" text="Tema" />
+            <MenuItem fx:id="menuItemHighlightColor" mnemonicParsing="false" onAction="#handleMenuItemHighlightColor" text="Markeringsfärg …" />
             <Menu fx:id="menuWaveform" mnemonicParsing="false" text="Ljudkurvans läge" />
             <SeparatorMenuItem mnemonicParsing="false" />
             <CheckMenuItem fx:id="menuItemShowWaveform" mnemonicParsing="false" text="Visa ljudkurvan" />
