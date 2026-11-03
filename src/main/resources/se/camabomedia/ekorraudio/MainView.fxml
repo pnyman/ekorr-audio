@@ -74,6 +74,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
         <Menu mnemonicParsing="false" text="Anpassning">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#handleMenuItemFont" text="Typsnitt …" />
+            <Menu fx:id="menuTextSize" mnemonicParsing="false" text="Textstorlek" />
             <Menu fx:id="menuTheme" mnemonicParsing="false" text="Tema" />
             <Menu fx:id="menuWaveform" mnemonicParsing="false" text="Ljudkurvans läge" />
             <SeparatorMenuItem mnemonicParsing="false" />

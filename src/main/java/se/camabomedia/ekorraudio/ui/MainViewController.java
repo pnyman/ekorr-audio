@@ -107,6 +107,7 @@ public class MainViewController implements Initializable {
     @FXML private javafx.scene.control.Menu menuRecent;
     @FXML private javafx.scene.control.Menu menuWaveform;
     @FXML private javafx.scene.control.Menu menuNavigation;
+    @FXML private javafx.scene.control.Menu menuTextSize;
     @FXML private javafx.scene.control.CheckMenuItem menuItemShowWaveform;
     @FXML private javafx.scene.control.CheckMenuItem menuItemShowLeft;
     @FXML private javafx.scene.control.CheckMenuItem menuItemShowRight;
@@ -372,6 +373,7 @@ public class MainViewController implements Initializable {
             });
         buildRecentMenu();
         setUpViewMenu();
+        buildTextSizeMenu();
 
         // Filter (inte handler) så att tangenterna fungerar även när en WebView
         // eller knapp har fokus
@@ -2082,6 +2084,33 @@ public class MainViewController implements Initializable {
         if (menuItemShowRight != null) {
             menuItemShowRight.setSelected(showRight);
         }
+    }
+
+    /**
+     * Anpassning → Textstorlek: större, mindre, normal. Kortkommandona
+     * hanteras i onKeyPressed (handleZoomKey); acceleratorerna visar dem i
+     * menyn. Fungerar även utan öppnad bok.
+     */
+    private void buildTextSizeMenu() {
+        if (menuTextSize == null) {
+            return;   // menyn saknas i FXML
+        }
+        MenuItem larger = new MenuItem("Större");
+        larger.setAccelerator(new javafx.scene.input.KeyCharacterCombination(
+            "+", javafx.scene.input.KeyCombination.SHORTCUT_DOWN));
+        larger.setOnAction(e -> changeFontScale(+SCALE_STEP));
+
+        MenuItem smaller = new MenuItem("Mindre");
+        smaller.setAccelerator(new javafx.scene.input.KeyCharacterCombination(
+            "-", javafx.scene.input.KeyCombination.SHORTCUT_DOWN));
+        smaller.setOnAction(e -> changeFontScale(-SCALE_STEP));
+
+        MenuItem normal = new MenuItem("Normal");
+        normal.setAccelerator(new javafx.scene.input.KeyCodeCombination(
+            KeyCode.DIGIT0, javafx.scene.input.KeyCombination.SHORTCUT_DOWN));
+        normal.setOnAction(e -> setFontScale(1.0));
+
+        menuTextSize.getItems().setAll(larger, smaller, normal);
     }
 
     // ------------------------------------------------------------ kolumner
