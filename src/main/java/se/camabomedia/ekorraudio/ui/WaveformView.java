@@ -17,15 +17,14 @@ import javafx.scene.text.TextAlignment;
 /**
  * Ljudkurvan (längst ned i fönstret), i ett av två lägen:
  *
- *  - rörlig: kurvan rullar förbi och positionsstrecket står still, en
- *    fjärdedel in från vänster
+ *  - rörlig: kurvan rullar förbi och positionsstrecket står still
  *  - fast: kurvan står still och strecket rör sig; när det når högerkanten
  *    bläddras kurvan fram en skärmbredd (som att vända blad)
  *
  * Innehåll:
  *
  *  - kurvan (toppvärden), symmetrisk kring mittlinjen
- *  - lodräta streck vid varje mening (par) – där texten byts
+ *  - lodräta streck vid varje mening (par), där texten byts
  *  - den mening som spelas, svagt markerad
  *  - långa pauser, markerade med färg och längd i sekunder
  *  - uppspelningsposition (streck)
@@ -100,7 +99,7 @@ public class WaveformView extends Pane {
 
     public WaveformView() {
         getChildren().add(canvas);
-        // Utanför layouten – annars hindrar canvas:ens bredd panelen från att krympa
+        // Utanför layouten, annars hindrar canvas:ens bredd panelen från att krympa
         canvas.setManaged(false);
         setMinHeight(40);
         setPrefHeight(80);
@@ -264,7 +263,7 @@ public class WaveformView extends Pane {
         g.strokeLine(px, 0, px, h);
 
         // Tid vid positionen
-        // Tid vid positionen – till vänster om strecket nära högerkanten
+        // Tid vid positionen, till vänster om strecket nära högerkanten
         g.setFill(palette.text);
         g.setTextBaseline(VPos.BOTTOM);
         if (px > w - 60) {
@@ -280,7 +279,7 @@ public class WaveformView extends Pane {
     /**
      * Par utan ljud (inläsning saknas) har längd 0 och syns inte i kurvan.
      * De markeras med ett tjockt streck, en liten triangel och texten
-     * "saknas" – eller "saknas (n)" om flera ligger i rad på samma ställe.
+     * "saknas", eller "saknas (n)" om flera ligger i rad på samma ställe.
      */
     private void drawMissingAudio(GraphicsContext g, long from, long to, double h) {
         g.setStroke(palette.playhead);
@@ -290,7 +289,7 @@ public class WaveformView extends Pane {
         g.setTextAlign(TextAlignment.LEFT);
         g.setTextBaseline(VPos.TOP);
 
-        // indexAt väljer paret som hörs – backa förbi par utan ljud som
+        // indexAt väljer paret som hörs, backa förbi par utan ljud som
         // ligger på samma tid, så att de också kommer med
         int i = Math.max(0, timeline.indexAt(from));
         while (i > 0 && timeline.startOf(i - 1) >= from) {
