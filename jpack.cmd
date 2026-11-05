@@ -19,7 +19,7 @@ jpackage --type msi ^
          --win-menu ^
          --win-dir-chooser ^
          --name Ekorr+ ^
-         --app-version 0.001 ^
+         --app-version 1.0 ^
          --icon src\main\resources\se\camabomedia\ekorraudio\icon.ico ^
          --description "Skapa korrektur-rapporter i talboksproduktion" ^
          --copyright "Copyright 2026, All rights reserved"

@@ -2447,9 +2447,9 @@ public class MainViewController implements Initializable {
         Alert alert = new Alert(AlertType.INFORMATION);
         alert.initOwner(stage);
         styleDialog(alert.getDialogPane());
-        alert.setTitle("Om Ekorr");
+        alert.setTitle("Om Ekorr+");
         alert.setHeaderText(null);
-        alert.setContentText("Ekorr v. 1.0");
+        alert.setContentText("Ekorr+ v. 1.0");
         alert.showAndWait();
     }
 
