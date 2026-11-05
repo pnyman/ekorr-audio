@@ -83,13 +83,13 @@ public class MpvPlayer implements AutoCloseable {
      *  4. "mpv" i PATH
      */
     public static String defaultMpvPath() {
-        String env = System.getenv("EKORR_MPV");
-        if (env != null && !env.isBlank()) {
-            return env;
-        }
         File bundled = bundledMpv();
         if (bundled != null) {
             return bundled.getPath();
+        }
+        String env = System.getenv("EKORR_MPV");
+        if (env != null && !env.isBlank()) {
+            return env;
         }
         return new File(SCOOP_MPV).isFile() ? SCOOP_MPV : "mpv";
     }
